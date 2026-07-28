@@ -1,0 +1,357 @@
+{
+  "generated_at": "2026-07-29T05:16:35.187833+00:00",
+  "description": "Physics-correct simulation validation: Agentic AI for Near-Real-Time Ocean Hazard Assessment (NOAA AI Workshop 2026)",
+  "physical_constants": {
+    "deep_ocean_wave_speed_m_s": 198.0,
+    "fsm_thresholds": {
+      "T1": 0.35,
+      "T2": 0.6,
+      "T3": 0.85
+    },
+    "seismic_quiet_penalty": 1.3,
+    "seismic_quiet_magnitude_threshold": 6.5,
+    "bandpass_range_min": "5-120",
+    "dart_detection_threshold_m": 0.03,
+    "coops_detection_threshold_m": 0.15,
+    "spatial_coherence_tolerance": 0.2
+  },
+  "scenarios": [
+    {
+      "name": "Large Tsunami (M8.5 Aleutian)",
+      "earthquake": {
+        "magnitude": 8.5,
+        "latitude": 52.5,
+        "longitude": -173.0,
+        "depth_km": 25.0,
+        "region": "aleutian"
+      },
+      "characteristic_amplitude_m": 0.11885,
+      "dominant_period_min": 37.2,
+      "stations": [
+        {
+          "station_id": "21413",
+          "station_type": "dart",
+          "distance_km": 3734.9,
+          "arrival_time_hours": 5.24,
+          "tsunami_amplitude_m": 0.025156,
+          "geometric_spreading": 0.5174,
+          "ensemble_score": 0.7065,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.2872,
+          "statistical_score": 0.2872,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "21418",
+          "station_type": "dart",
+          "distance_km": 3290.5,
+          "arrival_time_hours": 4.616,
+          "tsunami_amplitude_m": 0.026907,
+          "geometric_spreading": 0.5513,
+          "ensemble_score": 0.7269,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.3368,
+          "statistical_score": 0.3368,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "21419",
+          "station_type": "dart",
+          "distance_km": 2447.9,
+          "arrival_time_hours": 3.434,
+          "tsunami_amplitude_m": 0.03209,
+          "geometric_spreading": 0.6392,
+          "ensemble_score": 0.7001,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.2716,
+          "statistical_score": 0.2716,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "46404",
+          "station_type": "dart",
+          "distance_km": 3244.3,
+          "arrival_time_hours": 4.551,
+          "tsunami_amplitude_m": 0.029108,
+          "geometric_spreading": 0.5552,
+          "ensemble_score": 0.7129,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.3028,
+          "statistical_score": 0.3028,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "46407",
+          "station_type": "dart",
+          "distance_km": 3420.6,
+          "arrival_time_hours": 4.799,
+          "tsunami_amplitude_m": 0.030503,
+          "geometric_spreading": 0.5407,
+          "ensemble_score": 0.7027,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.2779,
+          "statistical_score": 0.2779,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "46411",
+          "station_type": "dart",
+          "distance_km": 3763.8,
+          "arrival_time_hours": 5.28,
+          "tsunami_amplitude_m": 0.030692,
+          "geometric_spreading": 0.5154,
+          "ensemble_score": 0.6876,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.2414,
+          "statistical_score": 0.2414,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "1612340",
+          "station_type": "coops",
+          "distance_km": 3702.9,
+          "arrival_time_hours": 5.195,
+          "tsunami_amplitude_m": 0.230594,
+          "geometric_spreading": 0.5197,
+          "ensemble_score": 0.9278,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.8247,
+          "bocpd_score": 0.7867,
+          "statistical_score": 0.8247,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": true
+        },
+        {
+          "station_id": "1617760",
+          "station_type": "coops",
+          "distance_km": 3959.8,
+          "arrival_time_hours": 5.555,
+          "tsunami_amplitude_m": 0.237106,
+          "geometric_spreading": 0.5025,
+          "ensemble_score": 0.9148,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.1942,
+          "bocpd_score": 0.793,
+          "statistical_score": 0.793,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": true
+        },
+        {
+          "station_id": "1619910",
+          "station_type": "coops",
+          "distance_km": 2724.9,
+          "arrival_time_hours": 3.823,
+          "tsunami_amplitude_m": 0.275736,
+          "geometric_spreading": 0.6058,
+          "ensemble_score": 0.939,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.8518,
+          "bocpd_score": 0.7519,
+          "statistical_score": 0.8518,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": true
+        }
+      ],
+      "summary": {
+        "total_stations": 9,
+        "dart_stations": 6,
+        "coops_stations": 3,
+        "detecting_t1": 9,
+        "dart_detecting_t1": 6,
+        "detecting_t2": 9,
+        "detecting_t3": 3
+      }
+    },
+    {
+      "name": "Moderate Earthquake (M7.0 Aleutian)",
+      "earthquake": {
+        "magnitude": 7.0,
+        "latitude": 52.0,
+        "longitude": -172.0
+      },
+      "characteristic_amplitude_m": 0.008913,
+      "stations": [
+        {
+          "station_id": "21413",
+          "station_type": "dart",
+          "distance_km": 3771.6,
+          "arrival_time_hours": 5.291,
+          "tsunami_amplitude_m": 0.001858,
+          "geometric_spreading": 0.5149,
+          "ensemble_score": 0.0798,
+          "threshold_score": 0.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.1939,
+          "statistical_score": 0.1939,
+          "seismic_quiet": false,
+          "exceeds_t1": false,
+          "exceeds_t2": false,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "21418",
+          "station_type": "dart",
+          "distance_km": 3346.2,
+          "arrival_time_hours": 4.694,
+          "tsunami_amplitude_m": 0.002029,
+          "geometric_spreading": 0.5467,
+          "ensemble_score": 0.0795,
+          "threshold_score": 0.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.193,
+          "statistical_score": 0.193,
+          "seismic_quiet": false,
+          "exceeds_t1": false,
+          "exceeds_t2": false,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "21419",
+          "station_type": "dart",
+          "distance_km": 2507.8,
+          "arrival_time_hours": 3.518,
+          "tsunami_amplitude_m": 0.002431,
+          "geometric_spreading": 0.6315,
+          "ensemble_score": 0.0806,
+          "threshold_score": 0.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.1957,
+          "statistical_score": 0.1957,
+          "seismic_quiet": false,
+          "exceeds_t1": false,
+          "exceeds_t2": false,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "46404",
+          "station_type": "dart",
+          "distance_km": 3181.2,
+          "arrival_time_hours": 4.463,
+          "tsunami_amplitude_m": 0.002199,
+          "geometric_spreading": 0.5607,
+          "ensemble_score": 0.0803,
+          "threshold_score": 0.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.1951,
+          "statistical_score": 0.1951,
+          "seismic_quiet": false,
+          "exceeds_t1": false,
+          "exceeds_t2": false,
+          "exceeds_t3": false
+        }
+      ],
+      "summary": {
+        "total_stations": 4,
+        "detecting_t1": 0,
+        "detecting_t2": 0,
+        "no_false_escalation": true
+      }
+    },
+    {
+      "name": "Meteotsunami False Positive",
+      "meteotsunami": {
+        "amplitude_m": 0.1,
+        "period_min": 20.0,
+        "duration_hours": 2.0
+      },
+      "result": {
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_quiet": true,
+        "exceeds_t1": false,
+        "exceeds_t2": false
+      },
+      "summary": {
+        "correctly_rejected": true,
+        "seismic_quiet_penalty_applied": true
+      }
+    },
+    {
+      "name": "Partial Network Outage",
+      "online_stations": [
+        "21418",
+        "21419"
+      ],
+      "offline_stations": [
+        "21413",
+        "46404",
+        "46407",
+        "46411"
+      ],
+      "stations": [
+        {
+          "station_id": "21418",
+          "station_type": "dart",
+          "distance_km": 3290.5,
+          "arrival_time_hours": 4.616,
+          "tsunami_amplitude_m": 0.026907,
+          "geometric_spreading": 0.5513,
+          "ensemble_score": 0.7151,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.3082,
+          "statistical_score": 0.3082,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        },
+        {
+          "station_id": "21419",
+          "station_type": "dart",
+          "distance_km": 2447.9,
+          "arrival_time_hours": 3.434,
+          "tsunami_amplitude_m": 0.03209,
+          "geometric_spreading": 0.6392,
+          "ensemble_score": 0.7016,
+          "threshold_score": 1.0,
+          "wavelet_score": 0.0,
+          "bocpd_score": 0.2754,
+          "statistical_score": 0.2754,
+          "seismic_quiet": false,
+          "exceeds_t1": true,
+          "exceeds_t2": true,
+          "exceeds_t3": false
+        }
+      ],
+      "summary": {
+        "online_count": 2,
+        "offline_count": 4,
+        "detecting_t1": 2,
+        "detection_with_reduced_network": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,809 @@
+/* Console layout.
+   A continuous status strip on top, one dominant operations row (map flush on
+   the field, recessed instrument rails left and right), and a hairline
+   activity strip along the bottom. Separation comes from hairlines and tonal
+   steps, not boxed cards. */
+
+.console {
+  display: grid;
+  grid-template-rows: 58px minmax(0, 1fr) 56px;
+  grid-template-columns: 268px minmax(0, 1fr) 356px;
+  grid-template-areas:
+    "topbar topbar topbar"
+    "rail   map    side"
+    "audit  audit  audit";
+  height: 100vh;
+  background: var(--bg-field);
+}
+
+.console--banner {
+  grid-template-rows: 30px 58px minmax(0, 1fr) 56px;
+  grid-template-areas:
+    "banner banner banner"
+    "topbar topbar topbar"
+    "rail   map    side"
+    "audit  audit  audit";
+}
+
+.region-banner { grid-area: banner; }
+.region-topbar { grid-area: topbar; }
+.region-rail { grid-area: rail; min-height: 0; }
+/* The map cell is the containing block for the chart overlay. Without this the
+   overlay's absolute positioning resolves against the viewport, so it spans the
+   full width and collides with both rails. */
+.region-map { grid-area: map; min-height: 0; position: relative; }
+.region-side { grid-area: side; min-height: 0; }
+.region-audit { grid-area: audit; min-height: 0; }
+
+/* Recessed side rails. */
+.region-rail,
+.region-side {
+  background: var(--bg-rail);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.region-rail { border-right: 1px solid var(--line-soft); }
+.region-side { border-left: 1px solid var(--line-soft); }
+
+.rail-section {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 0;
+}
+.rail-section + .rail-section { border-top: 1px solid var(--line-soft); }
+
+/* --- Section headers (replacing panel cards + dot motif) ----------------- */
+
+.sect {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+/* .sect__head is an <h2>. The UA margin and font-size are reset so that
+   these section titles carry heading semantics without affecting layout. */
+.sect__head {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px 11px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+
+.sect__body {
+  padding: 0 16px 16px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.sect__body--flush {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ESCALATE draws a slow inner attention ring on the review section. */
+/* Size and urgency are separate. The gate keeps the larger share of the rail
+   for as long as the event is in ESCALATE, because the packet is still the most
+   important thing on screen; only the pulse stands down once a decision exists,
+   since the pulse is a request for action. */
+.sect--escalate,
+.sect--escalate-reviewed {
+  flex: 1.6 1 0;
+}
+.sect--escalate {
+  /* The static edge is the fallback, not decoration. Under
+     prefers-reduced-motion the global rule sets animation: none, so a cue
+     living only in the keyframes would leave the escalating gate visually
+     identical to every other panel. The running animation overrides this
+     declaration, so nothing changes for viewers who do accept motion.
+
+     Alpha 0.75 rather than the animation's 0.5 peak: composited over the rail
+     background this measures 3.45:1, clearing the 3:1 that WCAG 1.4.11 asks of
+     a boundary that carries meaning on its own. 0.5 measures only 2.14:1. */
+  box-shadow: inset 0 0 0 1px rgba(224, 92, 92, 0.75);
+  animation: pulse-emergency 2.4s infinite ease-in-out;
+}
+
+/* The decision row stays pinned to the bottom of the review gate while the
+   evidence above it scrolls, so the operator can always see (and reach) the
+   decision controls. They remain disabled until the packet is acknowledged and
+   a rationale is entered, so pinning them exposes the gate rather than
+   bypassing it. */
+.review-actions {
+  position: sticky;
+  /* Pin past the body's 16px bottom padding so scrolled evidence cannot show
+     through underneath the buttons. */
+  bottom: -16px;
+  margin-top: auto;
+  padding: 8px 0 16px;
+  background: linear-gradient(to bottom, rgba(10, 15, 22, 0) 0%, var(--bg-rail) 24%);
+}
+
+/* --- Top status strip ----------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: var(--bg-bar);
+  border-bottom: 1px solid var(--line-soft);
+  padding: 0 20px;
+}
+
+.topbar__brand { min-width: 0; }
+
+.topbar__title {
+  /* This is the document's h1: a brand mark that happens to be the top-level
+     heading. The UA heading margin and font-size are reset so its box keeps
+     the dimensions the topbar grid expects. */
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  /* The brand is min-width: 0 so it may shrink. Without a clip its nowrap
+     children overflow the box and paint over the disclaimer at 1280px. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-2);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__rule {
+  width: 1px;
+  align-self: stretch;
+  margin: 12px 0;
+  background: var(--line);
+}
+
+.topbar__kpis {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-left: auto;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.kpi__value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.kpi__label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.stateread {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.stateread__label {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.stateread__value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+.disclaimer {
+  font-size: 10px;
+  line-height: 1.35;
+  color: var(--amber);
+  font-weight: 600;
+  max-width: 230px;
+}
+
+/* --- Map field ------------------------------------------------------------ */
+
+.map-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-field);
+}
+
+.map-vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 90px rgba(4, 6, 10, 0.9);
+  pointer-events: none;
+  z-index: 400;
+}
+
+/* Dual-layer basemap. CARTO Dark gives neutral land silhouettes; the ESRI
+   World Ocean overlay adds bathymetric depth shading. The base is lifted with
+   brightness so land and station markers stay legible against the abyssal
+   field, and the overlay is multiply-blended so the ocean keeps its depth
+   gradient without greying the land. */
+.base-tiles {
+  filter: brightness(2.1) saturate(0.85);
+}
+.ocean-overlay {
+  filter: saturate(0.85);
+  mix-blend-mode: multiply;
+}
+
+.chart-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 150px;
+  padding: 16px 16px 10px;
+  background: linear-gradient(to bottom, rgba(7, 11, 17, 0) 0%, rgba(7, 11, 17, 0.85) 34%, rgba(7, 11, 17, 0.96) 100%);
+  z-index: 450;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+.chart-overlay > * { pointer-events: auto; }
+
+.chart-overlay__title {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin-bottom: 4px;
+}
+
+.map-legend {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 500;
+  background: rgba(9, 13, 19, 0.82);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  font-size: 10px;
+  color: var(--ink-2);
+  line-height: 1.9;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+.map-legend__title {
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.14em;
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.map-legend__row { display: flex; align-items: center; gap: 9px; }
+.map-legend__swatch { flex-shrink: 0; }
+
+/* --- Key / value rows ----------------------------------------------------- */
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  padding: 5px 0;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(148, 178, 205, 0.05);
+}
+.kv:last-child { border-bottom: none; }
+.kv__key { color: var(--ink-2); }
+.kv__value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+  text-align: right;
+}
+
+/* --- Evidence boxes --------------------------------------------------------- */
+
+.box {
+  background: var(--bg-inset);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+}
+
+.box__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 9px;
+}
+
+/* --- Layout utilities ------------------------------------------------------- */
+
+.col { display: flex; flex-direction: column; }
+.row { display: flex; align-items: center; }
+.row--between { display: flex; align-items: center; justify-content: space-between; }
+.gap-4 { gap: 4px; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.wrap { flex-wrap: wrap; }
+.grow { flex: 1; min-width: 0; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-10 { margin-top: 10px; }
+.mb-5 { margin-bottom: 5px; }
+.mb-8 { margin-bottom: 8px; }
+.center { text-align: center; }
+.small { font-size: 11px; }
+.tiny { font-size: 10px; }
+.dim { color: var(--ink-2); }
+.dim-2 { color: var(--ink-dim); }
+
+/* --- Compact metric tables --------------------------------------------------- */
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+}
+.metrics-table th {
+  text-align: right;
+  color: var(--ink-dim);
+  font-weight: 600;
+  padding: 3px 5px;
+  border-bottom: 1px solid var(--line);
+}
+.metrics-table th:first-child,
+.metrics-table td:first-child { text-align: left; }
+.metrics-table td {
+  text-align: right;
+  padding: 3px 5px;
+  color: var(--ink-2);
+  border-bottom: 1px solid rgba(148, 178, 205, 0.04);
+}
+.metrics-table .val-good { color: var(--state-idle); }
+.metrics-table .val-warn { color: var(--state-monitor); }
+.metrics-table .val-bad { color: var(--state-emergency); }
+.metrics-table .val-muted { color: var(--ink-dim); }
+.metrics-table .row-highlight td:first-child { color: var(--accent); }
+
+/* --- Buttons ------------------------------------------------------------------- */
+
+.btn {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 9px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  color: var(--ink);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn:hover:not(:disabled) { border-color: var(--line-strong); }
+.btn:disabled { opacity: 0.36; cursor: not-allowed; }
+
+.btn--approve { background: rgba(58, 168, 127, 0.12); border-color: rgba(58, 168, 127, 0.5); color: var(--state-idle); }
+.btn--approve:hover:not(:disabled) { background: var(--state-idle); color: #070b11; border-color: var(--state-idle); }
+
+.btn--reject { background: rgba(224, 92, 92, 0.1); border-color: rgba(224, 92, 92, 0.5); color: var(--state-emergency); }
+.btn--reject:hover:not(:disabled) { background: var(--state-emergency); color: #070b11; border-color: var(--state-emergency); }
+
+.btn--defer { background: rgba(224, 164, 92, 0.08); border-color: rgba(224, 164, 92, 0.5); color: var(--state-monitor); }
+.btn--defer:hover:not(:disabled) { background: var(--state-monitor); color: #070b11; border-color: var(--state-monitor); }
+
+.btn--full { width: 100%; }
+
+/* --- Station chips ---------------------------------------------------------------- */
+
+.chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(224, 164, 92, 0.1);
+  border: 1px solid rgba(224, 164, 92, 0.32);
+  color: var(--state-monitor);
+}
+
+/* --- FSM state ladder ---------------------------------------------------------------- */
+
+.fsm-state {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-soft);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0.04em;
+  transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+.fsm-state--active { border-color: var(--row-line, rgba(224, 92, 92, 0.55)); background: var(--row-tint, rgba(224, 92, 92, 0.08)); }
+.fsm-state--observed { border-color: var(--line); background: rgba(58, 168, 127, 0.05); }
+/* Do not lower this. These rows are informational, not disabled controls,
+   so the WCAG inactive-component contrast exemption does not apply, and at
+   0.4 the state name falls to 3.18:1 with the NOT SEEN tag lower still. */
+.fsm-state--unseen { opacity: 0.55; }
+
+.fsm-state__pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  flex-shrink: 0;
+}
+.fsm-state--active .fsm-state__pip { background: var(--row-accent, var(--state-emergency)); }
+.fsm-state--observed .fsm-state__pip { background: var(--state-idle); }
+
+.fsm-state__name { flex: 1; }
+.fsm-state--active .fsm-state__name { color: var(--row-accent, var(--state-emergency)); }
+
+.fsm-tag {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 700;
+}
+.fsm-tag--active { background: var(--row-line, rgba(224, 92, 92, 0.2)); color: var(--row-tag, var(--state-emergency-text)); }
+.fsm-tag--observed { background: rgba(58, 168, 127, 0.18); color: var(--state-idle); }
+/* Fill only: the chip keeps the inherited ink. Setting --ink-2 here would
+   land around 2.65:1 under the 0.55 row opacity. The suffix must match the
+   one FSMPanel emits, or the chip renders with no fill at all. */
+.fsm-tag--unseen { background: rgba(106, 124, 141, 0.15); }
+
+/* --- Section subheading ---------------------------------------------------------------- */
+
+.subhead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 14px 0 7px;
+}
+
+/* --- Registry list ------------------------------------------------------------------------ */
+
+.registry-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 10px 12px;
+  background: var(--bg-inset);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+}
+.registry-row__badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.registry-row__name { font-size: 12px; font-weight: 600; }
+.registry-row__desc { font-size: 10px; color: var(--ink-2); margin-top: 1px; }
+.registry-row__body { flex: 1; min-width: 0; }
+.registry-row__path {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  margin-top: 4px;
+}
+
+/* --- Activity strip --------------------------------------------------------------------------- */
+
+.audit-strip {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  height: 100%;
+  padding: 0 18px;
+  overflow: hidden;
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg-bar);
+}
+.audit-strip__title {
+  /* Same reason as .topbar__title: this is an h2 now. */
+  margin: 0;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+.audit-strip__items { display: flex; gap: 22px; overflow: hidden; flex: 1; align-items: center; }
+.audit-item { display: flex; gap: 8px; align-items: center; white-space: nowrap; font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
+.audit-item__time { color: var(--ink-dim); }
+
+/* --- Banners -------------------------------------------------------------------------------------- */
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.banner--alert { background: var(--state-emergency-fill); color: #fff; }
+.banner--demo { background: #8a5a1e; color: #ffe6c4; }
+
+/* --- Standby / empty states -------------------------------------------------------------------------- */
+
+.standby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--ink-2);
+  text-align: center;
+  padding: 20px 16px;
+}
+.standby__mark {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  color: var(--ink-dim);
+}
+.standby__text { font-size: 11px; }
+
+/* --- Review notes ---------------------------------------------------------------------------------------- */
+
+.note {
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--state-monitor);
+  margin-top: 9px;
+}
+
+.result-line { font-size: 10px; text-align: center; margin-top: 9px; font-weight: 600; }
+.result-line--ok { color: var(--state-idle); }
+.result-line--err { color: var(--state-emergency); }
+
+/* --- Unlock gate -------------------------------------------------------------------------------------------- */
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 5, 8, 0.8);
+  backdrop-filter: blur(7px);
+}
+
+.gate__card {
+  width: 384px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-rail);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.55);
+  animation: rise-in 0.25s ease-out;
+}
+
+.gate__title { font-size: 16px; font-weight: 700; letter-spacing: 0.01em; }
+.gate__sub { font-size: 12px; color: var(--ink-2); margin-top: 8px; line-height: 1.55; }
+.gate__field { margin-top: 18px; }
+.gate__label { display: block; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; font-weight: 700; }
+.gate__input { width: 100%; font-size: 13px; padding: 10px 12px; }
+.gate__error { margin-top: 10px; font-size: 11px; color: var(--state-emergency); min-height: 14px; }
+.gate__disclaimer { margin-top: 18px; font-size: 10px; line-height: 1.55; color: var(--amber); }
+
+/* --- Responsive ------------------------------------------------------------------------------------------------ */
+
+@media (max-width: 1180px) {
+  .console,
+  .console--banner {
+    /* minmax(0, 1fr), not a bare 1fr. A bare 1fr is minmax(auto, 1fr) and
+       carries a min-content floor, and .audit-item below is white-space:
+       nowrap, so the activity strip pinned this column at ~1232px at every
+       width from 1180 down to 768: the layout stopped responding entirely
+       and the review buttons could not all be on screen at once. The
+       desktop rule above already uses minmax(0, 1fr) for the same reason. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: unset;
+    grid-template-areas: none;
+    height: unset;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .region-banner,
+  .region-topbar,
+  .region-rail,
+  .region-map,
+  .region-side,
+  .region-audit { grid-area: unset; }
+  .region-rail,
+  .region-side { border: none; border-top: 1px solid var(--line-soft); }
+  .region-map { min-height: 440px; }
+  /* Stacked, the page itself scrolls, so the panels must size to their content
+     rather than share a fixed row height. Without this the review gate got a
+     123px porthole onto 879px of evidence at 768px wide: the same defect the
+     sticky decision row fixed on the desktop layout, reintroduced by the
+     single-column collapse. Inner scrollports are released and the sticky rows
+     pin against the page instead. */
+  .region-rail,
+  .region-side,
+  .rail-section,
+  .sect { flex: none; }
+  .sect__body { overflow-y: visible; flex: none; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 12px 16px; row-gap: 12px; }
+  .topbar__kpis { margin-left: 0; flex-wrap: wrap; }
+  .disclaimer { max-width: none; }
+}
+
+/* --- Skip link ------------------------------------------------------------------------------------- */
+
+/* Off-screen until focused, then anchored top-left over the topbar. The
+   review gate is the operator's task but sits after the map in DOM order. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 10px 14px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bg-field);
+  background: var(--accent);
+  border-radius: 0 0 var(--radius-sm) 0;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+.chart-overlay__window {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink-2);
+}
+
+/* --- Recorded review ------------------------------------------------------------------------------- */
+
+/* A decision is a durable record, not a notification, so this block persists
+   rather than dismissing itself. It names the decision, who signed it and
+   when, so a colleague taking over the shift can see that the packet on
+   screen has already been handled. Pinned for the same reason as the decision
+   row it stands in for: on handover that fact must be visible without
+   scrolling through the evidence above it. */
+.review-recorded {
+  position: sticky;
+  bottom: -16px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px;
+  /* Opaque, not a 6% tint. The block is sticky, so a translucent background
+     let the evidence scrolling underneath show through it: the rationale
+     placeholder and packet fields read straight across the recorded decision.
+     The tint is layered over the rail colour instead of replacing it, so the
+     block still reads as the same green-tinted card. */
+  background:
+    linear-gradient(rgba(58, 168, 127, 0.06), rgba(58, 168, 127, 0.06)),
+    var(--bg-rail);
+  border: 1px solid rgba(58, 168, 127, 0.28);
+  border-radius: var(--radius-sm);
+}
+.review-recorded__head {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--state-idle);
+}
+.review-recorded__grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  font-size: 11px;
+}
+.review-recorded__grid span { color: var(--ink-2); }
+.review-recorded__grid strong { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+.review-recorded__note { font-size: 10px; color: var(--ink-2); line-height: 1.45; }
+
+/* Names what is still missing before a decision can be recorded. The buttons
+   render at 36% opacity when disabled, which signals that they are blocked
+   but not what would unblock them. */
+.review-hint {
+  font-size: 10px;
+  color: var(--ink-2);
+  line-height: 1.45;
+  margin-top: -2px;
+}
+
+/* Run length for collapsed activity entries. Reads as a count, not as another
+   event, so a busy scoring loop cannot be mistaken for ten separate findings. */
+.audit-item__count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--ink-dim);
+}
+
+/* Tile-provider attribution. Leaflet's own control is disabled to preserve the
+   dark theme, so CARTO and Esri credit is rendered here instead. */
+.map-attribution {
+  position: absolute;
+  right: 8px;
+  /* Clears .chart-overlay, which shares this bottom edge and is 150px tall.
+     At 4px the credit wrapped across the anomaly chart's x-axis labels. */
+  bottom: 158px;
+  z-index: 500;
+  max-width: 52ch;
+  text-align: right;
+  font-size: 10px;
+  line-height: 1.35;
+  /* On a plate rather than bare over the tiles. The basemap is brightened
+     (see .base-tiles), so land silhouettes can reach a luminance where
+     translucent ink on tiles alone falls below 3:1. */
+  color: rgba(226, 232, 240, 0.82);
+  background: rgba(7, 11, 17, 0.72);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}

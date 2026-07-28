@@ -1,0 +1,260 @@
+# Docker Compose stack - full local environment
+#
+# One-command startup:  docker compose up
+# Includes infrastructure services AND application services.
+
+x-app-db-depends-on: &app_db_depends_on
+  timescaledb:
+    condition: service_healthy
+  init-db:
+    condition: service_completed_successfully
+
+x-threshold-env: &threshold_env
+  THRESHOLD_T1: ${THRESHOLD_T1:-0.35}
+  THRESHOLD_T2: ${THRESHOLD_T2:-0.60}
+  THRESHOLD_T3: ${THRESHOLD_T3:-0.85}
+  THRESHOLD_SEISMIC_MIN_MAGNITUDE: ${THRESHOLD_SEISMIC_MIN_MAGNITUDE:-6.0}
+  THRESHOLD_ESCALATION_MAGNITUDE: ${THRESHOLD_ESCALATION_MAGNITUDE:-7.5}
+  THRESHOLD_MONITOR_TIMEOUT_HOURS: ${THRESHOLD_MONITOR_TIMEOUT_HOURS:-12.0}
+  THRESHOLD_SEISMIC_ESCALATION_DEPTH_KM: ${THRESHOLD_SEISMIC_ESCALATION_DEPTH_KM:-100.0}
+  THRESHOLD_BASIN: ${THRESHOLD_BASIN:-pacific}
+
+x-app-common: &app_common
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+  environment: &app_env
+    DB_HOST: timescaledb
+    DB_PORT: "5432"
+    DB_NAME: hazard_assessment
+    DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD environment variable is required}
+    KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
+    APP_LOG_LEVEL: ${APP_LOG_LEVEL:-INFO}
+    # Worker Prometheus exporter port (pipeline/ingest workers only; the API
+    # serves /metrics directly so it ignores this).
+    METRICS_PORT: ${METRICS_PORT:-9100}
+  restart: unless-stopped
+
+services:
+  # --- Data Plane ---
+
+  timescaledb:
+    image: timescale/timescaledb:2.17.2-pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hazard_assessment
+      POSTGRES_USER: ${DB_ADMIN_USER:-hazard_admin}
+      POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD:?DB_ADMIN_PASSWORD environment variable is required}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - timescaledb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_ADMIN_USER:-hazard_admin} -d hazard_assessment"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  init-db:
+    build:
+      context: ..
+      dockerfile: deploy/init-db.Dockerfile
+    environment:
+      DB_HOST: timescaledb
+      DB_PORT: "5432"
+      DB_NAME: hazard_assessment
+      DB_ADMIN_USER: ${DB_ADMIN_USER:-hazard_admin}
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?DB_ADMIN_PASSWORD environment variable is required}
+      DB_DEFAULT_ROLE_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD environment variable is required}
+      DB_INGEST_WRITER_PASSWORD: ${DB_INGEST_WRITER_PASSWORD:-}
+      DB_AGENT_WRITER_PASSWORD: ${DB_AGENT_WRITER_PASSWORD:-}
+      DB_AGENT_READER_PASSWORD: ${DB_AGENT_READER_PASSWORD:-}
+      DB_AUDIT_READER_PASSWORD: ${DB_AUDIT_READER_PASSWORD:-}
+      DB_ORCHESTRATOR_WRITER_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-}
+      DB_PIPELINE_WORKER_PASSWORD: ${DB_PIPELINE_WORKER_PASSWORD:-}
+      # investigator_writer is provisioned by migration 009 for the planned
+      # evidence-investigator worker; no running
+      # service consumes this role yet.
+      DB_INVESTIGATOR_WRITER_PASSWORD: ${DB_INVESTIGATOR_WRITER_PASSWORD:-}
+      DB_CONNECT_TIMEOUT: 5
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    restart: "no"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      # Single-node replication settings (required for KRaft without multi-broker)
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    ports:
+      - "127.0.0.1:9092:9092"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # --- Observability ---
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?GRAFANA_PASSWORD environment variable is required}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+
+  jaeger:
+    image: jaegertracing/jaeger:2.4.0
+    restart: unless-stopped
+    environment:
+      # Jaeger v2 default config binds to localhost; override to make
+      # ports reachable from other containers and the Docker host.
+      JAEGER_LISTEN_HOST: "0.0.0.0"
+    ports:
+      - "127.0.0.1:16686:16686"  # UI
+      - "127.0.0.1:4317:4317"    # OTLP gRPC
+      - "127.0.0.1:4318:4318"    # OTLP HTTP
+
+  # --- Application Services ---
+
+  api-server:
+    <<: *app_common
+    command: ["uvicorn", "hazard_assessment.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      <<: [*app_env, *threshold_env]
+      DB_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-${DB_PASSWORD:?}}
+      HAZARD_API_KEY: ${HAZARD_API_KEY:?HAZARD_API_KEY environment variable is required}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-}
+      DB_ORCHESTRATOR_WRITER_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-}
+      OTLP_ENDPOINT: http://jaeger:4317
+    depends_on:
+      <<: *app_db_depends_on
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  pipeline-worker:
+    <<: *app_common
+    command: ["python", "-m", "hazard_assessment.workers.pipeline_runner"]
+    environment:
+      <<: [*app_env, *threshold_env]
+      # Migration 009 revokes processed_features INSERT from
+      # orchestrator_writer; the entrypoint selects pipeline_worker.
+      DB_PASSWORD: ${DB_PIPELINE_WORKER_PASSWORD:-${DB_PASSWORD:?}}
+      DB_PIPELINE_WORKER_PASSWORD: ${DB_PIPELINE_WORKER_PASSWORD:-}
+      CALIBRATION_DIR: "${CALIBRATION_DIR:-}"
+      OTLP_ENDPOINT: http://jaeger:4317
+    volumes:
+      - ../data:/app/data:ro
+    depends_on:
+      <<: *app_db_depends_on
+      kafka:
+        condition: service_healthy
+
+  ingest-dart:
+    <<: *app_common
+    command: ["python", "-m", "hazard_assessment.workers.ingest_runner", "--connector", "dart"]
+    environment:
+      <<: *app_env
+      DB_PASSWORD: ${DB_INGEST_WRITER_PASSWORD:-${DB_PASSWORD:?}}
+      INGEST_DART_POLL_INTERVAL_STANDARD_SEC: ${INGEST_DART_POLL_INTERVAL_STANDARD_SEC:-60}
+      INGEST_DART_POLL_INTERVAL_EVENT_SEC: ${INGEST_DART_POLL_INTERVAL_EVENT_SEC:-15}
+      INGEST_DART_EVENT_MODE_TIMEOUT_SEC: ${INGEST_DART_EVENT_MODE_TIMEOUT_SEC:-14400}
+      INGEST_RETRY_MAX_ATTEMPTS: ${INGEST_RETRY_MAX_ATTEMPTS:-3}
+      INGEST_RETRY_BACKOFF_SEC: ${INGEST_RETRY_BACKOFF_SEC:-2.0}
+    depends_on:
+      <<: *app_db_depends_on
+      kafka:
+        condition: service_healthy
+
+  ingest-coops:
+    <<: *app_common
+    command: ["python", "-m", "hazard_assessment.workers.ingest_runner", "--connector", "coops"]
+    environment:
+      <<: *app_env
+      DB_PASSWORD: ${DB_INGEST_WRITER_PASSWORD:-${DB_PASSWORD:?}}
+      INGEST_COOPS_POLL_INTERVAL_SEC: ${INGEST_COOPS_POLL_INTERVAL_SEC:-30}
+      INGEST_RETRY_MAX_ATTEMPTS: ${INGEST_RETRY_MAX_ATTEMPTS:-3}
+      INGEST_RETRY_BACKOFF_SEC: ${INGEST_RETRY_BACKOFF_SEC:-2.0}
+    depends_on:
+      <<: *app_db_depends_on
+      kafka:
+        condition: service_healthy
+
+  ingest-seismic:
+    <<: *app_common
+    command: ["python", "-m", "hazard_assessment.workers.ingest_runner", "--connector", "seismic"]
+    environment:
+      <<: *app_env
+      DB_PASSWORD: ${DB_INGEST_WRITER_PASSWORD:-${DB_PASSWORD:?}}
+      INGEST_SEISMIC_POLL_INTERVAL_SEC: ${INGEST_SEISMIC_POLL_INTERVAL_SEC:-15}
+      INGEST_RETRY_MAX_ATTEMPTS: ${INGEST_RETRY_MAX_ATTEMPTS:-3}
+      INGEST_RETRY_BACKOFF_SEC: ${INGEST_RETRY_BACKOFF_SEC:-2.0}
+    depends_on:
+      <<: *app_db_depends_on
+      kafka:
+        condition: service_healthy
+
+  # --- Mission Control UI ---
+
+  mission-control:
+    build:
+      context: ../mission-control
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8100:8100"
+    environment:
+      MISSION_CONTROL_HAZARD_API_URL: http://api-server:8000
+      MISSION_CONTROL_HAZARD_API_KEY: ${HAZARD_API_KEY:?HAZARD_API_KEY environment variable is required}
+      MISSION_CONTROL_API_KEY: ${MISSION_CONTROL_API_KEY:?MISSION_CONTROL_API_KEY environment variable is required}
+      MISSION_CONTROL_POLL_INTERVAL_SECONDS: "2.0"
+    depends_on:
+      api-server:
+        condition: service_healthy
+
+volumes:
+  timescaledb_data:
+  kafka_data:
+  prometheus_data:
+  grafana_data:

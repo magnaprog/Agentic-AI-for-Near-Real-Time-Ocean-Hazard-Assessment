@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+*.egg
+.env
+.venv/
+node_modules/
+*.tsbuildinfo
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.listing
+paper/*.pdf
+!paper/paper.pdf
+texput.log
+paper.log
+.DS_Store
+**/.DS_Store
+
+# Local-only compose override (timescaledb host-port remap).
+/deploy/compose.local.yml

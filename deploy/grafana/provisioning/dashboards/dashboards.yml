@@ -1,0 +1,10 @@
+# Loads dashboard JSON files mounted at /etc/grafana/dashboards.
+apiVersion: 1
+
+providers:
+  - name: hazard-assessment
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 60
+    options:
+      path: /etc/grafana/dashboards

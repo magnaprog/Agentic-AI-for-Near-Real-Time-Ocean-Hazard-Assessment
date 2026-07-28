@@ -1,0 +1,194 @@
+# Agent Permission Matrix - Machine-Readable Policy
+#
+# Declarative contract. Evaluated on demand by policy/approval.py and exposed
+# through the /api/policy/check endpoint. Nothing in the pipeline execution
+# path consults it, so this file documents the intended capability envelope
+# rather than enforcing it at runtime.
+# Agents declare capabilities in their manifests; this file defines the policy.
+
+schema_version: "1.0"
+
+permissions:
+  - code: RD
+    name: READ_DATA
+    description: Read from data stores or external APIs
+  - code: WD
+    name: WRITE_DATA
+    description: Write to internal data stores
+  - code: WA
+    name: WRITE_AUDIT
+    description: Write to the append-only audit trail
+  - code: PK
+    name: PRODUCE_KAFKA
+    description: Publish messages to Kafka topics
+  - code: CK
+    name: CONSUME_KAFKA
+    description: Consume messages from Kafka topics
+  - code: IL
+    name: INVOKE_LLM
+    description: Call the LLM synthesis service
+  - code: MS
+    name: MODIFY_STATE
+    description: Modify the FSM state
+  - code: ER
+    name: EMIT_REPORT
+    description: Generate assessment reports
+  - code: AO
+    name: APPROVE_OUTPUT
+    description: Approve distributable outputs
+
+  # Kafka topic design (TARGET topology, simplified). The current deployment
+  # publishes ONLY raw.observations; audit entries go to the durable
+  # audit_events DB table, not a Kafka topic.
+  #   raw.observations - all ingest data (keyed by source_type:station_id)
+  #   audit.events - PLANNED audit trail replication for external consumers
+  # audit.events, processed.*, and output.* topics listed below are
+  # aspirational permission ceilings, not current Kafka topology.
+
+agents:
+  dart_ingest:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["raw.observations", "audit.events"]
+    kafka_topics_consume: []
+
+  coops_ingest:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["raw.observations", "audit.events"]
+    kafka_topics_consume: []
+
+  seismic_ingest:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["raw.observations", "audit.events"]
+    kafka_topics_consume: []
+
+  qc_agent:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["audit.events"]
+    kafka_topics_consume: []
+    # QC runs in-process via pipeline_runner (not a separate Kafka consumer).
+
+  anomaly_agent:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["audit.events"]
+    kafka_topics_consume: []
+    # Runs in-process via pipeline_runner.
+
+  orchestrator:
+    # Purely deterministic - no LLM invocation.
+    allowed: [RD, WD, WA, PK, CK, MS]
+    kafka_topics_produce: ["audit.events"]
+    kafka_topics_consume: ["raw.observations"]
+
+  scenario_agent:
+    allowed: [RD, WD, WA, PK]
+    kafka_topics_produce: ["audit.events"]
+    kafka_topics_consume: []
+    # Triggered by Orchestrator via pipeline routing (not Kafka).
+    # Reads DART waveform data from TimescaleDB for inversion.
+
+  verification_agent:
+    allowed: [RD, WD, WA, PK, CK]
+    # Aspirational - runs in-process via pipeline_runner; per-agent topics not yet implemented.
+    kafka_topics_produce: ["processed.verification", "audit.events"]
+    kafka_topics_consume: ["processed.scenario"]
+
+  report_agent:
+    # IL (INVOKE_LLM) conditionally enabled when LLM settings are configured
+    allowed: [RD, WD, WA, PK, CK, ER, IL]
+    # Aspirational - runs in-process via pipeline_runner; per-agent topics not yet implemented.
+    kafka_topics_produce: ["output.reports", "audit.events"]
+    kafka_topics_consume: ["processed.verification"]
+
+  human_review_gate:
+    allowed: [RD, WD, WA, PK, CK, AO]
+    # Aspirational - runs in-process; per-agent topics not yet implemented.
+    kafka_topics_produce: ["output.decisions", "audit.events"]
+    kafka_topics_consume: ["output.reports"]
+
+prohibited_actions:
+  - id: P1
+    description: Issue public communications or alerts
+    enforcement: No credentials or network route to NWS dissemination systems
+
+  - id: P2
+    description: Use official NOAA alert terminology
+    enforcement: Automated guardrail scanner on emitted report, ABSTAIN, decision, and escalation-packet text
+    prohibited_terms:
+      - "Warning"
+      - "Advisory"
+      - "Watch"
+      - "Information Statement"
+      - "Threat Message"
+      - "Cancellation"
+      - "All Clear"
+      - "Bulletin"
+    context: >
+      Warning, Advisory, Watch, and Information Statement are domestic
+      alert types defined under NWSPD 10-7. Threat Message is an
+      international TWC product type. Cancellation, All Clear, and Bulletin
+      are reserved product categories blocked as additional precautions.
+      All are reserved for official Tsunami Warning Centers. The system
+      must never use them to label its own outputs. This list mirrors the
+      enforced PROHIBITED_TERMS in policy/guardrails.py.
+
+  - id: P3
+    description: Trigger DART event mode or actuate external instruments
+    enforcement: Outbound HTTP GET only; no write endpoints configured; public APIs require no credentials
+
+  - id: P4
+    description: Delete or modify audit trail records
+    enforcement: Database role permissions; no UPDATE/DELETE on audit_events
+
+  - id: P5
+    description: Delete or modify raw observation data
+    enforcement: Database role permissions; no UPDATE/DELETE on raw_observations
+
+  - id: P6
+    description: Bypass the Human Review Gate for distributable outputs
+    enforcement: Orchestrator enforces; Tier 2 requires HumanDecision.decision = APPROVE
+
+  - id: P7
+    description: Suppress agent outputs or verification results
+    enforcement: Orchestrator forwards all outputs; audit trail completeness checks
+
+  - id: P8
+    description: Modify FSM state transition thresholds at runtime
+    enforcement: Thresholds loaded from versioned config; changes require deployment
+
+  - id: P9
+    description: Override Verification Agent FAIL verdict
+    enforcement: ABSTAIN path is mandatory when verification returns FAIL
+
+  - id: P10
+    description: Communicate directly with public or emergency management
+    enforcement: No external communication endpoints in tool registry
+
+tool_registry:
+  # Only tools actually implemented in src/hazard_assessment/agents/llm_advisory/tools.py.
+  # Used exclusively by the after-action analysis graph (within the Report Agent).
+  allowed:
+    - name: query_audit_trail
+      description: Read audit events for lineage
+      agents: [report_agent]
+
+    - name: query_processed_features
+      description: Read processed features and scores
+      agents: [report_agent]
+
+    - name: query_fsm_transitions
+      description: Read FSM state transition history
+      agents: [report_agent]
+
+  excluded:
+    - capability: NWS dissemination write
+      reason: Prohibited action P1
+    - capability: DART buoy actuation
+      reason: Prohibited action P3
+    - capability: Email/SMS to public
+      reason: Prohibited action P10
+    - capability: Database schema modification
+      reason: Administrative action only
+    - capability: Threshold modification
+      reason: Prohibited action P8
+    - capability: Audit record modification
+      reason: Prohibited action P4

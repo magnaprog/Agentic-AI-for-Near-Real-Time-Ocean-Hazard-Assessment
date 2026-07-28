@@ -1,0 +1,126 @@
+<mxfile host="65bd71144e">
+    <diagram name="ScenarioInversionActivity" id="30">
+        <mxGraphModel dx="896" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1400" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="38" value="Scenario Inversion Pipeline" style="text;html=1;fontSize=14;fontFamily=Helvetica;fontStyle=1;fontColor=#212121;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="20" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="Seismic Event Context&lt;br&gt;+ DART Station Waveforms (if available)&lt;br&gt;+ Unit Source Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="60" width="340" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="DART waveforms&lt;br&gt;available?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="415" y="170" width="170" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="29" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Seismic-Only Path" style="text;html=1;fontSize=12;fontFamily=Helvetica;fontStyle=5;fontColor=#2E7D32;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="280" width="240" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="Select unit sources&lt;br&gt;within 500 km of epicenter" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="310" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="Magnitude-based slip scaling&lt;br&gt;slip = 10&lt;sup&gt;(a &amp;middot; M&lt;sub&gt;w&lt;/sub&gt; + b)&lt;/sup&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="380" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="Wells &amp;amp; Coppersmith&lt;br&gt;rupture length" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="450" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="Gaussian taper weighting" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="520" width="220" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="Compute M&lt;sub&gt;w&lt;/sub&gt; from weights&lt;br&gt;Hanks-Kanamori (C = 9.1)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="585" width="220" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="InversionResult&lt;br&gt;&amp;ldquo;Seismic-only estimate.&lt;br&gt;High uncertainty.&amp;rdquo;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="660" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="NO" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#2E7D32;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#2E7D32;" parent="1" source="12" target="31" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="160" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="31" target="32" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="32" target="33" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="33" target="34" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="34" target="35" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="35" target="36" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="DART-Constrained Path" style="text;html=1;fontSize=12;fontFamily=Helvetica;fontStyle=5;fontColor=#1565C0;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="280" width="240" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="Select unit sources&lt;br&gt;(distance, strike, contiguity)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="310" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Build observation vector &lt;b&gt;d&lt;/b&gt;&lt;br&gt;(concatenated station waveforms)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="380" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Build Green&amp;rsquo;s function matrix &lt;b&gt;H&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="450" width="240" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="NNLS solve&lt;br&gt;scipy.optimize.nnls(H, d)&lt;br&gt;Lawson-Hanson algorithm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="515" width="240" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Bootstrap uncertainty&lt;br&gt;B = 500, station resampling, seeded RNG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="590" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Rank scenarios from bootstrap&lt;br&gt;Cluster by activation pattern, top-5" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="660" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Coastal amplitude proxies&lt;br&gt;P10 / P50 / P90 per site" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="730" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Ensemble spread classification&lt;br&gt;LOW / MODERATE / HIGH" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="800" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="InversionResult&lt;br&gt;+ RankedScenario[]&lt;br&gt;+ CoastalProxy[]&lt;br&gt;+ EnsembleSpread" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="875" width="240" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="YES" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#1565C0;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#1565C0;" parent="1" source="12" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="800" y="220"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="7" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

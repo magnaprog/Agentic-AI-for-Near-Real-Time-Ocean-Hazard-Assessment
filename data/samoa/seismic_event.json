@@ -1,0 +1,40 @@
+{
+  "type": "Feature",
+  "properties": {
+    "mag": 8.1,
+    "place": "2009 Samoa Earthquake",
+    "time": 1254246490990,
+    "updated": 1764175286460,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/usp000h1ys",
+    "detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=usp000h1ys&format=geojson",
+    "felt": 66,
+    "cdi": 7.2,
+    "mmi": 5.681,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 1057,
+    "net": "us",
+    "code": "p000h1ys",
+    "ids": ",us2009mdbi,usp000h1ys,choy20090929174811,gcmtc200909291748a,duputel200909291748a,gcmt20090929174811,atlas20090929174810,iscgem15162203,",
+    "sources": ",us,us,choy,gcmt,duputel,gcmt,atlas,iscgem,",
+    "types": ",associate,dyfi,earthquake-name,finite-fault,focal-mechanism,general-text,impact-text,moment-tensor,origin,phase-data,poster,shakemap,trump-shakemap,",
+    "nst": 520,
+    "dmin": null,
+    "rms": 1.01,
+    "gap": 20.8,
+    "magType": "mwc",
+    "type": "earthquake",
+    "title": "M 8.1 - 2009 Samoa Earthquake"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -172.095,
+      -15.489,
+      18
+    ]
+  },
+  "id": "usp000h1ys"
+}

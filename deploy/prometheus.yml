@@ -1,0 +1,28 @@
+# Prometheus configuration for hazard assessment system
+# Scrapes application metrics and infrastructure health
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Scrapes the FSM state gauge from the hazard assessment API (/metrics).
+  - job_name: "hazard-assessment-api"
+    static_configs:
+      - targets: ["api-server:8000"]
+
+  # Worker domain counters (ingest records, anomaly scores, FSM transitions,
+  # ABSTAIN) exposed by each worker's Prometheus exporter on METRICS_PORT
+  # (default 9100). If METRICS_PORT is overridden in compose, update the target
+  # ports below to match.
+  - job_name: "hazard-workers"
+    static_configs:
+      - targets:
+          - "pipeline-worker:9100"
+          - "ingest-dart:9100"
+          - "ingest-coops:9100"
+          - "ingest-seismic:9100"
+
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]

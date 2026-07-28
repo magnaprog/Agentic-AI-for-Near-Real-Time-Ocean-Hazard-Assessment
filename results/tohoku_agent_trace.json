@@ -1,0 +1,35 @@
+{
+  "event": "Tohoku 2011",
+  "pipeline": {
+    "fsm_state": "ESCALATE",
+    "final_status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 9.1\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion window: 0 s\n\nRanked scenarios:\n  #1: Mw 9.1, RMSE 0.00 cm, posterior weight 1.000 [src_001]\n\nNo coastal amplitude proxies available for this assessment.\n\nVerification checks:\n  [CONCERN] holdout_station:"
+  },
+  "audit_trail": [
+    {
+      "seq": 1,
+      "event_type": "state_transition",
+      "producer": "orchestrator",
+      "data_preview": "{\"transition_id\": \"56045f75-45ca-4b91-8fd3-cb71e7788365\", \"from_state\": \"IDLE\", \"to_state\": \"MONITOR\", \"trigger_reason\": \"Seismic trigger: M9.1 at japan\", \"anomaly_score\": null, \"seismic_magnitude\": 9"
+    },
+    {
+      "seq": 2,
+      "event_type": "state_transition",
+      "producer": "orchestrator",
+      "data_preview": "{\"transition_id\": \"94fcf7f3-88ed-490f-ad92-d677f83eec06\", \"from_state\": \"MONITOR\", \"to_state\": \"ESCALATE\", \"trigger_reason\": \"Seismic-only escalation: M9.1 at depth 29 km in japan (PTWC criteria: M>=7"
+    },
+    {
+      "seq": 3,
+      "event_type": "verification_complete",
+      "producer": "verify_node",
+      "data_preview": "{\"overall\": \"PASS_WITH_CONCERNS\", \"abstain_required\": false}"
+    },
+    {
+      "seq": 4,
+      "event_type": "report_generated",
+      "producer": "report_node",
+      "data_preview": "{\"tier\": 1, \"confidence\": \"LOW\", \"status\": \"PROVISIONAL\"}"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+<mxfile host="65bd71144e">
+    <diagram name="SystemContext" id="31">
+        <mxGraphModel dx="896" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="25" value="non-authoritative&#xa;reports" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;exitX=1;exitY=0.3;exitDx=0;exitDy=0;" parent="1" source="10" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="Duty Scientist" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E8F5E9;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="200" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="System Operator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E8F5E9;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="440" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="NOAA NDBC&#xa;(DART BPR)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E8F5E9;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="140" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="NOAA CO-OPS&#xa;(Water-Level)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E8F5E9;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="220" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="USGS&#xa;(Earthquake Feeds)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E8F5E9;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="300" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Agentic AI for Near-Real-Time Ocean Hazard Assessment" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=14;fontColor=#212121;fontStyle=1;strokeColor=#424242;fillColor=none;strokeWidth=2;dashed=1;verticalAlign=top;align=center;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="240" y="80" width="570" height="540" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Data Plane" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E3F2FD;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="140" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Processing Plane" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E3F2FD;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="240" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Output Plane" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#E3F2FD;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="340" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Audit Trail&#xa;(append-only)" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#212121;strokeColor=#424242;fillColor=#FFF3E0;strokeWidth=1.5;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="440" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;b&gt;Hard Boundaries&lt;/b&gt;&#xa;&#xa;- No write access to NWS dissemination&#xa;- No official alert terminology&#xa;- Human review required for all outputs&#xa;- Append-only audit trail" style="shape=note;size=15;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;fillColor=#FFF3E0;strokeWidth=1.5;align=left;spacingLeft=8;spacingTop=2;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="380" width="250" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="4" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="HTTPS (read-only)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="5" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="6" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="raw observations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="verified assessments" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="APPROVE /&lt;br&gt;REJECT / DEFER" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.7;entryDx=0;entryDy=0;dashed=1;" parent="1" source="2" target="10" edge="1">
+                    <mxGeometry x="0.0085" y="15" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="860" y="250"/>
+                            <mxPoint x="860" y="375"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="27" value="configuration,&#xa;monitoring" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#424242;strokeWidth=1.5;dashed=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="3" target="7" edge="1">
+                    <mxGeometry x="-0.2381" y="-20" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" parent="1" source="8" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="270" y="165"/>
+                            <mxPoint x="270" y="465"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" parent="1" source="9" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="280" y="265"/>
+                            <mxPoint x="280" y="465"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;" parent="1" source="10" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="290" y="365"/>
+                            <mxPoint x="290" y="465"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

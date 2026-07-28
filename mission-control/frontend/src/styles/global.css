@@ -1,0 +1,183 @@
+/* Mission Control console theme.
+   Typefaces: Archivo (UI/labels) and IBM Plex Mono (live values), self-hosted
+   via @fontsource in main.tsx so the console renders identically offline. */
+
+:root {
+  /* State colors. One quiet phosphor hue per severity, reused everywhere so the
+     status bar, event card, and chart can never disagree. */
+  --state-idle: #3aa87f;
+  --state-monitor: #e0a45c;
+  --state-warning: #e07a52;
+  --state-emergency: #e05c5c;
+  /* Two companions to --state-emergency, both for contrast, not for a new hue.
+     --fill is the darker red used when white text sits ON the red (the alert
+     banner was 3.59:1 at 11px bold, under the 4.5:1 floor; #c94a4a is 4.60:1).
+     --text is the lighter red used when red text sits on a red tint (the FSM
+     ESCALATE and ACTIVE tags were 3.30:1 and 3.88:1; #ef8a8a is 4.91 and 5.77
+     against those measured backgrounds). Re-run the contrast check before
+     touching any of the three. */
+  --state-emergency-fill: #c94a4a;
+  --state-emergency-text: #ef8a8a;
+
+  /* Abyssal field and matte surfaces. The map sits flush on --bg-field;
+     the side rails recede to --bg-rail so the field reads as the room. */
+  --bg-field: #070b11;
+  --bg-bar: #080d13;
+  --bg-rail: #0a0f16;
+  --bg-raised: #10161f;
+  --bg-inset: #0c1219;
+
+  /* Hairlines. --line-strong is reserved for focus and the few real borders. */
+  --line: rgba(148, 178, 205, 0.09);
+  --line-soft: rgba(148, 178, 205, 0.06);
+  --line-strong: rgba(148, 178, 205, 0.22);
+
+  /* Ink. --ink-dim is the lowest emphasis that still clears WCAG AA 4.5:1 on
+     every surface below (worst case 4.52:1 on --bg-raised); anything dimmer is
+     decoration only. Re-run the contrast check before darkening any of these. */
+  --ink: #d9e2ec;
+  --ink-2: #8b9cac;
+  --ink-dim: #6e8193;
+
+  /* Phosphor teal instrumentation accent. --amber is reserved for elevated
+     attention and never used as a neutral accent. */
+  --accent: #46c2ae;
+  --amber: #e0a45c;
+
+  --radius: 3px;
+  --radius-sm: 2px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  background: var(--bg-field);
+  color: var(--ink);
+  line-height: 1.45;
+  /* Live values must not jitter as digits tick over. */
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+::selection {
+  background: rgba(70, 194, 174, 0.3);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 8px;
+}
+
+button {
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+textarea,
+input {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: inherit;
+  background: var(--bg-inset);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+textarea:focus,
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(70, 194, 174, 0.18);
+}
+
+/* Keyframes. One pulse for ESCALATE emphasis, one gentle rise for content
+   appearing. Reduced-motion users get a still UI. */
+@keyframes pulse-emergency {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(224, 92, 92, 0.5); }
+  50% { box-shadow: inset 0 0 0 1px rgba(224, 92, 92, 0.14); }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  html,
+  body,
+  #root {
+    height: auto;
+    overflow: auto;
+  }
+}
+
+button:focus-visible,
+textarea:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Review rationale needs the emergency tint on focus to signal gravity. */
+.review-rationale:focus {
+  border-color: var(--state-emergency);
+  box-shadow: 0 0 0 2px rgba(224, 92, 92, 0.16);
+}
+
+/* Permanent map labels for active DART stations. Override Leaflet's default
+   white tooltip box with a borderless dark label. */
+.leaflet-tooltip.station-label {
+  background: rgba(7, 11, 17, 0.78);
+  border: none;
+  box-shadow: none;
+  color: #e08a8a;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+
+.leaflet-tooltip.station-label::before {
+  display: none;
+}

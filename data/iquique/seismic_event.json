@@ -1,0 +1,40 @@
+{
+  "type": "Feature",
+  "properties": {
+    "mag": 8.2,
+    "place": "93 km NW of Iquique, Chile",
+    "time": 1396396007260,
+    "updated": 1758675356205,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/usc000nzvd",
+    "detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=usc000nzvd&format=geojson",
+    "felt": 356,
+    "cdi": 8.5,
+    "mmi": 8.204,
+    "alert": "yellow",
+    "status": "reviewed",
+    "tsunami": 1,
+    "sig": 1337,
+    "net": "us",
+    "code": "c000nzvd",
+    "ids": ",pt14091000,at00n3dm1y,usc000nzvd,iscgem610102185,atlas20140401234647,",
+    "sources": ",pt,at,us,iscgem,atlas,",
+    "types": ",cap,dyfi,finite-fault,general-text,ground-failure,impact-link,losspager,moment-tensor,origin,phase-data,poster,shakemap,trump,",
+    "nst": null,
+    "dmin": 0.609,
+    "rms": 0.66,
+    "gap": 23,
+    "magType": "mww",
+    "type": "earthquake",
+    "title": "M 8.2 - 93 km NW of Iquique, Chile"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -70.7691,
+      -19.6097,
+      25
+    ]
+  },
+  "id": "usc000nzvd"
+}

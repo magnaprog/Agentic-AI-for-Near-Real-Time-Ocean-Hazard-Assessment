@@ -1,0 +1,24 @@
+# Build context for the mission-control image is this directory
+# (deploy/docker-compose.yml sets `context: ../mission-control`), so Docker
+# reads THIS file, not the repository-root .dockerignore.
+#
+# Without these rules `COPY frontend/ .` overlays the host's node_modules on
+# top of the `npm ci` result from the previous layer, so the image would be
+# built against whatever happens to be installed locally rather than the
+# lockfile. A stale tsconfig.tsbuildinfo has the same effect on `tsc -b`,
+# which treats it as its own output and skips type-checking when it looks
+# newer than the sources.
+frontend/node_modules
+frontend/dist
+**/*.tsbuildinfo
+
+# Python caches from local runs.
+**/__pycache__
+**/*.pyc
+.mypy_cache
+.ruff_cache
+.pytest_cache
+
+# Local env files must never enter an image layer.
+.env
+*.env

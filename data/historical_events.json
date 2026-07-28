@@ -1,0 +1,73 @@
+[
+  {
+    "name": "1960 Valdivia, Chile",
+    "mw": 9.5,
+    "year": 1960,
+    "tsunamigenic": true,
+    "outcome": "Largest recorded earthquake. Generated a trans-Pacific tsunami with run-up exceeding 10 m locally and significant impacts across the Pacific basin."
+  },
+  {
+    "name": "2004 Sumatra-Andaman",
+    "mw": 9.1,
+    "year": 2004,
+    "tsunamigenic": true,
+    "outcome": "Generated a devastating Indian Ocean tsunami. No DART coverage existed in the Indian Ocean at the time; event catalysed global buoy expansion."
+  },
+  {
+    "name": "2011 Tohoku, Japan",
+    "mw": 9.1,
+    "year": 2011,
+    "tsunamigenic": true,
+    "outcome": "Near-field tsunami with run-up exceeding 30 m locally. DART buoys in the Pacific confirmed trans-oceanic propagation within 30 minutes."
+  },
+  {
+    "name": "2010 Maule, Chile",
+    "mw": 8.8,
+    "year": 2010,
+    "tsunamigenic": true,
+    "outcome": "Generated a significant Pacific-wide tsunami. SIFT inversion constrained the source within 45 minutes of the first DART detection."
+  },
+  {
+    "name": "2022 Hunga Tonga eruption",
+    "mw": 5.8,
+    "year": 2022,
+    "tsunamigenic": true,
+    "magnitude_note": "Ms 5.8 (USGS NEIC); volcanic source, no conventional Mw. VEI-5+ eruption generated tsunami via atmospheric coupling, not seafloor displacement.",
+    "outcome": "Volcanic rather than seismic source. Generated atmospheric-coupled tsunami waves detectable globally. Challenged conventional seismic-first detection workflows."
+  },
+  {
+    "name": "2010 Haiti",
+    "mw": 7.0,
+    "year": 2010,
+    "tsunamigenic": true,
+    "outcome": "Devastating on land. Generated localised tsunami (up to 3 m run-up) along the southern coast, likely triggered by submarine landslides and aftershocks rather than primary fault rupture."
+  },
+  {
+    "name": "2015 Gorkha, Nepal",
+    "mw": 7.8,
+    "year": 2015,
+    "tsunamigenic": false,
+    "outcome": "Continental interior earthquake. No tsunami risk. Demonstrates that magnitude alone does not predict tsunami generation."
+  },
+  {
+    "name": "2018 Lombok, Indonesia",
+    "mw": 6.9,
+    "year": 2018,
+    "tsunamigenic": true,
+    "outcome": "Shallow thrust event generating localised tsunami. Minor waves at most locations but up to 2 m at Kayangan (North Lombok). Demonstrates threshold where moderate earthquakes can produce small but measurable tsunamis."
+  },
+  {
+    "name": "2023 Kahramanmaras, Turkey",
+    "mw": 7.8,
+    "year": 2023,
+    "tsunamigenic": false,
+    "outcome": "Continental strike-slip earthquake doublet. No tsunami generated despite high magnitude. Focal mechanism incompatible with tsunami generation."
+  },
+  {
+    "name": "2024 Noto Peninsula, Japan",
+    "mw": 7.5,
+    "year": 2024,
+    "tsunamigenic": true,
+    "outcome": "Near-field thrust event generating localised tsunami with run-up exceeding 6 m. DART buoys confirmed signal within 15 minutes; short warning window for coastal communities."
+  }
+]

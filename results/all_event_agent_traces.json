@@ -1,0 +1,127 @@
+{
+  "tohoku": {
+    "fsm_final": "ESCALATE",
+    "status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 9.1\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion win",
+    "audit_entries": 4,
+    "audit_trail": [
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "verification_complete",
+        "producer": "verify_node"
+      },
+      {
+        "event_type": "report_generated",
+        "producer": "report_node"
+      }
+    ]
+  },
+  "chile": {
+    "fsm_final": "ESCALATE",
+    "status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 8.8\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion win",
+    "audit_entries": 4,
+    "audit_trail": [
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "verification_complete",
+        "producer": "verify_node"
+      },
+      {
+        "event_type": "report_generated",
+        "producer": "report_node"
+      }
+    ]
+  },
+  "illapel": {
+    "fsm_final": "ESCALATE",
+    "status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 8.3\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion win",
+    "audit_entries": 4,
+    "audit_trail": [
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "verification_complete",
+        "producer": "verify_node"
+      },
+      {
+        "event_type": "report_generated",
+        "producer": "report_node"
+      }
+    ]
+  },
+  "iquique": {
+    "fsm_final": "ESCALATE",
+    "status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 8.2\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion win",
+    "audit_entries": 4,
+    "audit_trail": [
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "verification_complete",
+        "producer": "verify_node"
+      },
+      {
+        "event_type": "report_generated",
+        "producer": "report_node"
+      }
+    ]
+  },
+  "samoa": {
+    "fsm_final": "ESCALATE",
+    "status": "PROVISIONAL",
+    "report_tier": 1,
+    "summary_preview": "TECHNICAL BRIEF\nNon-authoritative situational awareness. Not an official NOAA tsunami message.\n\nEvent: \nConstraint stage: SEISMIC_ONLY\nBest-fit magnitude: Mw 8.1\nVerification: PASS_WITH_CONCERNS\nConfidence: LOW\nEnsemble spread: HIGH\nDART stations used: none\nDART stations excluded: none\nInversion win",
+    "audit_entries": 4,
+    "audit_trail": [
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "state_transition",
+        "producer": "orchestrator"
+      },
+      {
+        "event_type": "verification_complete",
+        "producer": "verify_node"
+      },
+      {
+        "event_type": "report_generated",
+        "producer": "report_node"
+      }
+    ]
+  }
+}

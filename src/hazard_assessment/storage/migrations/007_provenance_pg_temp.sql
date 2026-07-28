@@ -1,0 +1,21 @@
+-- 007_provenance_pg_temp.sql
+-- 005 pinned get_provenance()'s search_path to "pg_catalog, public", which
+-- blocks resolution through the CALLER's schemas. It did not cover the session
+-- temporary schema: when pg_temp is not listed explicitly, PostgreSQL searches
+-- it FIRST for relation names (see the search_path documentation). A role with
+-- EXECUTE on this SECURITY DEFINER function and TEMP on the database (PUBLIC
+-- keeps TEMP by default; no migration revokes it) could CREATE TEMP VIEW
+-- processed_features AS ... and have the definer-rights function read the
+-- shadow instead of the real table; expressions embedded in such a view would
+-- evaluate with definer rights. Pin pg_temp LAST, the arrangement the
+-- PostgreSQL "Writing SECURITY DEFINER Functions Safely" guidance recommends,
+-- so the real tables always win and temp objects can never shadow them.
+--
+-- Corrects the residual overclaim in 006's header, which argued the PG16
+-- public-schema CREATE lockdown made shadowing impossible: that covers the
+-- public schema only, not pg_temp. 006 itself is left untouched because
+-- applied migrations are checksummed (storage/provision.py).
+--
+-- Idempotent: ALTER FUNCTION ... SET overwrites the previous setting.
+
+ALTER FUNCTION get_provenance(UUID) SET search_path = pg_catalog, public, pg_temp;

@@ -1,0 +1,59 @@
+name: Detection Artifacts
+
+# The committed results/*_detection.json feed the paper's appendix station
+# tables and six of its figures. Nothing reproduced them, so when the detector
+# changed on 2026-07-23 the artifacts silently stopped matching the code and
+# three of the five events carried stale numbers into the paper for six days.
+#
+# Reproducing all five events takes several minutes, so this runs only when
+# something that can cause that drift changes. Job-level path filters do not
+# exist in Actions, which is why this is a separate workflow rather than a job
+# in ci.yml.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/hazard_assessment/agents/**"
+      - "src/hazard_assessment/tidal.py"
+      - "src/hazard_assessment/geo.py"
+      - "scripts/validate_*.py"
+      - "scripts/_seismic_params.py"
+      - "scripts/evaluate_duplicate_sensitivity.py"
+      - "data/**"
+      - "results/*_detection.json"
+      - "results/duplicate_sensitivity.json"
+      - "tests/artifacts/**"
+      - ".github/workflows/detection-artifacts.yml"
+  pull_request:
+    paths:
+      - "src/hazard_assessment/agents/**"
+      - "src/hazard_assessment/tidal.py"
+      - "src/hazard_assessment/geo.py"
+      - "scripts/validate_*.py"
+      - "scripts/_seismic_params.py"
+      - "scripts/evaluate_duplicate_sensitivity.py"
+      - "data/**"
+      - "results/*_detection.json"
+      - "results/duplicate_sensitivity.json"
+      - "tests/artifacts/**"
+      - ".github/workflows/detection-artifacts.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reproduce:
+    name: Detection Artifacts Reproduce
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/artifacts/ -q

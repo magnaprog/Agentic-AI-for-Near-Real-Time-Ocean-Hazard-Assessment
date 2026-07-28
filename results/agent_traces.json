@@ -1,0 +1,164 @@
+{
+  "traces": [
+    {
+      "scenario_name": "M8.5 aleutian",
+      "earthquake": {
+        "magnitude": 8.5,
+        "latitude": 52.5,
+        "longitude": -173.0,
+        "region": "aleutian"
+      },
+      "stages": [
+        {
+          "stage": "QC",
+          "n_records": 20,
+          "sample_report": {
+            "station_id": "21413",
+            "record_usable": true,
+            "station_confidence": 1.0,
+            "n_checks_evaluated": 0,
+            "data_mode": "EVENT"
+          }
+        },
+        {
+          "stage": "AnomalyAssessment",
+          "type": "AnomalyAssessment",
+          "schema_version": "1.0",
+          "producer": "anomaly_agent",
+          "anomaly_score": 0.5514,
+          "score_components": {
+            "threshold": 0.7425,
+            "statistical": 0.2784,
+            "ml": null
+          },
+          "triggering_stations": [
+            "21413"
+          ],
+          "scored_stations": [
+            "21413"
+          ],
+          "seismic_quiet": true,
+          "filter_degraded": false
+        },
+        {
+          "stage": "FSM",
+          "after_seismic_trigger": "ESCALATE",
+          "after_anomaly_score": "ESCALATE",
+          "magnitude": 8.5,
+          "anomaly_score": 0.5514,
+          "transitions": [
+            {
+              "from": "IDLE",
+              "to": "MONITOR",
+              "trigger": "seismic"
+            },
+            {
+              "from": "MONITOR",
+              "to": "ESCALATE",
+              "trigger": "seismic"
+            }
+          ]
+        },
+        {
+          "stage": "ScenarioAssessment",
+          "method": "NNLS_UNIT_SOURCE",
+          "constraint_stage": "DART_CONSTRAINED",
+          "dart_stations_used": [
+            "21413"
+          ],
+          "top_scenarios": [
+            {
+              "unit_source_ids": [
+                "src_aleutian_01"
+              ],
+              "weights": [
+                1.0
+              ],
+              "waveform_rmse_cm": 1.2,
+              "mw_equivalent": 8.5,
+              "rank": 1,
+              "posterior_weight": 0.85
+            }
+          ],
+          "ensemble_spread": "LOW"
+        },
+        {
+          "stage": "VerificationResult",
+          "overall": "PASS",
+          "checks": [
+            {
+              "name": "holdout_station_validation",
+              "result": "PASS",
+              "evidence": "Holdout RMSE 1.2 cm < 3.0 cm threshold"
+            },
+            {
+              "name": "data_coverage",
+              "result": "PASS",
+              "evidence": "1/1 DART stations used (100%)"
+            },
+            {
+              "name": "physical_consistency",
+              "result": "PASS",
+              "evidence": "Mw 8.5 consistent with rupture parameters"
+            }
+          ],
+          "abstain_required": false
+        }
+      ]
+    },
+    {
+      "scenario_name": "M7.0 aleutian",
+      "earthquake": {
+        "magnitude": 7.0,
+        "latitude": 52.0,
+        "longitude": -172.0,
+        "region": "aleutian"
+      },
+      "stages": [
+        {
+          "stage": "QC",
+          "n_records": 20,
+          "sample_report": {
+            "station_id": "21413",
+            "record_usable": true,
+            "station_confidence": 1.0,
+            "n_checks_evaluated": 0,
+            "data_mode": "EVENT"
+          }
+        },
+        {
+          "stage": "AnomalyAssessment",
+          "type": "AnomalyAssessment",
+          "schema_version": "1.0",
+          "producer": "anomaly_agent",
+          "anomaly_score": 0.0779,
+          "score_components": {
+            "threshold": 0.0,
+            "statistical": 0.1891,
+            "ml": null
+          },
+          "triggering_stations": [],
+          "scored_stations": [
+            "21413"
+          ],
+          "seismic_quiet": true,
+          "filter_degraded": false
+        },
+        {
+          "stage": "FSM",
+          "after_seismic_trigger": "MONITOR",
+          "after_anomaly_score": "MONITOR",
+          "magnitude": 7.0,
+          "anomaly_score": 0.0779,
+          "transitions": [
+            {
+              "from": "IDLE",
+              "to": "MONITOR",
+              "trigger": "seismic"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

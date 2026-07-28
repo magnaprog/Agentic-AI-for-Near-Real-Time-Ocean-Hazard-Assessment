@@ -1,0 +1,40 @@
+{
+  "type": "Feature",
+  "properties": {
+    "mag": 8.8,
+    "place": "2010 Maule, Chile Earthquake",
+    "time": 1267252451530,
+    "updated": 1772643478089,
+    "tz": null,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/official20100227063411530_30",
+    "detail": "https://earthquake.usgs.gov/fdsnws/event/1/query?eventid=official20100227063411530_30&format=geojson",
+    "felt": 2851,
+    "cdi": 9.1,
+    "mmi": 8.249,
+    "alert": null,
+    "status": "reviewed",
+    "tsunami": 0,
+    "sig": 2101,
+    "net": "official",
+    "code": "20100227063411530_30",
+    "ids": ",usp000h7rf,us2010tfan,official20100227063411530_30,choy20100227063411,gcmtc201002270634a,duputel201002270634a,gcmt20100227063415,atlas20100227063414,iscgem14340585,",
+    "sources": ",us,us,official,choy,gcmt,duputel,gcmt,atlas,iscgem,",
+    "types": ",associate,dyfi,earthquake-name,finite-fault,focal-mechanism,general-header,general-text,ground-failure,impact-text,moment-tensor,origin,phase-data,poster,scitech-link,scitech-text,shakemap,trump-impact-text,trump-origin,trump-phase-data,trump-shakemap,",
+    "nst": 454,
+    "dmin": null,
+    "rms": 1.09,
+    "gap": 17.8,
+    "magType": "mww",
+    "type": "earthquake",
+    "title": "M 8.8 - 2010 Maule, Chile Earthquake"
+  },
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      -72.898,
+      -36.122,
+      22.9
+    ]
+  },
+  "id": "official20100227063411530_30"
+}

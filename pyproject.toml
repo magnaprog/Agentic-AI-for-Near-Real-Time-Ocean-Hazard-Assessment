@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hazard-assessment"
+version = "0.1.0"
+description = "Agentic AI for Near-Real-Time Ocean Hazard Assessment"
+readme = "README.md"
+license = { text = "PolyForm-Noncommercial-1.0.0" }
+authors = [
+    { name = "Kevin Lee" },
+    { name = "Alison J. March" },
+]
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.32.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    "httpx>=0.28.0",
+    "scipy>=1.14.0",
+    "numpy>=2.1.0",
+    "PyWavelets>=1.7.0",
+    "psycopg[binary]>=3.2.0",
+    "psycopg-pool>=3.2.0",
+    "confluent-kafka>=2.6.0",
+    "prometheus-client>=0.21.0",
+    "opentelemetry-api>=1.28.0",
+    "opentelemetry-sdk>=1.28.0",
+    "pyyaml>=6.0.0",
+    "scikit-learn>=1.5.0",
+    "langgraph>=1.1.2,<2.0",
+    "langchain-core>=1.0,<2.0",
+]
+
+[project.urls]
+Repository = "https://github.com/magnaprog/Agentic-AI-for-Near-Real-Time-Ocean-Hazard-Assessment"
+
+[project.optional-dependencies]
+llm = [
+    "langchain-anthropic>=1.0,<2.0",
+]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "types-PyYAML>=6.0.0",
+]
+telemetry = [
+    "opentelemetry-exporter-otlp-proto-grpc>=1.28.0",
+]
+paper = [
+    "matplotlib>=3.9.0",
+    "cartopy>=0.24.0",
+    "pandas>=2.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hazard_assessment"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["N803", "N806"]
+
+[tool.coverage.run]
+omit = [
+    # Infrastructure modules requiring external services (tested in integration tests)
+    "src/hazard_assessment/messaging/*",
+    "src/hazard_assessment/storage/client.py",
+    "src/hazard_assessment/telemetry/*",
+    "src/hazard_assessment/workers/ingest_runner.py",
+    # LLM advisory modules requiring API keys (tested with live LLM in integration)
+    "src/hazard_assessment/agents/llm_advisory/*",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["pywt", "pywt.*", "scipy.*", "sklearn.*", "opentelemetry.*", "langgraph.*", "langchain.*", "langchain_core.*", "langchain_anthropic.*", "anthropic", "anthropic.*", "yaml", "psycopg_pool", "prometheus_client", "prometheus_client.*"]
+ignore_missing_imports = true

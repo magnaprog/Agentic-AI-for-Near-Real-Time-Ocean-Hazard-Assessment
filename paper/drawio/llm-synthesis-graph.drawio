@@ -1,0 +1,109 @@
+<mxfile host="65bd71144e">
+    <diagram name="LLM Synthesis Graph" id="86">
+        <mxGraphModel dx="810" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Pipeline Input" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="200" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="system_confidence&#xa;≥ 0.35?" style="shape=rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="175" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Template-Only&#xa;Report" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="180" y="60" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Retrieval&#xa;(Python)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="195" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Parse Mw, sort historical&#xa;events by |ΔMw|,&#xa;return top-3 analogues" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#616161;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="260" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="3" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="Evidence&#xa;(Fast LLM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="195" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="Structured output:&#xa;EvidenceSynthesisOutput&#xa;Summarize sensor evidence" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#616161;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="260" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="10" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="Scenario&#xa;(Fast LLM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="195" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="Structured output:&#xa;ScenarioInterpOutput&#xa;Interpret NNLS + uncertainty" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#616161;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="260" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="20" target="30" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="Narrative&#xa;(Standard LLM)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="195" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="Combine all upstream&#xa;outputs into operator narrative.&#xa;If conf &lt; 0.55: inject caveat into prompt" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#616161;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="260" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="30" target="40" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="50" value="Guardrail&#xa;Scan&#xa;(post-graph)" style="shape=rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="180" width="110" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="51" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;entryX=0.035;entryY=0.499;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="40" target="50" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="Template +&#xa;Commentary" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="975" y="310" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" value="Template&#xa;Only" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="975" y="60" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="Pass" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="50" target="52" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" value="Fail" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#212121;" parent="1" source="50" target="53" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="LangGraph DAG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#9E9E9E;strokeWidth=1;dashed=1;fontFamily=Helvetica;fontSize=10;fontColor=#9E9E9E;verticalAlign=top;align=left;spacingLeft=5;spacingTop=2;" parent="1" vertex="1">
+                    <mxGeometry x="325" y="170" width="635" height="145" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="system_confidence computed deterministically&#xa;before graph - LLM never self-reports confidence" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#9E9E9E;strokeWidth=1;fontFamily=Helvetica;fontSize=9;fontColor=#424242;size=12;align=left;spacingLeft=4;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="340" width="260" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" value="Any node failure → no commentary;&#xa;template summary emitted unchanged" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#9E9E9E;strokeWidth=1;fontFamily=Helvetica;fontSize=9;fontColor=#424242;size=12;align=left;spacingLeft=4;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="340" width="230" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="72" value="All structured outputs constrain&#xa;LLM response format" style="shape=note;whiteSpace=wrap;html=1;fillColor=#FFFDE7;strokeColor=#9E9E9E;strokeWidth=1;fontFamily=Helvetica;fontSize=9;fontColor=#424242;size=12;align=left;spacingLeft=4;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="340" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="20" y="420" width="16" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" value="Pure Python (no LLM)" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#424242;" parent="1" vertex="1">
+                    <mxGeometry x="42" y="418" width="120" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="420" width="16" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="LLM Node" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#424242;" parent="1" vertex="1">
+                    <mxGeometry x="192" y="418" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="" style="shape=rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="416" width="20" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" value="Safety Gate" style="text;whiteSpace=wrap;html=1;fillColor=none;strokeColor=none;fontFamily=Helvetica;fontSize=9;fontColor=#424242;" parent="1" vertex="1">
+                    <mxGeometry x="306" y="418" width="80" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

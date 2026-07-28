@@ -1,0 +1,224 @@
+{
+  "event": "illapel",
+  "origin_utc": "2015-09-16T22:54:32+00:00",
+  "format_note": "Native NDBC DART column format: YY MM DD hh mm ss T HEIGHT, where T is the measurement type (1 = 15-min standard mode, 2 = 1-min, 3 = 15-sec) and HEIGHT is the water-column height in meters with 9999.000 as the missing-data sentinel. Lines are verbatim from the NDBC year file in native order; only lines outside the archived time span are omitted.",
+  "window_rules": {
+    "event_window_utc": [
+      "2015-09-16T21:54:32+00:00",
+      "2015-09-17T04:54:32+00:00"
+    ],
+    "calibration_window_utc": [
+      "2015-08-17T22:54:32+00:00",
+      "2015-09-16T21:54:32+00:00"
+    ],
+    "calibration_measurement_types": [
+      "1"
+    ],
+    "event_measurement_types": "all"
+  },
+  "stations": {
+    "32401": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=32401t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:03.968870+00:00",
+      "full_file_sha256": "5232e0a55d163ae3149fd46788e3aac8d215860d256bead927e7742a3dbf86dd",
+      "full_file_bytes": 1130353,
+      "native_subset_file": "native/dart_32401_2015_native.txt",
+      "subset_sha256": "6cae31cb05ccbc667dbeac0d00073f76c574e0927e586415382a9196beccf9c4",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 4264,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 600,
+        "3": 16
+      },
+      "sentinel_9999_rows": 56,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 557,
+        "csv_rows": 557
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2848,
+        "csv_rows": 2848
+      }
+    },
+    "32402": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=32402t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:05.841548+00:00",
+      "full_file_sha256": "a9fe648af85708055c3b69610b62db3af9d76f322de3da67570000bd07bb9898",
+      "full_file_bytes": 1160454,
+      "native_subset_file": "native/dart_32402_2015_native.txt",
+      "subset_sha256": "46eb129e7f325e9819b3a3398fa26661c4b2cb47148dba04c695612b8460f346",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 4760,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 1080,
+        "3": 32
+      },
+      "sentinel_9999_rows": 56,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 557,
+        "csv_rows": 557
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2876,
+        "csv_rows": 2876
+      }
+    },
+    "32412": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=32412t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:08.458525+00:00",
+      "full_file_sha256": "d838d12dd4ee2ec8b5fe27d6db4215d9a563b02ac827669fc624e046aff2b970",
+      "full_file_bytes": 656518,
+      "native_subset_file": "native/dart_32412_2015_native.txt",
+      "subset_sha256": "a9f13df88ce0f2e2f54e0ab104327597c9f069ddc26534d6d3b9232ce9ff15cd",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 4280,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 600,
+        "3": 32
+      },
+      "sentinel_9999_rows": 117,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 568,
+        "csv_rows": 568
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2824,
+        "csv_rows": 2824
+      }
+    },
+    "46403": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=46403t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:10.250600+00:00",
+      "full_file_sha256": "1497438084a78a7d89368a8e3347adcb01d5f1b347a1a5319ed3fe49a98d1ba9",
+      "full_file_bytes": 1123936,
+      "native_subset_file": "native/dart_46403_2015_native.txt",
+      "subset_sha256": "a0e166a5dbba400c182c1358eb6e2fc75168f935e80bd90142addb2e0a1b1805",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 4546,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 802,
+        "3": 96
+      },
+      "sentinel_9999_rows": 36,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 28,
+        "csv_rows": 28
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2852,
+        "csv_rows": 2852
+      }
+    },
+    "46407": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=46407t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:13.224175+00:00",
+      "full_file_sha256": "66a0dfe4258fee104420c7819faa29416d41205708fb207e8a9533d814ef66dd",
+      "full_file_bytes": 929597,
+      "native_subset_file": "native/dart_46407_2015_native.txt",
+      "subset_sha256": "4b7085e4be15dd7e5fb9c6cc9da8cdab2398b28aa9842c94610f74cb622bbb24",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 3941,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 261,
+        "3": 32
+      },
+      "sentinel_9999_rows": 12,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 28,
+        "csv_rows": 28
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2876,
+        "csv_rows": 2876
+      }
+    },
+    "46411": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=46411t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:15.923533+00:00",
+      "full_file_sha256": "76ebde77561fc154ce8827622717ddf50827c9d93767987799906718b72d7321",
+      "full_file_bytes": 929597,
+      "native_subset_file": "native/dart_46411_2015_native.txt",
+      "subset_sha256": "53ca0d298d6fd8d5bbcfa7cf0bb9d8ad0ad8abcaedb92e2cefc0b5313decb980",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 3941,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 276,
+        "3": 17
+      },
+      "sentinel_9999_rows": 100,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 28,
+        "csv_rows": 28
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2808,
+        "csv_rows": 2808
+      }
+    },
+    "51426": {
+      "source_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=51426t2015.txt.gz&dir=data/historical/dart/",
+      "retrieved_at_utc": "2026-07-16T11:10:17.959560+00:00",
+      "full_file_sha256": "6c0c78d4186994940f19d25b63f70f2c3ee09e70b6b4aa85390b8b11c739a300",
+      "full_file_bytes": 987598,
+      "native_subset_file": "native/dart_51426_2015_native.txt",
+      "subset_sha256": "67a5ff18b83a31ffd6aed1fa34399ec62964a05323f632eb6351a34e3d7a08fe",
+      "subset_span_utc": [
+        "2015-08-16T22:54:32+00:00",
+        "2015-09-23T22:54:32+00:00"
+      ],
+      "subset_data_rows": 5404,
+      "measurement_type_counts": {
+        "1": 3648,
+        "2": 1740,
+        "3": 16
+      },
+      "sentinel_9999_rows": 113,
+      "event_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 28,
+        "csv_rows": 28
+      },
+      "calibration_window_match": {
+        "matches_transformed_csv": true,
+        "native_rows": 2876,
+        "csv_rows": 2876
+      }
+    }
+  }
+}

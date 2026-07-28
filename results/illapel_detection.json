@@ -1,0 +1,3768 @@
+{
+  "event": "Illapel 2015",
+  "origin_utc": "2015-09-16T22:54:32.860000+00:00",
+  "magnitude": 8.3,
+  "depth_km": 22.44,
+  "epicenter": {
+    "lat": -31.5729,
+    "lon": -71.6744
+  },
+  "per_station": [
+    {
+      "station_id": "32401",
+      "n_samples": 552,
+      "sampling_sec": 60.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 557,
+        "n_rows_out": 552,
+        "n_duplicate_rows": 5,
+        "n_conflict_timestamps": 5,
+        "max_conflict_delta": 19.61
+      },
+      "ensemble_score": 0.753421,
+      "threshold_score": 0.913837,
+      "wavelet_score": 0.524254,
+      "bocpd_score": 0.363621,
+      "statistical_score": 0.524254,
+      "ml_score": null,
+      "filter_degraded": false,
+      "would_investigate": true,
+      "would_assess": true,
+      "would_escalate": false
+    },
+    {
+      "station_id": "32402",
+      "n_samples": 552,
+      "sampling_sec": 60.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 557,
+        "n_rows_out": 552,
+        "n_duplicate_rows": 5,
+        "n_conflict_timestamps": 4,
+        "max_conflict_delta": 0.149
+      },
+      "ensemble_score": 0.992222,
+      "threshold_score": 1.0,
+      "wavelet_score": 0.981109,
+      "bocpd_score": 0.303988,
+      "statistical_score": 0.981109,
+      "ml_score": null,
+      "filter_degraded": false,
+      "would_investigate": true,
+      "would_assess": true,
+      "would_escalate": true
+    },
+    {
+      "station_id": "32412",
+      "n_samples": 555,
+      "sampling_sec": 60.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 568,
+        "n_rows_out": 555,
+        "n_duplicate_rows": 13,
+        "n_conflict_timestamps": 11,
+        "max_conflict_delta": 0.005
+      },
+      "ensemble_score": 0.492535,
+      "threshold_score": 0.538656,
+      "wavelet_score": 0.119911,
+      "bocpd_score": 0.426647,
+      "statistical_score": 0.426647,
+      "ml_score": null,
+      "filter_degraded": false,
+      "would_investigate": true,
+      "would_assess": false,
+      "would_escalate": false
+    },
+    {
+      "station_id": "46403",
+      "n_samples": 28,
+      "sampling_sec": 900.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 28,
+        "n_rows_out": 28,
+        "n_duplicate_rows": 0,
+        "n_conflict_timestamps": 0,
+        "max_conflict_delta": 0.0
+      },
+      "ensemble_score": 0.000493,
+      "threshold_score": 0.0,
+      "wavelet_score": 0.0,
+      "bocpd_score": 0.001196,
+      "statistical_score": 0.001196,
+      "ml_score": null,
+      "filter_degraded": true,
+      "would_investigate": false,
+      "would_assess": false,
+      "would_escalate": false
+    },
+    {
+      "station_id": "46407",
+      "n_samples": 28,
+      "sampling_sec": 900.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 28,
+        "n_rows_out": 28,
+        "n_duplicate_rows": 0,
+        "n_conflict_timestamps": 0,
+        "max_conflict_delta": 0.0
+      },
+      "ensemble_score": 0.0,
+      "threshold_score": 0.0,
+      "wavelet_score": 0.0,
+      "bocpd_score": 0.0,
+      "statistical_score": 0.0,
+      "ml_score": null,
+      "filter_degraded": true,
+      "would_investigate": false,
+      "would_assess": false,
+      "would_escalate": false
+    },
+    {
+      "station_id": "46411",
+      "n_samples": 28,
+      "sampling_sec": 900.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 28,
+        "n_rows_out": 28,
+        "n_duplicate_rows": 0,
+        "n_conflict_timestamps": 0,
+        "max_conflict_delta": 0.0
+      },
+      "ensemble_score": 0.0,
+      "threshold_score": 0.0,
+      "wavelet_score": 0.0,
+      "bocpd_score": 0.0,
+      "statistical_score": 0.0,
+      "ml_score": null,
+      "filter_degraded": true,
+      "would_investigate": false,
+      "would_assess": false,
+      "would_escalate": false
+    },
+    {
+      "station_id": "51426",
+      "n_samples": 28,
+      "sampling_sec": 900.0,
+      "has_calibration": true,
+      "dedup": {
+        "policy": "first",
+        "n_rows_in": 28,
+        "n_rows_out": 28,
+        "n_duplicate_rows": 0,
+        "n_conflict_timestamps": 0,
+        "max_conflict_delta": 0.0
+      },
+      "ensemble_score": 0.0,
+      "threshold_score": 0.0,
+      "wavelet_score": 0.0,
+      "bocpd_score": 0.0,
+      "statistical_score": 0.0,
+      "ml_score": null,
+      "filter_degraded": true,
+      "would_investigate": false,
+      "would_assess": false,
+      "would_escalate": false
+    }
+  ],
+  "summary": {
+    "n_stations": 7,
+    "n_investigate": 3,
+    "n_assess": 2,
+    "n_escalate": 1
+  },
+  "analysis_mode": "FULL_RECORD_RETROSPECTIVE_ANALYSIS",
+  "sliding_window": {
+    "32401": [
+      {
+        "minutes_from_start": 4.0,
+        "minutes_from_earthquake": -55.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 9.0,
+        "minutes_from_earthquake": -50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 14.0,
+        "minutes_from_earthquake": -45.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 19.0,
+        "minutes_from_earthquake": -40.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 24.0,
+        "minutes_from_earthquake": -35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 29.0,
+        "minutes_from_earthquake": -30.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 34.0,
+        "minutes_from_earthquake": -25.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 39.0,
+        "minutes_from_earthquake": -20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 44.0,
+        "minutes_from_earthquake": -15.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 49.0,
+        "minutes_from_earthquake": -10.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 54.0,
+        "minutes_from_earthquake": -5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 59.0,
+        "minutes_from_earthquake": -0.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 64.0,
+        "minutes_from_earthquake": 4.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 66.0,
+        "minutes_from_earthquake": 6.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 67.2,
+        "minutes_from_earthquake": 7.7,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 68.5,
+        "minutes_from_earthquake": 9.0,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 72.0,
+        "minutes_from_earthquake": 12.5,
+        "ensemble_score": 0.54067,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.007574,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 77.0,
+        "minutes_from_earthquake": 17.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 82.0,
+        "minutes_from_earthquake": 22.5,
+        "ensemble_score": 0.552498,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0363,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 87.0,
+        "minutes_from_earthquake": 27.5,
+        "ensemble_score": 0.550464,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.03136,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 92.0,
+        "minutes_from_earthquake": 32.5,
+        "ensemble_score": 0.554491,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.041138,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 97.0,
+        "minutes_from_earthquake": 37.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 102.0,
+        "minutes_from_earthquake": 42.5,
+        "ensemble_score": 0.546743,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.022322,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 107.0,
+        "minutes_from_earthquake": 47.5,
+        "ensemble_score": 0.544962,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.017998,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 112.0,
+        "minutes_from_earthquake": 52.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 117.0,
+        "minutes_from_earthquake": 57.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 122.0,
+        "minutes_from_earthquake": 62.5,
+        "ensemble_score": 0.54219,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.011266,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 126.0,
+        "minutes_from_earthquake": 66.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 128.8,
+        "minutes_from_earthquake": 69.2,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 131.0,
+        "minutes_from_earthquake": 71.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 133.8,
+        "minutes_from_earthquake": 74.2,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 136.0,
+        "minutes_from_earthquake": 76.5,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 138.8,
+        "minutes_from_earthquake": 79.2,
+        "ensemble_score": 0.537551,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 141.0,
+        "minutes_from_earthquake": 81.5,
+        "ensemble_score": 0.545493,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.019287,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 143.8,
+        "minutes_from_earthquake": 84.2,
+        "ensemble_score": 0.544363,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.016542,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 146.0,
+        "minutes_from_earthquake": 86.5,
+        "ensemble_score": 0.540813,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.007922,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 148.8,
+        "minutes_from_earthquake": 89.2,
+        "ensemble_score": 0.541865,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.010476,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 151.0,
+        "minutes_from_earthquake": 91.5,
+        "ensemble_score": 0.559477,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.053248,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 153.8,
+        "minutes_from_earthquake": 94.2,
+        "ensemble_score": 0.565381,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.067586,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 156.0,
+        "minutes_from_earthquake": 96.5,
+        "ensemble_score": 0.581888,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.107674,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 158.8,
+        "minutes_from_earthquake": 99.2,
+        "ensemble_score": 0.616601,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.191979,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 161.0,
+        "minutes_from_earthquake": 101.5,
+        "ensemble_score": 0.624604,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.211414,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 163.8,
+        "minutes_from_earthquake": 104.2,
+        "ensemble_score": 0.624503,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.211168,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 166.0,
+        "minutes_from_earthquake": 106.5,
+        "ensemble_score": 0.642343,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.254494,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 168.8,
+        "minutes_from_earthquake": 109.2,
+        "ensemble_score": 0.646073,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.263553,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 171.0,
+        "minutes_from_earthquake": 111.5,
+        "ensemble_score": 0.650959,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.275418,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 173.8,
+        "minutes_from_earthquake": 114.2,
+        "ensemble_score": 0.657013,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.290121,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 176.0,
+        "minutes_from_earthquake": 116.5,
+        "ensemble_score": 0.661122,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.117708,
+        "bocpd_score": 0.300101,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 178.8,
+        "minutes_from_earthquake": 119.2,
+        "ensemble_score": 0.66238,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.005334,
+        "bocpd_score": 0.303154,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 181.0,
+        "minutes_from_earthquake": 121.5,
+        "ensemble_score": 0.664798,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.309026,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 183.8,
+        "minutes_from_earthquake": 124.2,
+        "ensemble_score": 0.644983,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.260905,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 186.0,
+        "minutes_from_earthquake": 126.5,
+        "ensemble_score": 0.635111,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.236931,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 188.8,
+        "minutes_from_earthquake": 129.2,
+        "ensemble_score": 0.628115,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.21994,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 191.0,
+        "minutes_from_earthquake": 131.5,
+        "ensemble_score": 0.608588,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.172518,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 193.8,
+        "minutes_from_earthquake": 134.2,
+        "ensemble_score": 0.604659,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.162976,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 196.0,
+        "minutes_from_earthquake": 136.5,
+        "ensemble_score": 0.588319,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.123293,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 198.8,
+        "minutes_from_earthquake": 139.2,
+        "ensemble_score": 0.585987,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.11763,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 201.0,
+        "minutes_from_earthquake": 141.5,
+        "ensemble_score": 0.584351,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.113655,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 203.8,
+        "minutes_from_earthquake": 144.2,
+        "ensemble_score": 0.583562,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.11174,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 206.0,
+        "minutes_from_earthquake": 146.5,
+        "ensemble_score": 0.579152,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.101029,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 208.8,
+        "minutes_from_earthquake": 149.2,
+        "ensemble_score": 0.578887,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.100385,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 211.0,
+        "minutes_from_earthquake": 151.5,
+        "ensemble_score": 0.577095,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.096034,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 213.8,
+        "minutes_from_earthquake": 154.2,
+        "ensemble_score": 0.581001,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.105519,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 216.0,
+        "minutes_from_earthquake": 156.5,
+        "ensemble_score": 0.589812,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.126918,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 218.8,
+        "minutes_from_earthquake": 159.2,
+        "ensemble_score": 0.600294,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.152375,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 221.0,
+        "minutes_from_earthquake": 161.5,
+        "ensemble_score": 0.608534,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.172387,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 223.8,
+        "minutes_from_earthquake": 164.2,
+        "ensemble_score": 0.615889,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.19025,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 226.0,
+        "minutes_from_earthquake": 166.5,
+        "ensemble_score": 0.623431,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.208565,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 228.8,
+        "minutes_from_earthquake": 169.2,
+        "ensemble_score": 0.623058,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.207658,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 231.0,
+        "minutes_from_earthquake": 171.5,
+        "ensemble_score": 0.625356,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.213241,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 233.8,
+        "minutes_from_earthquake": 174.2,
+        "ensemble_score": 0.635155,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.237038,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 236.0,
+        "minutes_from_earthquake": 176.5,
+        "ensemble_score": 0.634459,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.235348,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 238.8,
+        "minutes_from_earthquake": 179.2,
+        "ensemble_score": 0.635309,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.237412,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 241.0,
+        "minutes_from_earthquake": 181.5,
+        "ensemble_score": 0.63753,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.067753,
+        "bocpd_score": 0.242806,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 243.8,
+        "minutes_from_earthquake": 184.2,
+        "ensemble_score": 0.636279,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.239768,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 247.0,
+        "minutes_from_earthquake": 187.5,
+        "ensemble_score": 0.640088,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.249018,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 252.0,
+        "minutes_from_earthquake": 192.5,
+        "ensemble_score": 0.646878,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.265508,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 257.0,
+        "minutes_from_earthquake": 197.5,
+        "ensemble_score": 0.644427,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.259555,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 262.0,
+        "minutes_from_earthquake": 202.5,
+        "ensemble_score": 0.642058,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.253801,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 267.0,
+        "minutes_from_earthquake": 207.5,
+        "ensemble_score": 0.642908,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.255867,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 272.0,
+        "minutes_from_earthquake": 212.5,
+        "ensemble_score": 0.638311,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.078913,
+        "bocpd_score": 0.244702,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 277.0,
+        "minutes_from_earthquake": 217.5,
+        "ensemble_score": 0.641275,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.251899,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 282.0,
+        "minutes_from_earthquake": 222.5,
+        "ensemble_score": 0.637201,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.004818,
+        "bocpd_score": 0.242006,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 287.0,
+        "minutes_from_earthquake": 227.5,
+        "ensemble_score": 0.657359,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.19016,
+        "bocpd_score": 0.290962,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 292.0,
+        "minutes_from_earthquake": 232.5,
+        "ensemble_score": 0.657033,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.198832,
+        "bocpd_score": 0.290169,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 297.0,
+        "minutes_from_earthquake": 237.5,
+        "ensemble_score": 0.656657,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.20029,
+        "bocpd_score": 0.289256,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 302.0,
+        "minutes_from_earthquake": 242.5,
+        "ensemble_score": 0.66764,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.266634,
+        "bocpd_score": 0.315929,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 307.0,
+        "minutes_from_earthquake": 247.5,
+        "ensemble_score": 0.67819,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.218357,
+        "bocpd_score": 0.341552,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 312.0,
+        "minutes_from_earthquake": 252.5,
+        "ensemble_score": 0.683905,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.251942,
+        "bocpd_score": 0.35543,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 317.0,
+        "minutes_from_earthquake": 257.5,
+        "ensemble_score": 0.753252,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.523844,
+        "bocpd_score": 0.352304,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 322.0,
+        "minutes_from_earthquake": 262.5,
+        "ensemble_score": 0.749748,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.515335,
+        "bocpd_score": 0.360027,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 327.0,
+        "minutes_from_earthquake": 267.5,
+        "ensemble_score": 0.770323,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.565303,
+        "bocpd_score": 0.368824,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 332.0,
+        "minutes_from_earthquake": 272.5,
+        "ensemble_score": 0.791382,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.616447,
+        "bocpd_score": 0.363995,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 337.0,
+        "minutes_from_earthquake": 277.5,
+        "ensemble_score": 0.790717,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.61483,
+        "bocpd_score": 0.355176,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 342.0,
+        "minutes_from_earthquake": 282.5,
+        "ensemble_score": 0.806956,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.654269,
+        "bocpd_score": 0.363878,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 347.0,
+        "minutes_from_earthquake": 287.5,
+        "ensemble_score": 0.800649,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.638952,
+        "bocpd_score": 0.375992,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 352.0,
+        "minutes_from_earthquake": 292.5,
+        "ensemble_score": 0.794339,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.623627,
+        "bocpd_score": 0.367898,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 357.0,
+        "minutes_from_earthquake": 297.5,
+        "ensemble_score": 0.775094,
+        "threshold_score": 0.913837,
+        "wavelet_score": 0.576888,
+        "bocpd_score": 0.35352,
+        "seismic_context_quiet": false
+      }
+    ],
+    "32402": [
+      {
+        "minutes_from_start": 4.0,
+        "minutes_from_earthquake": -55.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 9.0,
+        "minutes_from_earthquake": -50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 14.0,
+        "minutes_from_earthquake": -45.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 19.0,
+        "minutes_from_earthquake": -40.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 24.0,
+        "minutes_from_earthquake": -35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 29.0,
+        "minutes_from_earthquake": -30.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 34.0,
+        "minutes_from_earthquake": -25.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 39.0,
+        "minutes_from_earthquake": -20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 44.0,
+        "minutes_from_earthquake": -15.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 49.0,
+        "minutes_from_earthquake": -10.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 54.0,
+        "minutes_from_earthquake": -5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 59.0,
+        "minutes_from_earthquake": -0.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 62.0,
+        "minutes_from_earthquake": 2.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 63.2,
+        "minutes_from_earthquake": 3.7,
+        "ensemble_score": 0.588235,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 64.5,
+        "minutes_from_earthquake": 5.0,
+        "ensemble_score": 0.864929,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.671971,
+        "bocpd_score": 0.012401,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 67.0,
+        "minutes_from_earthquake": 7.5,
+        "ensemble_score": 0.988803,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.972807,
+        "bocpd_score": 0.384447,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 72.0,
+        "minutes_from_earthquake": 12.5,
+        "ensemble_score": 0.98798,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.970807,
+        "bocpd_score": 0.381787,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 77.0,
+        "minutes_from_earthquake": 17.5,
+        "ensemble_score": 0.985122,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.963868,
+        "bocpd_score": 0.379298,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 82.0,
+        "minutes_from_earthquake": 22.5,
+        "ensemble_score": 0.979477,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.950158,
+        "bocpd_score": 0.376957,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 87.0,
+        "minutes_from_earthquake": 27.5,
+        "ensemble_score": 0.978697,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.948263,
+        "bocpd_score": 0.37475,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 92.0,
+        "minutes_from_earthquake": 32.5,
+        "ensemble_score": 0.978653,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.948156,
+        "bocpd_score": 0.37266,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 97.0,
+        "minutes_from_earthquake": 37.5,
+        "ensemble_score": 0.978655,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.948163,
+        "bocpd_score": 0.370676,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 102.0,
+        "minutes_from_earthquake": 42.5,
+        "ensemble_score": 0.980811,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.953397,
+        "bocpd_score": 0.368787,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 107.0,
+        "minutes_from_earthquake": 47.5,
+        "ensemble_score": 0.983493,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.959912,
+        "bocpd_score": 0.366985,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 112.0,
+        "minutes_from_earthquake": 52.5,
+        "ensemble_score": 0.984653,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962728,
+        "bocpd_score": 0.365262,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 117.0,
+        "minutes_from_earthquake": 57.5,
+        "ensemble_score": 0.984995,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.963558,
+        "bocpd_score": 0.363611,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 122.0,
+        "minutes_from_earthquake": 62.5,
+        "ensemble_score": 0.9872,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.968915,
+        "bocpd_score": 0.362026,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 126.0,
+        "minutes_from_earthquake": 66.5,
+        "ensemble_score": 0.986682,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.967657,
+        "bocpd_score": 0.360502,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 128.2,
+        "minutes_from_earthquake": 68.7,
+        "ensemble_score": 0.985221,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.964109,
+        "bocpd_score": 0.359035,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 131.0,
+        "minutes_from_earthquake": 71.5,
+        "ensemble_score": 0.98507,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.963742,
+        "bocpd_score": 0.35762,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 133.2,
+        "minutes_from_earthquake": 73.7,
+        "ensemble_score": 0.984875,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.963267,
+        "bocpd_score": 0.356254,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 136.0,
+        "minutes_from_earthquake": 76.5,
+        "ensemble_score": 0.984396,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962105,
+        "bocpd_score": 0.354933,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 138.2,
+        "minutes_from_earthquake": 78.7,
+        "ensemble_score": 0.984341,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.961971,
+        "bocpd_score": 0.353654,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 141.0,
+        "minutes_from_earthquake": 81.5,
+        "ensemble_score": 0.984546,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962468,
+        "bocpd_score": 0.352415,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 143.2,
+        "minutes_from_earthquake": 83.7,
+        "ensemble_score": 0.984581,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962553,
+        "bocpd_score": 0.351214,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 146.0,
+        "minutes_from_earthquake": 86.5,
+        "ensemble_score": 0.984754,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962974,
+        "bocpd_score": 0.350048,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 148.2,
+        "minutes_from_earthquake": 88.7,
+        "ensemble_score": 0.984823,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.963143,
+        "bocpd_score": 0.348914,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 151.0,
+        "minutes_from_earthquake": 91.5,
+        "ensemble_score": 0.984737,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962932,
+        "bocpd_score": 0.347812,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 153.2,
+        "minutes_from_earthquake": 93.7,
+        "ensemble_score": 0.98464,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962697,
+        "bocpd_score": 0.34674,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 156.0,
+        "minutes_from_earthquake": 96.5,
+        "ensemble_score": 0.984704,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962852,
+        "bocpd_score": 0.345695,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 158.2,
+        "minutes_from_earthquake": 98.7,
+        "ensemble_score": 0.984718,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962885,
+        "bocpd_score": 0.344677,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 161.0,
+        "minutes_from_earthquake": 101.5,
+        "ensemble_score": 0.984643,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962704,
+        "bocpd_score": 0.343684,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 163.2,
+        "minutes_from_earthquake": 103.7,
+        "ensemble_score": 0.984646,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.962712,
+        "bocpd_score": 0.342715,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 166.0,
+        "minutes_from_earthquake": 106.5,
+        "ensemble_score": 0.984901,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.96333,
+        "bocpd_score": 0.341768,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 168.2,
+        "minutes_from_earthquake": 108.7,
+        "ensemble_score": 0.98773,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.970202,
+        "bocpd_score": 0.340843,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 171.0,
+        "minutes_from_earthquake": 111.5,
+        "ensemble_score": 0.98792,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.970663,
+        "bocpd_score": 0.339939,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 173.2,
+        "minutes_from_earthquake": 113.7,
+        "ensemble_score": 0.987855,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.970506,
+        "bocpd_score": 0.339055,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 176.0,
+        "minutes_from_earthquake": 116.5,
+        "ensemble_score": 0.988374,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.971766,
+        "bocpd_score": 0.33819,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 178.2,
+        "minutes_from_earthquake": 118.7,
+        "ensemble_score": 0.989671,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.974916,
+        "bocpd_score": 0.337343,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 181.0,
+        "minutes_from_earthquake": 121.5,
+        "ensemble_score": 0.988515,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.972107,
+        "bocpd_score": 0.336513,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 183.2,
+        "minutes_from_earthquake": 123.7,
+        "ensemble_score": 0.98858,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.972267,
+        "bocpd_score": 0.3357,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 186.0,
+        "minutes_from_earthquake": 126.5,
+        "ensemble_score": 0.988391,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.971807,
+        "bocpd_score": 0.334903,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 188.2,
+        "minutes_from_earthquake": 128.7,
+        "ensemble_score": 0.988583,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.972274,
+        "bocpd_score": 0.334121,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 191.0,
+        "minutes_from_earthquake": 131.5,
+        "ensemble_score": 0.988798,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.972796,
+        "bocpd_score": 0.333354,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 193.2,
+        "minutes_from_earthquake": 133.7,
+        "ensemble_score": 0.990623,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977226,
+        "bocpd_score": 0.332601,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 196.0,
+        "minutes_from_earthquake": 136.5,
+        "ensemble_score": 0.990091,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.975935,
+        "bocpd_score": 0.331862,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 198.2,
+        "minutes_from_earthquake": 138.7,
+        "ensemble_score": 0.99001,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.975738,
+        "bocpd_score": 0.331136,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 201.0,
+        "minutes_from_earthquake": 141.5,
+        "ensemble_score": 0.990642,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977273,
+        "bocpd_score": 0.330422,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 203.2,
+        "minutes_from_earthquake": 143.7,
+        "ensemble_score": 0.990439,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97678,
+        "bocpd_score": 0.329721,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 206.0,
+        "minutes_from_earthquake": 146.5,
+        "ensemble_score": 0.990498,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.976924,
+        "bocpd_score": 0.329032,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 208.2,
+        "minutes_from_earthquake": 148.7,
+        "ensemble_score": 0.990309,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.976466,
+        "bocpd_score": 0.328354,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 211.0,
+        "minutes_from_earthquake": 151.5,
+        "ensemble_score": 0.991296,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978862,
+        "bocpd_score": 0.327687,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 213.2,
+        "minutes_from_earthquake": 153.7,
+        "ensemble_score": 0.990197,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.976194,
+        "bocpd_score": 0.327031,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 216.0,
+        "minutes_from_earthquake": 156.5,
+        "ensemble_score": 0.990147,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97607,
+        "bocpd_score": 0.326385,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 218.2,
+        "minutes_from_earthquake": 158.7,
+        "ensemble_score": 0.990089,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97593,
+        "bocpd_score": 0.32575,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 221.0,
+        "minutes_from_earthquake": 161.5,
+        "ensemble_score": 0.990404,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.976695,
+        "bocpd_score": 0.325124,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 223.2,
+        "minutes_from_earthquake": 163.7,
+        "ensemble_score": 0.990607,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977189,
+        "bocpd_score": 0.324507,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 226.0,
+        "minutes_from_earthquake": 166.5,
+        "ensemble_score": 0.991557,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979495,
+        "bocpd_score": 0.3239,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 228.2,
+        "minutes_from_earthquake": 168.7,
+        "ensemble_score": 0.990657,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977309,
+        "bocpd_score": 0.323301,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 231.0,
+        "minutes_from_earthquake": 171.5,
+        "ensemble_score": 0.99057,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977099,
+        "bocpd_score": 0.322711,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 233.2,
+        "minutes_from_earthquake": 173.7,
+        "ensemble_score": 0.990789,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.977631,
+        "bocpd_score": 0.322129,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 236.0,
+        "minutes_from_earthquake": 176.5,
+        "ensemble_score": 0.990863,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97781,
+        "bocpd_score": 0.321556,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 238.2,
+        "minutes_from_earthquake": 178.7,
+        "ensemble_score": 0.991124,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978444,
+        "bocpd_score": 0.32099,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 241.0,
+        "minutes_from_earthquake": 181.5,
+        "ensemble_score": 0.991513,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979388,
+        "bocpd_score": 0.320432,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 243.2,
+        "minutes_from_earthquake": 183.7,
+        "ensemble_score": 0.991069,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978311,
+        "bocpd_score": 0.319881,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 247.0,
+        "minutes_from_earthquake": 187.5,
+        "ensemble_score": 0.991159,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97853,
+        "bocpd_score": 0.319338,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 252.0,
+        "minutes_from_earthquake": 192.5,
+        "ensemble_score": 0.991127,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978452,
+        "bocpd_score": 0.318802,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 257.0,
+        "minutes_from_earthquake": 197.5,
+        "ensemble_score": 0.99166,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979745,
+        "bocpd_score": 0.318272,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 262.0,
+        "minutes_from_earthquake": 202.5,
+        "ensemble_score": 0.991817,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980127,
+        "bocpd_score": 0.317749,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 267.0,
+        "minutes_from_earthquake": 207.5,
+        "ensemble_score": 0.991751,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979966,
+        "bocpd_score": 0.317233,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 272.0,
+        "minutes_from_earthquake": 212.5,
+        "ensemble_score": 0.992497,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.981778,
+        "bocpd_score": 0.316723,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 277.0,
+        "minutes_from_earthquake": 217.5,
+        "ensemble_score": 0.991326,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978934,
+        "bocpd_score": 0.31622,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 282.0,
+        "minutes_from_earthquake": 222.5,
+        "ensemble_score": 0.991362,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979021,
+        "bocpd_score": 0.315722,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 287.0,
+        "minutes_from_earthquake": 227.5,
+        "ensemble_score": 0.991359,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979015,
+        "bocpd_score": 0.31523,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 292.0,
+        "minutes_from_earthquake": 232.5,
+        "ensemble_score": 0.991351,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.978996,
+        "bocpd_score": 0.314744,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 297.0,
+        "minutes_from_earthquake": 237.5,
+        "ensemble_score": 0.991501,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979361,
+        "bocpd_score": 0.314264,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 302.0,
+        "minutes_from_earthquake": 242.5,
+        "ensemble_score": 0.991571,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.97953,
+        "bocpd_score": 0.313789,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 307.0,
+        "minutes_from_earthquake": 247.5,
+        "ensemble_score": 0.991438,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979205,
+        "bocpd_score": 0.31332,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 312.0,
+        "minutes_from_earthquake": 252.5,
+        "ensemble_score": 0.991429,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.979184,
+        "bocpd_score": 0.312855,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 317.0,
+        "minutes_from_earthquake": 257.5,
+        "ensemble_score": 0.992027,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980636,
+        "bocpd_score": 0.312396,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 322.0,
+        "minutes_from_earthquake": 262.5,
+        "ensemble_score": 0.992091,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980794,
+        "bocpd_score": 0.311942,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 327.0,
+        "minutes_from_earthquake": 267.5,
+        "ensemble_score": 0.992064,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980727,
+        "bocpd_score": 0.311493,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 332.0,
+        "minutes_from_earthquake": 272.5,
+        "ensemble_score": 0.992051,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980695,
+        "bocpd_score": 0.311048,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 337.0,
+        "minutes_from_earthquake": 277.5,
+        "ensemble_score": 0.992106,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.980828,
+        "bocpd_score": 0.310609,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 342.0,
+        "minutes_from_earthquake": 282.5,
+        "ensemble_score": 0.992647,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.982143,
+        "bocpd_score": 0.310174,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 347.0,
+        "minutes_from_earthquake": 287.5,
+        "ensemble_score": 0.992196,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.981047,
+        "bocpd_score": 0.309743,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 352.0,
+        "minutes_from_earthquake": 292.5,
+        "ensemble_score": 0.992543,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.981891,
+        "bocpd_score": 0.309317,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 357.0,
+        "minutes_from_earthquake": 297.5,
+        "ensemble_score": 0.992386,
+        "threshold_score": 1.0,
+        "wavelet_score": 0.981509,
+        "bocpd_score": 0.308895,
+        "seismic_context_quiet": false
+      }
+    ],
+    "32412": [
+      {
+        "minutes_from_start": 4.0,
+        "minutes_from_earthquake": -50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 9.0,
+        "minutes_from_earthquake": -45.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 14.0,
+        "minutes_from_earthquake": -40.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 19.0,
+        "minutes_from_earthquake": -35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 24.0,
+        "minutes_from_earthquake": -30.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 29.0,
+        "minutes_from_earthquake": -25.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 34.0,
+        "minutes_from_earthquake": -20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 39.0,
+        "minutes_from_earthquake": -15.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 44.0,
+        "minutes_from_earthquake": -10.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 49.0,
+        "minutes_from_earthquake": -5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 54.0,
+        "minutes_from_earthquake": -0.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 59.0,
+        "minutes_from_earthquake": 4.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 64.0,
+        "minutes_from_earthquake": 9.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 69.0,
+        "minutes_from_earthquake": 14.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 74.0,
+        "minutes_from_earthquake": 19.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 79.0,
+        "minutes_from_earthquake": 24.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 84.0,
+        "minutes_from_earthquake": 29.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 89.0,
+        "minutes_from_earthquake": 34.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 94.0,
+        "minutes_from_earthquake": 39.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 99.0,
+        "minutes_from_earthquake": 44.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 104.0,
+        "minutes_from_earthquake": 49.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 109.0,
+        "minutes_from_earthquake": 54.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 114.0,
+        "minutes_from_earthquake": 59.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 119.0,
+        "minutes_from_earthquake": 64.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 122.0,
+        "minutes_from_earthquake": 67.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 124.2,
+        "minutes_from_earthquake": 69.7,
+        "ensemble_score": 0.003303,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.008022,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 127.0,
+        "minutes_from_earthquake": 72.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 129.2,
+        "minutes_from_earthquake": 74.7,
+        "ensemble_score": 0.011583,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.028131,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 132.0,
+        "minutes_from_earthquake": 77.5,
+        "ensemble_score": 0.012731,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.030918,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 134.2,
+        "minutes_from_earthquake": 79.7,
+        "ensemble_score": 0.016714,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.04059,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 137.0,
+        "minutes_from_earthquake": 82.5,
+        "ensemble_score": 0.017252,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.041897,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 139.2,
+        "minutes_from_earthquake": 84.7,
+        "ensemble_score": 0.024425,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.059319,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 142.0,
+        "minutes_from_earthquake": 87.5,
+        "ensemble_score": 0.020186,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.049023,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 144.2,
+        "minutes_from_earthquake": 89.7,
+        "ensemble_score": 0.019289,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.046845,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 147.0,
+        "minutes_from_earthquake": 92.5,
+        "ensemble_score": 0.031405,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.076269,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 149.2,
+        "minutes_from_earthquake": 94.7,
+        "ensemble_score": 0.029203,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.070922,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 152.0,
+        "minutes_from_earthquake": 97.5,
+        "ensemble_score": 0.031368,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.07618,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 154.2,
+        "minutes_from_earthquake": 99.7,
+        "ensemble_score": 0.032488,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.078901,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 157.0,
+        "minutes_from_earthquake": 102.5,
+        "ensemble_score": 0.040674,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.098781,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 159.2,
+        "minutes_from_earthquake": 104.7,
+        "ensemble_score": 0.036637,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.088977,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 162.0,
+        "minutes_from_earthquake": 107.5,
+        "ensemble_score": 0.045149,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.109647,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 164.2,
+        "minutes_from_earthquake": 109.7,
+        "ensemble_score": 0.038308,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.093033,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 167.0,
+        "minutes_from_earthquake": 112.5,
+        "ensemble_score": 0.040716,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.098881,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 169.2,
+        "minutes_from_earthquake": 114.7,
+        "ensemble_score": 0.048627,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.118093,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 172.0,
+        "minutes_from_earthquake": 117.5,
+        "ensemble_score": 0.050064,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.121583,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 174.2,
+        "minutes_from_earthquake": 119.7,
+        "ensemble_score": 0.052109,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.126551,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 177.0,
+        "minutes_from_earthquake": 122.5,
+        "ensemble_score": 0.055071,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.133745,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 179.2,
+        "minutes_from_earthquake": 124.7,
+        "ensemble_score": 0.052771,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.128159,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 182.0,
+        "minutes_from_earthquake": 127.5,
+        "ensemble_score": 0.057715,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.140166,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 184.2,
+        "minutes_from_earthquake": 129.7,
+        "ensemble_score": 0.060395,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.146675,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 187.0,
+        "minutes_from_earthquake": 132.5,
+        "ensemble_score": 0.060838,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.147749,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 189.2,
+        "minutes_from_earthquake": 134.7,
+        "ensemble_score": 0.062533,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.151865,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 192.0,
+        "minutes_from_earthquake": 137.5,
+        "ensemble_score": 0.065748,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.159675,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 194.2,
+        "minutes_from_earthquake": 139.7,
+        "ensemble_score": 0.062508,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.151806,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 197.0,
+        "minutes_from_earthquake": 142.5,
+        "ensemble_score": 0.067405,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.163699,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 199.2,
+        "minutes_from_earthquake": 144.7,
+        "ensemble_score": 0.070932,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.172262,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 202.0,
+        "minutes_from_earthquake": 147.5,
+        "ensemble_score": 0.076314,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.185333,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 204.2,
+        "minutes_from_earthquake": 149.7,
+        "ensemble_score": 0.074814,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.181691,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 207.0,
+        "minutes_from_earthquake": 152.5,
+        "ensemble_score": 0.082027,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.199209,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 209.2,
+        "minutes_from_earthquake": 154.7,
+        "ensemble_score": 0.082185,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.199593,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 212.0,
+        "minutes_from_earthquake": 157.5,
+        "ensemble_score": 0.085923,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.208669,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 214.2,
+        "minutes_from_earthquake": 159.7,
+        "ensemble_score": 0.084409,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.204993,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 217.0,
+        "minutes_from_earthquake": 162.5,
+        "ensemble_score": 0.08381,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.203539,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 219.2,
+        "minutes_from_earthquake": 164.7,
+        "ensemble_score": 0.087256,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.211907,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 222.0,
+        "minutes_from_earthquake": 167.5,
+        "ensemble_score": 0.088442,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.214788,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 224.2,
+        "minutes_from_earthquake": 169.7,
+        "ensemble_score": 0.090229,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.219126,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 227.0,
+        "minutes_from_earthquake": 172.5,
+        "ensemble_score": 0.102692,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.249394,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 229.2,
+        "minutes_from_earthquake": 174.7,
+        "ensemble_score": 0.105694,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.256686,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 232.0,
+        "minutes_from_earthquake": 177.5,
+        "ensemble_score": 0.3687,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.265794,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 233.2,
+        "minutes_from_earthquake": 178.7,
+        "ensemble_score": 0.370221,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.269489,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 234.5,
+        "minutes_from_earthquake": 180.0,
+        "ensemble_score": 0.373677,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.277882,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 235.8,
+        "minutes_from_earthquake": 181.2,
+        "ensemble_score": 0.382399,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.299063,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 238.0,
+        "minutes_from_earthquake": 183.5,
+        "ensemble_score": 0.388515,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.313916,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 241.0,
+        "minutes_from_earthquake": 186.5,
+        "ensemble_score": 0.388752,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.118305,
+        "bocpd_score": 0.314492,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 246.0,
+        "minutes_from_earthquake": 191.5,
+        "ensemble_score": 0.399366,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.34027,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 251.0,
+        "minutes_from_earthquake": 196.5,
+        "ensemble_score": 0.403323,
+        "threshold_score": 0.440734,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.349879,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 256.0,
+        "minutes_from_earthquake": 201.5,
+        "ensemble_score": 0.46205,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.352613,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 258.0,
+        "minutes_from_earthquake": 203.5,
+        "ensemble_score": 0.466348,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.070236,
+        "bocpd_score": 0.363049,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 259.2,
+        "minutes_from_earthquake": 204.7,
+        "ensemble_score": 0.46852,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.368326,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 260.5,
+        "minutes_from_earthquake": 206.0,
+        "ensemble_score": 0.47215,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.377142,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 264.0,
+        "minutes_from_earthquake": 209.5,
+        "ensemble_score": 0.480979,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.398582,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 269.0,
+        "minutes_from_earthquake": 214.5,
+        "ensemble_score": 0.486307,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.411523,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 274.0,
+        "minutes_from_earthquake": 219.5,
+        "ensemble_score": 0.490437,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.421552,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 279.0,
+        "minutes_from_earthquake": 224.5,
+        "ensemble_score": 0.493138,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.428111,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 284.0,
+        "minutes_from_earthquake": 229.5,
+        "ensemble_score": 0.497793,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.439416,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 289.0,
+        "minutes_from_earthquake": 234.5,
+        "ensemble_score": 0.493946,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.430075,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 294.0,
+        "minutes_from_earthquake": 239.5,
+        "ensemble_score": 0.489666,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.419679,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 299.0,
+        "minutes_from_earthquake": 244.5,
+        "ensemble_score": 0.486582,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.41219,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 304.0,
+        "minutes_from_earthquake": 249.5,
+        "ensemble_score": 0.482256,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.401684,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 309.0,
+        "minutes_from_earthquake": 254.5,
+        "ensemble_score": 0.482232,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.401626,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 314.0,
+        "minutes_from_earthquake": 259.5,
+        "ensemble_score": 0.485062,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.408498,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 319.0,
+        "minutes_from_earthquake": 264.5,
+        "ensemble_score": 0.488849,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.417696,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 324.0,
+        "minutes_from_earthquake": 269.5,
+        "ensemble_score": 0.493935,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.430047,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 329.0,
+        "minutes_from_earthquake": 274.5,
+        "ensemble_score": 0.488573,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.417025,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 334.0,
+        "minutes_from_earthquake": 279.5,
+        "ensemble_score": 0.495151,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.433,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 339.0,
+        "minutes_from_earthquake": 284.5,
+        "ensemble_score": 0.493365,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.428663,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 344.0,
+        "minutes_from_earthquake": 289.5,
+        "ensemble_score": 0.49583,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.235387,
+        "bocpd_score": 0.434648,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 349.0,
+        "minutes_from_earthquake": 294.5,
+        "ensemble_score": 0.494414,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.127659,
+        "bocpd_score": 0.431211,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 354.0,
+        "minutes_from_earthquake": 299.5,
+        "ensemble_score": 0.489551,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.038651,
+        "bocpd_score": 0.419401,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 359.0,
+        "minutes_from_earthquake": 304.5,
+        "ensemble_score": 0.493051,
+        "threshold_score": 0.538656,
+        "wavelet_score": 0.146867,
+        "bocpd_score": 0.4279,
+        "seismic_context_quiet": false
+      }
+    ],
+    "46403": [
+      {
+        "minutes_from_start": 0.0,
+        "minutes_from_earthquake": -54.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 15.0,
+        "minutes_from_earthquake": -39.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 30.0,
+        "minutes_from_earthquake": -24.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 45.0,
+        "minutes_from_earthquake": -9.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 60.0,
+        "minutes_from_earthquake": 5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 75.0,
+        "minutes_from_earthquake": 20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 90.0,
+        "minutes_from_earthquake": 35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 105.0,
+        "minutes_from_earthquake": 50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 120.0,
+        "minutes_from_earthquake": 65.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 135.0,
+        "minutes_from_earthquake": 80.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 150.0,
+        "minutes_from_earthquake": 95.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 165.0,
+        "minutes_from_earthquake": 110.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 180.0,
+        "minutes_from_earthquake": 125.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 195.0,
+        "minutes_from_earthquake": 140.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 210.0,
+        "minutes_from_earthquake": 155.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 225.0,
+        "minutes_from_earthquake": 170.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 240.0,
+        "minutes_from_earthquake": 185.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 255.0,
+        "minutes_from_earthquake": 200.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 270.0,
+        "minutes_from_earthquake": 215.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 285.0,
+        "minutes_from_earthquake": 230.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 300.0,
+        "minutes_from_earthquake": 245.5,
+        "ensemble_score": 0.001971,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.004787,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 315.0,
+        "minutes_from_earthquake": 260.5,
+        "ensemble_score": 0.018659,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.045314,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 330.0,
+        "minutes_from_earthquake": 275.5,
+        "ensemble_score": 0.055446,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.134654,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 345.0,
+        "minutes_from_earthquake": 290.5,
+        "ensemble_score": 0.041325,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.100362,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 360.0,
+        "minutes_from_earthquake": 305.5,
+        "ensemble_score": 0.019847,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.048199,
+        "seismic_context_quiet": false
+      }
+    ],
+    "46407": [
+      {
+        "minutes_from_start": 0.0,
+        "minutes_from_earthquake": -54.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 15.0,
+        "minutes_from_earthquake": -39.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 30.0,
+        "minutes_from_earthquake": -24.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 45.0,
+        "minutes_from_earthquake": -9.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 60.0,
+        "minutes_from_earthquake": 5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 75.0,
+        "minutes_from_earthquake": 20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 90.0,
+        "minutes_from_earthquake": 35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 105.0,
+        "minutes_from_earthquake": 50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 120.0,
+        "minutes_from_earthquake": 65.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 135.0,
+        "minutes_from_earthquake": 80.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 150.0,
+        "minutes_from_earthquake": 95.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 165.0,
+        "minutes_from_earthquake": 110.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 180.0,
+        "minutes_from_earthquake": 125.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 195.0,
+        "minutes_from_earthquake": 140.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 210.0,
+        "minutes_from_earthquake": 155.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 225.0,
+        "minutes_from_earthquake": 170.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 240.0,
+        "minutes_from_earthquake": 185.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 255.0,
+        "minutes_from_earthquake": 200.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 270.0,
+        "minutes_from_earthquake": 215.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 285.0,
+        "minutes_from_earthquake": 230.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 300.0,
+        "minutes_from_earthquake": 245.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 315.0,
+        "minutes_from_earthquake": 260.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 330.0,
+        "minutes_from_earthquake": 275.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 345.0,
+        "minutes_from_earthquake": 290.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 360.0,
+        "minutes_from_earthquake": 305.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      }
+    ],
+    "46411": [
+      {
+        "minutes_from_start": 0.0,
+        "minutes_from_earthquake": -54.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 15.0,
+        "minutes_from_earthquake": -39.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 30.0,
+        "minutes_from_earthquake": -24.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 45.0,
+        "minutes_from_earthquake": -9.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 60.0,
+        "minutes_from_earthquake": 5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 75.0,
+        "minutes_from_earthquake": 20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 90.0,
+        "minutes_from_earthquake": 35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 105.0,
+        "minutes_from_earthquake": 50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 120.0,
+        "minutes_from_earthquake": 65.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 135.0,
+        "minutes_from_earthquake": 80.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 150.0,
+        "minutes_from_earthquake": 95.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 165.0,
+        "minutes_from_earthquake": 110.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 180.0,
+        "minutes_from_earthquake": 125.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 195.0,
+        "minutes_from_earthquake": 140.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 210.0,
+        "minutes_from_earthquake": 155.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 225.0,
+        "minutes_from_earthquake": 170.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 240.0,
+        "minutes_from_earthquake": 185.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 255.0,
+        "minutes_from_earthquake": 200.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 270.0,
+        "minutes_from_earthquake": 215.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 285.0,
+        "minutes_from_earthquake": 230.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 300.0,
+        "minutes_from_earthquake": 245.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 315.0,
+        "minutes_from_earthquake": 260.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 330.0,
+        "minutes_from_earthquake": 275.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 345.0,
+        "minutes_from_earthquake": 290.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 360.0,
+        "minutes_from_earthquake": 305.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      }
+    ],
+    "51426": [
+      {
+        "minutes_from_start": 0.0,
+        "minutes_from_earthquake": -54.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 15.0,
+        "minutes_from_earthquake": -39.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 30.0,
+        "minutes_from_earthquake": -24.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 45.0,
+        "minutes_from_earthquake": -9.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": true
+      },
+      {
+        "minutes_from_start": 60.0,
+        "minutes_from_earthquake": 5.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 75.0,
+        "minutes_from_earthquake": 20.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 90.0,
+        "minutes_from_earthquake": 35.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 105.0,
+        "minutes_from_earthquake": 50.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 120.0,
+        "minutes_from_earthquake": 65.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 135.0,
+        "minutes_from_earthquake": 80.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 150.0,
+        "minutes_from_earthquake": 95.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 165.0,
+        "minutes_from_earthquake": 110.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 180.0,
+        "minutes_from_earthquake": 125.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 195.0,
+        "minutes_from_earthquake": 140.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 210.0,
+        "minutes_from_earthquake": 155.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 225.0,
+        "minutes_from_earthquake": 170.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 240.0,
+        "minutes_from_earthquake": 185.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 255.0,
+        "minutes_from_earthquake": 200.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 270.0,
+        "minutes_from_earthquake": 215.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 285.0,
+        "minutes_from_earthquake": 230.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 300.0,
+        "minutes_from_earthquake": 245.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 315.0,
+        "minutes_from_earthquake": 260.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 330.0,
+        "minutes_from_earthquake": 275.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 345.0,
+        "minutes_from_earthquake": 290.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      },
+      {
+        "minutes_from_start": 360.0,
+        "minutes_from_earthquake": 305.5,
+        "ensemble_score": 0.0,
+        "threshold_score": 0.0,
+        "wavelet_score": 0.0,
+        "bocpd_score": 0.0,
+        "seismic_context_quiet": false
+      }
+    ]
+  },
+  "sliding_window_replay_mode": "POST_HOC_CONDITIONED_OCEAN_REPLAY"
+}

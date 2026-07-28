@@ -1,0 +1,14 @@
+# Exclude non-application files from Docker build context.
+# The build context is the repo root (deploy/docker-compose.yml uses context: ..)
+.git
+tests
+docs
+mission-control
+deploy
+*.md
+!README.md
+.env*
+**/__pycache__
+**/.mypy_cache
+**/.ruff_cache
+**/.pytest_cache

@@ -1,0 +1,1808 @@
+{
+  "1611400": {
+    "name": "Nawiliwili",
+    "lat": 21.9544,
+    "lon": -159.3561,
+    "state": "HI"
+  },
+  "1612340": {
+    "name": "Honolulu",
+    "lat": 21.3033,
+    "lon": -157.8645,
+    "state": "HI"
+  },
+  "1612401": {
+    "name": "Pearl Harbor",
+    "lat": 21.3675,
+    "lon": -157.9639,
+    "state": "HI"
+  },
+  "1612480": {
+    "name": "Mokuoloe",
+    "lat": 21.4331,
+    "lon": -157.79,
+    "state": "HI"
+  },
+  "1615680": {
+    "name": "Kahului, Kahului Harbor",
+    "lat": 20.8949,
+    "lon": -156.469,
+    "state": "HI"
+  },
+  "1617433": {
+    "name": "Kawaihae",
+    "lat": 20.0366,
+    "lon": -155.8294,
+    "state": "HI"
+  },
+  "1617760": {
+    "name": "Hilo, Hilo Bay, Kuhio Bay",
+    "lat": 19.7303,
+    "lon": -155.0556,
+    "state": "HI"
+  },
+  "1619910": {
+    "name": "Sand Island, Midway Islands",
+    "lat": 28.2117,
+    "lon": -177.36,
+    "state": "United States of America"
+  },
+  "1630000": {
+    "name": "Apra Harbor, Guam",
+    "lat": 13.4434,
+    "lon": 144.6564,
+    "state": "United States of America"
+  },
+  "1631428": {
+    "name": "Pago Bay, Guam",
+    "lat": 13.4283,
+    "lon": 144.7989,
+    "state": "United States of America"
+  },
+  "1770000": {
+    "name": "Pago Pago, American Samoa",
+    "lat": -14.28,
+    "lon": -170.69,
+    "state": "American Samoa"
+  },
+  "1820000": {
+    "name": "Kwajalein, Marshall Islands",
+    "lat": 8.7317,
+    "lon": 167.7361,
+    "state": "United States of America"
+  },
+  "1890000": {
+    "name": "Wake Island, Pacific Ocean",
+    "lat": 19.2906,
+    "lon": 166.6175,
+    "state": "United States of America"
+  },
+  "2695535": {
+    "name": "Bermuda Biological Station",
+    "lat": 32.3702,
+    "lon": -64.6957,
+    "state": "Bermuda"
+  },
+  "2695540": {
+    "name": "Bermuda, St. Georges Island",
+    "lat": 32.3734,
+    "lon": -64.7033,
+    "state": "Bermuda"
+  },
+  "8311030": {
+    "name": "Ogdensburg",
+    "lat": 44.7028,
+    "lon": -75.4944,
+    "state": "NY"
+  },
+  "8311062": {
+    "name": "Alexandria Bay",
+    "lat": 44.3311,
+    "lon": -75.9345,
+    "state": "NY"
+  },
+  "8410140": {
+    "name": "Eastport",
+    "lat": 44.9046,
+    "lon": -66.9829,
+    "state": "ME"
+  },
+  "8411060": {
+    "name": "Cutler Farris Wharf",
+    "lat": 44.6567,
+    "lon": -67.21,
+    "state": "ME"
+  },
+  "8413320": {
+    "name": "Bar Harbor",
+    "lat": 44.3922,
+    "lon": -68.2043,
+    "state": "ME"
+  },
+  "8418150": {
+    "name": "Portland",
+    "lat": 43.6581,
+    "lon": -70.2442,
+    "state": "ME"
+  },
+  "8419870": {
+    "name": "Seavey Island",
+    "lat": 43.0797,
+    "lon": -70.7411,
+    "state": "ME"
+  },
+  "8443970": {
+    "name": "Boston",
+    "lat": 42.3539,
+    "lon": -71.0503,
+    "state": "MA"
+  },
+  "8447386": {
+    "name": "Fall River",
+    "lat": 41.7043,
+    "lon": -71.1641,
+    "state": "MA"
+  },
+  "8447435": {
+    "name": "Chatham",
+    "lat": 41.6885,
+    "lon": -69.9511,
+    "state": "MA"
+  },
+  "8447636": {
+    "name": "New Bedford Harbor",
+    "lat": 41.6212,
+    "lon": -70.9137,
+    "state": "MA"
+  },
+  "8447930": {
+    "name": "Woods Hole",
+    "lat": 41.5236,
+    "lon": -70.6711,
+    "state": "MA"
+  },
+  "8449130": {
+    "name": "Nantucket Island",
+    "lat": 41.285,
+    "lon": -70.0967,
+    "state": "MA"
+  },
+  "8452660": {
+    "name": "Newport",
+    "lat": 41.5043,
+    "lon": -71.3261,
+    "state": "RI"
+  },
+  "8452944": {
+    "name": "Conimicut Light",
+    "lat": 41.7167,
+    "lon": -71.3433,
+    "state": "RI"
+  },
+  "8454000": {
+    "name": "Providence",
+    "lat": 41.8072,
+    "lon": -71.4007,
+    "state": "RI"
+  },
+  "8461490": {
+    "name": "New London",
+    "lat": 41.3717,
+    "lon": -72.0956,
+    "state": "CT"
+  },
+  "8465705": {
+    "name": "New Haven",
+    "lat": 41.2833,
+    "lon": -72.9083,
+    "state": "CT"
+  },
+  "8467150": {
+    "name": "Bridgeport",
+    "lat": 41.1758,
+    "lon": -73.184,
+    "state": "CT"
+  },
+  "8510560": {
+    "name": "Montauk",
+    "lat": 41.0483,
+    "lon": -71.9594,
+    "state": "NY"
+  },
+  "8516945": {
+    "name": "Kings Point",
+    "lat": 40.8103,
+    "lon": -73.7649,
+    "state": "NY"
+  },
+  "8518750": {
+    "name": "The Battery",
+    "lat": 40.7006,
+    "lon": -74.0142,
+    "state": "NY"
+  },
+  "8518962": {
+    "name": "Turkey Point Hudson River NERRS",
+    "lat": 42.0139,
+    "lon": -73.9392,
+    "state": "NY"
+  },
+  "8518979": {
+    "name": "Coxsackie, Hudson River",
+    "lat": 42.3526,
+    "lon": -73.7949,
+    "state": "NY"
+  },
+  "8531680": {
+    "name": "Sandy Hook",
+    "lat": 40.4669,
+    "lon": -74.0094,
+    "state": "NJ"
+  },
+  "8534720": {
+    "name": "Atlantic City",
+    "lat": 39.3567,
+    "lon": -74.418,
+    "state": "NJ"
+  },
+  "8536110": {
+    "name": "Cape May",
+    "lat": 38.9683,
+    "lon": -74.96,
+    "state": "NJ"
+  },
+  "8537121": {
+    "name": "Ship John Shoal",
+    "lat": 39.3054,
+    "lon": -75.3767,
+    "state": "NJ"
+  },
+  "8539094": {
+    "name": "Burlington, Delaware River",
+    "lat": 40.0817,
+    "lon": -74.8697,
+    "state": "NJ"
+  },
+  "8540433": {
+    "name": "Marcus Hook",
+    "lat": 39.8118,
+    "lon": -75.4095,
+    "state": "PA"
+  },
+  "8545240": {
+    "name": "Philadelphia",
+    "lat": 39.9331,
+    "lon": -75.142,
+    "state": "PA"
+  },
+  "8546252": {
+    "name": "Bridesburg",
+    "lat": 39.9797,
+    "lon": -75.0793,
+    "state": "PA"
+  },
+  "8548989": {
+    "name": "Newbold",
+    "lat": 40.1373,
+    "lon": -74.7518,
+    "state": "PA"
+  },
+  "8551762": {
+    "name": "Delaware City",
+    "lat": 39.5822,
+    "lon": -75.589,
+    "state": "DE"
+  },
+  "8551910": {
+    "name": "Reedy Point",
+    "lat": 39.5583,
+    "lon": -75.5719,
+    "state": "DE"
+  },
+  "8555889": {
+    "name": "Brandywine Shoal Light",
+    "lat": 38.9867,
+    "lon": -75.1133,
+    "state": "DE"
+  },
+  "8557380": {
+    "name": "Lewes",
+    "lat": 38.7828,
+    "lon": -75.1193,
+    "state": "DE"
+  },
+  "8570283": {
+    "name": "Ocean City Inlet",
+    "lat": 38.3283,
+    "lon": -75.0917,
+    "state": "MD"
+  },
+  "8571421": {
+    "name": "Bishops Head",
+    "lat": 38.22,
+    "lon": -76.0383,
+    "state": "MD"
+  },
+  "8571892": {
+    "name": "Cambridge",
+    "lat": 38.5725,
+    "lon": -76.0617,
+    "state": "MD"
+  },
+  "8573364": {
+    "name": "Tolchester Beach",
+    "lat": 39.2134,
+    "lon": -76.2446,
+    "state": "MD"
+  },
+  "8573927": {
+    "name": "Chesapeake City",
+    "lat": 39.5267,
+    "lon": -75.81,
+    "state": "MD"
+  },
+  "8574680": {
+    "name": "Baltimore",
+    "lat": 39.2667,
+    "lon": -76.5783,
+    "state": "MD"
+  },
+  "8575512": {
+    "name": "Annapolis",
+    "lat": 38.9839,
+    "lon": -76.48,
+    "state": "MD"
+  },
+  "8577330": {
+    "name": "Solomons Island",
+    "lat": 38.3167,
+    "lon": -76.4517,
+    "state": "MD"
+  },
+  "8594900": {
+    "name": "Washington",
+    "lat": 38.8733,
+    "lon": -77.0217,
+    "state": "DC"
+  },
+  "8631044": {
+    "name": "Wachapreague",
+    "lat": 37.6078,
+    "lon": -75.6858,
+    "state": "VA"
+  },
+  "8632200": {
+    "name": "Kiptopeke",
+    "lat": 37.1652,
+    "lon": -75.9884,
+    "state": "VA"
+  },
+  "8635027": {
+    "name": "Dahlgren",
+    "lat": 38.3197,
+    "lon": -77.0366,
+    "state": "VA"
+  },
+  "8635750": {
+    "name": "Lewisetta",
+    "lat": 37.9961,
+    "lon": -76.4644,
+    "state": "VA"
+  },
+  "8636580": {
+    "name": "Windmill Point",
+    "lat": 37.6155,
+    "lon": -76.2898,
+    "state": "VA"
+  },
+  "8637689": {
+    "name": "Yorktown USCG Training Center",
+    "lat": 37.2265,
+    "lon": -76.4788,
+    "state": "VA"
+  },
+  "8638610": {
+    "name": "Sewells Point",
+    "lat": 36.9428,
+    "lon": -76.3286,
+    "state": "VA"
+  },
+  "8638901": {
+    "name": "CBBT, Chesapeake Channel",
+    "lat": 37.0329,
+    "lon": -76.0833,
+    "state": "VA"
+  },
+  "8639348": {
+    "name": "Money Point",
+    "lat": 36.7782,
+    "lon": -76.3019,
+    "state": "VA"
+  },
+  "8651370": {
+    "name": "Duck",
+    "lat": 36.1833,
+    "lon": -75.7467,
+    "state": "NC"
+  },
+  "8652587": {
+    "name": "Oregon Inlet Marina",
+    "lat": 35.7957,
+    "lon": -75.5482,
+    "state": "NC"
+  },
+  "8654467": {
+    "name": "USCG Station Hatteras",
+    "lat": 35.2086,
+    "lon": -75.7042,
+    "state": "NC"
+  },
+  "8656483": {
+    "name": "Beaufort, Duke Marine Lab",
+    "lat": 34.7173,
+    "lon": -76.6707,
+    "state": "NC"
+  },
+  "8658120": {
+    "name": "Wilmington",
+    "lat": 34.2267,
+    "lon": -77.9533,
+    "state": "NC"
+  },
+  "8658163": {
+    "name": "Wrightsville Beach",
+    "lat": 34.2133,
+    "lon": -77.7867,
+    "state": "NC"
+  },
+  "8661070": {
+    "name": "Springmaid Pier",
+    "lat": 33.655,
+    "lon": -78.9183,
+    "state": "SC"
+  },
+  "8665530": {
+    "name": "Charleston",
+    "lat": 32.7808,
+    "lon": -79.9236,
+    "state": "SC"
+  },
+  "8670870": {
+    "name": "Fort Pulaski",
+    "lat": 32.0347,
+    "lon": -80.903,
+    "state": "GA"
+  },
+  "8679598": {
+    "name": "Kings Bay MSF Pier",
+    "lat": 30.7781,
+    "lon": -81.4914,
+    "state": "GA"
+  },
+  "8720030": {
+    "name": "Fernandina Beach",
+    "lat": 30.6714,
+    "lon": -81.4658,
+    "state": "FL"
+  },
+  "8720218": {
+    "name": "Mayport (Bar Pilots Dock)",
+    "lat": 30.3982,
+    "lon": -81.4279,
+    "state": "FL"
+  },
+  "8720219": {
+    "name": "Dames Point",
+    "lat": 30.3867,
+    "lon": -81.5583,
+    "state": "FL"
+  },
+  "8720226": {
+    "name": "Southbank Riverwalk, St Johns River",
+    "lat": 30.32,
+    "lon": -81.6583,
+    "state": "FL"
+  },
+  "8720357": {
+    "name": "I-295 Buckman Bridge",
+    "lat": 30.1924,
+    "lon": -81.6889,
+    "state": "FL"
+  },
+  "8721604": {
+    "name": "Trident Pier, Port Canaveral",
+    "lat": 28.4158,
+    "lon": -80.5931,
+    "state": "FL"
+  },
+  "8722670": {
+    "name": "Lake Worth Pier, Atlantic Ocean",
+    "lat": 26.6128,
+    "lon": -80.0342,
+    "state": "FL"
+  },
+  "8722956": {
+    "name": "South Port Everglades",
+    "lat": 26.0817,
+    "lon": -80.1167,
+    "state": "FL"
+  },
+  "8723214": {
+    "name": "Virginia Key",
+    "lat": 25.7314,
+    "lon": -80.1618,
+    "state": "FL"
+  },
+  "8723970": {
+    "name": "Vaca Key, Florida Bay",
+    "lat": 24.711,
+    "lon": -81.1065,
+    "state": "FL"
+  },
+  "8724580": {
+    "name": "Key West",
+    "lat": 24.5557,
+    "lon": -81.8079,
+    "state": "FL"
+  },
+  "8725114": {
+    "name": "NAPLES BAY, NORTH",
+    "lat": 26.1367,
+    "lon": -81.7883,
+    "state": "FL"
+  },
+  "8725520": {
+    "name": "Fort Myers",
+    "lat": 26.6478,
+    "lon": -81.8711,
+    "state": "FL"
+  },
+  "8726384": {
+    "name": "Port Manatee",
+    "lat": 27.6387,
+    "lon": -82.5621,
+    "state": "FL"
+  },
+  "8726520": {
+    "name": "St. Petersburg",
+    "lat": 27.7606,
+    "lon": -82.6269,
+    "state": "FL"
+  },
+  "8726607": {
+    "name": "Old Port Tampa",
+    "lat": 27.8578,
+    "lon": -82.5528,
+    "state": "FL"
+  },
+  "8726674": {
+    "name": "East Bay",
+    "lat": 27.9231,
+    "lon": -82.4214,
+    "state": "FL"
+  },
+  "8726724": {
+    "name": "Clearwater Beach",
+    "lat": 27.9783,
+    "lon": -82.8317,
+    "state": "FL"
+  },
+  "8727520": {
+    "name": "Cedar Key",
+    "lat": 29.135,
+    "lon": -83.0317,
+    "state": "FL"
+  },
+  "8728690": {
+    "name": "Apalachicola",
+    "lat": 29.7244,
+    "lon": -84.9805,
+    "state": "FL"
+  },
+  "8729108": {
+    "name": "Panama City",
+    "lat": 30.1497,
+    "lon": -85.6644,
+    "state": "FL"
+  },
+  "8729210": {
+    "name": "Panama City Beach",
+    "lat": 30.2138,
+    "lon": -85.8786,
+    "state": "FL"
+  },
+  "8729840": {
+    "name": "Pensacola",
+    "lat": 30.4044,
+    "lon": -87.2112,
+    "state": "FL"
+  },
+  "8735180": {
+    "name": "Dauphin Island",
+    "lat": 30.25,
+    "lon": -88.075,
+    "state": "AL"
+  },
+  "8735391": {
+    "name": "Dog River Bridge",
+    "lat": 30.5652,
+    "lon": -88.088,
+    "state": "AL"
+  },
+  "8735523": {
+    "name": "East Fowl River Bridge",
+    "lat": 30.4437,
+    "lon": -88.1139,
+    "state": "AL"
+  },
+  "8736897": {
+    "name": "Coast Guard Sector Mobile",
+    "lat": 30.6495,
+    "lon": -88.0581,
+    "state": "AL"
+  },
+  "8737048": {
+    "name": "Mobile State Docks",
+    "lat": 30.7046,
+    "lon": -88.0396,
+    "state": "AL"
+  },
+  "8737138": {
+    "name": "Chickasaw Creek",
+    "lat": 30.7819,
+    "lon": -88.0736,
+    "state": "AL"
+  },
+  "8738043": {
+    "name": "West Fowl River Bridge",
+    "lat": 30.3766,
+    "lon": -88.1586,
+    "state": "AL"
+  },
+  "8739803": {
+    "name": "Bayou La Batre Bridge",
+    "lat": 30.4057,
+    "lon": -88.2477,
+    "state": "AL"
+  },
+  "8741533": {
+    "name": "Pascagoula NOAA Lab",
+    "lat": 30.3678,
+    "lon": -88.5631,
+    "state": "MS"
+  },
+  "8747437": {
+    "name": "Bay Waveland Yacht Club",
+    "lat": 30.3263,
+    "lon": -89.3258,
+    "state": "MS"
+  },
+  "8760721": {
+    "name": "Pilottown",
+    "lat": 29.1793,
+    "lon": -89.2588,
+    "state": "LA"
+  },
+  "8760922": {
+    "name": "Pilots Station East, S.W. Pass",
+    "lat": 28.9322,
+    "lon": -89.4075,
+    "state": "LA"
+  },
+  "8761305": {
+    "name": "Shell Beach",
+    "lat": 29.8681,
+    "lon": -89.6732,
+    "state": "LA"
+  },
+  "8761724": {
+    "name": "Grand Isle",
+    "lat": 29.2633,
+    "lon": -89.9567,
+    "state": "LA"
+  },
+  "8761927": {
+    "name": "New Canal Station",
+    "lat": 30.0272,
+    "lon": -90.1133,
+    "state": "LA"
+  },
+  "8761955": {
+    "name": "Carrollton",
+    "lat": 29.9329,
+    "lon": -90.1355,
+    "state": "LA"
+  },
+  "8762075": {
+    "name": "Port Fourchon, Belle Pass",
+    "lat": 29.1142,
+    "lon": -90.1993,
+    "state": "LA"
+  },
+  "8762482": {
+    "name": "West Bank 1, Bayou Gauche",
+    "lat": 29.7886,
+    "lon": -90.4203,
+    "state": "LA"
+  },
+  "8764044": {
+    "name": "Berwick, Atchafalaya River",
+    "lat": 29.6675,
+    "lon": -91.2376,
+    "state": "LA"
+  },
+  "8764227": {
+    "name": "LAWMA, Amerada Pass",
+    "lat": 29.4496,
+    "lon": -91.3381,
+    "state": "LA"
+  },
+  "8764314": {
+    "name": "Eugene Island, North of, Atchafalaya Bay",
+    "lat": 29.3675,
+    "lon": -91.3839,
+    "state": "LA"
+  },
+  "8766072": {
+    "name": "Freshwater Canal Locks",
+    "lat": 29.5517,
+    "lon": -92.3052,
+    "state": "LA"
+  },
+  "8767816": {
+    "name": "Lake Charles",
+    "lat": 30.2236,
+    "lon": -93.2217,
+    "state": "LA"
+  },
+  "8767961": {
+    "name": "Bulk Terminal",
+    "lat": 30.1903,
+    "lon": -93.3007,
+    "state": "LA"
+  },
+  "8768094": {
+    "name": "Calcasieu Pass",
+    "lat": 29.7682,
+    "lon": -93.3429,
+    "state": "LA"
+  },
+  "8770475": {
+    "name": "Port Arthur",
+    "lat": 29.8667,
+    "lon": -93.93,
+    "state": "TX"
+  },
+  "8770520": {
+    "name": "Rainbow Bridge",
+    "lat": 29.98,
+    "lon": -93.8817,
+    "state": "TX"
+  },
+  "8770613": {
+    "name": "Morgans Point, Barbours Cut",
+    "lat": 29.6817,
+    "lon": -94.985,
+    "state": "TX"
+  },
+  "8770777": {
+    "name": "Manchester",
+    "lat": 29.7263,
+    "lon": -95.2658,
+    "state": "TX"
+  },
+  "8770808": {
+    "name": "High Island",
+    "lat": 29.5947,
+    "lon": -94.3903,
+    "state": "TX"
+  },
+  "8770822": {
+    "name": "Texas Point, Sabine Pass",
+    "lat": 29.6893,
+    "lon": -93.8418,
+    "state": "TX"
+  },
+  "8770971": {
+    "name": "Rollover Pass",
+    "lat": 29.515,
+    "lon": -94.5133,
+    "state": "TX"
+  },
+  "8771013": {
+    "name": "Eagle Point, Galveston Bay",
+    "lat": 29.4813,
+    "lon": -94.9172,
+    "state": "TX"
+  },
+  "8771341": {
+    "name": "Galveston Bay Entrance, North Jetty",
+    "lat": 29.3575,
+    "lon": -94.7247,
+    "state": "TX"
+  },
+  "8771367": {
+    "name": "Sabine Offshore Light",
+    "lat": 29.469,
+    "lon": -93.72,
+    "state": "TX"
+  },
+  "8771450": {
+    "name": "Galveston Pier 21",
+    "lat": 29.31,
+    "lon": -94.7933,
+    "state": "TX"
+  },
+  "8771486": {
+    "name": "Galveston Railroad Bridge",
+    "lat": 29.3026,
+    "lon": -94.8971,
+    "state": "TX"
+  },
+  "8771972": {
+    "name": "San Luis Pass",
+    "lat": 29.095,
+    "lon": -95.1133,
+    "state": "TX"
+  },
+  "8772471": {
+    "name": "Freeport Harbor",
+    "lat": 28.9357,
+    "lon": -95.2942,
+    "state": "TX"
+  },
+  "8772985": {
+    "name": "Sargent",
+    "lat": 28.7716,
+    "lon": -95.6168,
+    "state": "TX"
+  },
+  "8773037": {
+    "name": "Seadrift",
+    "lat": 28.4069,
+    "lon": -96.7124,
+    "state": "TX"
+  },
+  "8773146": {
+    "name": "Matagorda City",
+    "lat": 28.71,
+    "lon": -95.9139,
+    "state": "TX"
+  },
+  "8773259": {
+    "name": "Port Lavaca",
+    "lat": 28.6406,
+    "lon": -96.6098,
+    "state": "TX"
+  },
+  "8773701": {
+    "name": "Port O'Connor",
+    "lat": 28.4517,
+    "lon": -96.3883,
+    "state": "TX"
+  },
+  "8773767": {
+    "name": "Matagorda Bay Entrance Channel",
+    "lat": 28.4269,
+    "lon": -96.3301,
+    "state": "TX"
+  },
+  "8774230": {
+    "name": "Aransas Wildlife Refuge",
+    "lat": 28.2283,
+    "lon": -96.795,
+    "state": "TX"
+  },
+  "8774513": {
+    "name": "Copano Bay",
+    "lat": 28.1183,
+    "lon": -97.0217,
+    "state": "TX"
+  },
+  "8774770": {
+    "name": "Rockport",
+    "lat": 28.0217,
+    "lon": -97.0467,
+    "state": "TX"
+  },
+  "8775132": {
+    "name": "La Quinta Channel North",
+    "lat": 27.8804,
+    "lon": -97.2735,
+    "state": "TX"
+  },
+  "8775222": {
+    "name": "Viola Turning Basin",
+    "lat": 27.8461,
+    "lon": -97.5207,
+    "state": "TX"
+  },
+  "8775237": {
+    "name": "Port Aransas",
+    "lat": 27.8397,
+    "lon": -97.0725,
+    "state": "TX"
+  },
+  "8775241": {
+    "name": "Aransas, Aransas Pass",
+    "lat": 27.8366,
+    "lon": -97.0391,
+    "state": "TX"
+  },
+  "8775283": {
+    "name": "Enbridge, Ingleside",
+    "lat": 27.8186,
+    "lon": -97.209,
+    "state": "TX"
+  },
+  "8775296": {
+    "name": "USS Lexington, Corpus Christi Bay",
+    "lat": 27.8149,
+    "lon": -97.3892,
+    "state": "TX"
+  },
+  "8775792": {
+    "name": "Packery Channel",
+    "lat": 27.6333,
+    "lon": -97.2367,
+    "state": "TX"
+  },
+  "8776139": {
+    "name": "S. Bird Island",
+    "lat": 27.4844,
+    "lon": -97.3181,
+    "state": "TX"
+  },
+  "8776604": {
+    "name": "Baffin Bay",
+    "lat": 27.297,
+    "lon": -97.4052,
+    "state": "TX"
+  },
+  "8777812": {
+    "name": "Rincon Del San Jose",
+    "lat": 26.8012,
+    "lon": -97.4706,
+    "state": "TX"
+  },
+  "8778490": {
+    "name": "Port Mansfield",
+    "lat": 26.5576,
+    "lon": -97.4257,
+    "state": "TX"
+  },
+  "8779280": {
+    "name": "Realitos Peninsula",
+    "lat": 26.2624,
+    "lon": -97.2853,
+    "state": "TX"
+  },
+  "8779748": {
+    "name": "South Padre Island CG Station",
+    "lat": 26.0731,
+    "lon": -97.1675,
+    "state": "TX"
+  },
+  "8779749": {
+    "name": "SPI Brazos Santiago",
+    "lat": 26.0675,
+    "lon": -97.1548,
+    "state": "TX"
+  },
+  "8779770": {
+    "name": "Port Isabel",
+    "lat": 26.0612,
+    "lon": -97.2155,
+    "state": "TX"
+  },
+  "9014070": {
+    "name": "Algonac",
+    "lat": 42.6211,
+    "lon": -82.5267,
+    "state": "MI"
+  },
+  "9014080": {
+    "name": "St. Clair State Police",
+    "lat": 42.8122,
+    "lon": -82.4856,
+    "state": "MI"
+  },
+  "9014087": {
+    "name": "Dry Dock",
+    "lat": 42.9453,
+    "lon": -82.4433,
+    "state": "MI"
+  },
+  "9014090": {
+    "name": "Mouth of the Black River",
+    "lat": 42.9738,
+    "lon": -82.4204,
+    "state": "MI"
+  },
+  "9014098": {
+    "name": "Fort Gratiot",
+    "lat": 43.0069,
+    "lon": -82.4225,
+    "state": "MI"
+  },
+  "9034052": {
+    "name": "St Clair Shores",
+    "lat": 42.4732,
+    "lon": -82.8792,
+    "state": "MI"
+  },
+  "9044020": {
+    "name": "Gibraltar",
+    "lat": 42.0909,
+    "lon": -83.186,
+    "state": "MI"
+  },
+  "9044030": {
+    "name": "Wyandotte",
+    "lat": 42.2023,
+    "lon": -83.1475,
+    "state": "MI"
+  },
+  "9044036": {
+    "name": "Fort Wayne",
+    "lat": 42.2989,
+    "lon": -83.0926,
+    "state": "MI"
+  },
+  "9044049": {
+    "name": "Windmill Point",
+    "lat": 42.3578,
+    "lon": -82.93,
+    "state": "MI"
+  },
+  "9052000": {
+    "name": "Cape Vincent",
+    "lat": 44.1303,
+    "lon": -76.3322,
+    "state": "NY"
+  },
+  "9052030": {
+    "name": "Oswego",
+    "lat": 43.4642,
+    "lon": -76.5118,
+    "state": "NY"
+  },
+  "9052058": {
+    "name": "Rochester",
+    "lat": 43.269,
+    "lon": -77.6257,
+    "state": "NY"
+  },
+  "9052076": {
+    "name": "Olcott",
+    "lat": 43.3384,
+    "lon": -78.7273,
+    "state": "NY"
+  },
+  "9063007": {
+    "name": "Ashland Ave",
+    "lat": 43.0999,
+    "lon": -79.0599,
+    "state": "NY"
+  },
+  "9063009": {
+    "name": "American Falls",
+    "lat": 43.0811,
+    "lon": -79.0614,
+    "state": "NY"
+  },
+  "9063012": {
+    "name": "Niagara Intake",
+    "lat": 43.0769,
+    "lon": -79.014,
+    "state": "NY"
+  },
+  "9063020": {
+    "name": "Buffalo",
+    "lat": 42.8774,
+    "lon": -78.8905,
+    "state": "NY"
+  },
+  "9063028": {
+    "name": "Sturgeon Point",
+    "lat": 42.6913,
+    "lon": -79.0473,
+    "state": "NY"
+  },
+  "9063038": {
+    "name": "Erie, Lake Erie",
+    "lat": 42.1539,
+    "lon": -80.0758,
+    "state": "PA"
+  },
+  "9063053": {
+    "name": "Fairport",
+    "lat": 41.7597,
+    "lon": -81.2811,
+    "state": "OH"
+  },
+  "9063063": {
+    "name": "Cleveland",
+    "lat": 41.5409,
+    "lon": -81.6355,
+    "state": "OH"
+  },
+  "9063079": {
+    "name": "Marblehead",
+    "lat": 41.5436,
+    "lon": -82.7314,
+    "state": "OH"
+  },
+  "9063085": {
+    "name": "Toledo",
+    "lat": 41.6936,
+    "lon": -83.4723,
+    "state": "OH"
+  },
+  "9063090": {
+    "name": "Fermi Power Plant",
+    "lat": 41.96,
+    "lon": -83.2567,
+    "state": "MI"
+  },
+  "9075002": {
+    "name": "Lakeport",
+    "lat": 43.1417,
+    "lon": -82.4933,
+    "state": "MI"
+  },
+  "9075014": {
+    "name": "Harbor Beach",
+    "lat": 43.8464,
+    "lon": -82.6431,
+    "state": "MI"
+  },
+  "9075035": {
+    "name": "Essexville",
+    "lat": 43.6404,
+    "lon": -83.8468,
+    "state": "MI"
+  },
+  "9075065": {
+    "name": "Alpena",
+    "lat": 45.063,
+    "lon": -83.4286,
+    "state": "MI"
+  },
+  "9075080": {
+    "name": "Mackinaw City",
+    "lat": 45.7772,
+    "lon": -84.7211,
+    "state": "MI"
+  },
+  "9075099": {
+    "name": "De Tour Village",
+    "lat": 45.9925,
+    "lon": -83.8982,
+    "state": "MI"
+  },
+  "9076024": {
+    "name": "Rock Cut",
+    "lat": 46.2648,
+    "lon": -84.1912,
+    "state": "MI"
+  },
+  "9076027": {
+    "name": "West Neebish Island",
+    "lat": 46.2847,
+    "lon": -84.2098,
+    "state": "MI"
+  },
+  "9076033": {
+    "name": "Little Rapids",
+    "lat": 46.4858,
+    "lon": -84.3017,
+    "state": "MI"
+  },
+  "9076060": {
+    "name": "U.S. Slip",
+    "lat": 46.5008,
+    "lon": -84.3404,
+    "state": "MI"
+  },
+  "9076070": {
+    "name": "S.W. Pier, St. Marys River",
+    "lat": 46.5011,
+    "lon": -84.3726,
+    "state": "MI"
+  },
+  "9087023": {
+    "name": "Ludington",
+    "lat": 43.9474,
+    "lon": -86.4415,
+    "state": "MI"
+  },
+  "9087031": {
+    "name": "Holland",
+    "lat": 42.7733,
+    "lon": -86.2128,
+    "state": "MI"
+  },
+  "9087044": {
+    "name": "Calumet Harbor",
+    "lat": 41.7297,
+    "lon": -87.5383,
+    "state": "IL"
+  },
+  "9087057": {
+    "name": "Milwaukee",
+    "lat": 43.002,
+    "lon": -87.8876,
+    "state": "WI"
+  },
+  "9087068": {
+    "name": "Kewaunee, Lake Michigan",
+    "lat": 44.4639,
+    "lon": -87.501,
+    "state": "WI"
+  },
+  "9087072": {
+    "name": "Sturgeon Bay Canal",
+    "lat": 44.7947,
+    "lon": -87.3139,
+    "state": "WI"
+  },
+  "9087077": {
+    "name": "Green Bay East",
+    "lat": 44.539,
+    "lon": -88.0011,
+    "state": "WI"
+  },
+  "9087088": {
+    "name": "Menominee",
+    "lat": 45.0959,
+    "lon": -87.5899,
+    "state": "MI"
+  },
+  "9087096": {
+    "name": "Port Inland",
+    "lat": 45.9699,
+    "lon": -85.8715,
+    "state": "MI"
+  },
+  "9099004": {
+    "name": "Point Iroquois",
+    "lat": 46.4844,
+    "lon": -84.6308,
+    "state": "MI"
+  },
+  "9099018": {
+    "name": "Marquette C.G.",
+    "lat": 46.5456,
+    "lon": -87.3786,
+    "state": "MI"
+  },
+  "9099044": {
+    "name": "Ontonagon",
+    "lat": 46.8744,
+    "lon": -89.3242,
+    "state": "MI"
+  },
+  "9099064": {
+    "name": "Duluth",
+    "lat": 46.7758,
+    "lon": -92.092,
+    "state": "MN"
+  },
+  "9099090": {
+    "name": "Grand Marais, Lake Superior",
+    "lat": 47.7486,
+    "lon": -90.3413,
+    "state": "MN"
+  },
+  "9410170": {
+    "name": "San Diego",
+    "lat": 32.7156,
+    "lon": -117.1767,
+    "state": "CA"
+  },
+  "9410230": {
+    "name": "La Jolla",
+    "lat": 32.8669,
+    "lon": -117.2571,
+    "state": "CA"
+  },
+  "9410660": {
+    "name": "Los Angeles",
+    "lat": 33.72,
+    "lon": -118.272,
+    "state": "CA"
+  },
+  "9410840": {
+    "name": "Santa Monica",
+    "lat": 34.0083,
+    "lon": -118.5,
+    "state": "CA"
+  },
+  "9411340": {
+    "name": "Santa Barbara",
+    "lat": 34.4046,
+    "lon": -119.6925,
+    "state": "CA"
+  },
+  "9412110": {
+    "name": "Port San Luis",
+    "lat": 35.1689,
+    "lon": -120.7542,
+    "state": "CA"
+  },
+  "9413450": {
+    "name": "Monterey",
+    "lat": 36.6089,
+    "lon": -121.8914,
+    "state": "CA"
+  },
+  "9414290": {
+    "name": "San Francisco",
+    "lat": 37.8063,
+    "lon": -122.4659,
+    "state": "CA"
+  },
+  "9414523": {
+    "name": "Redwood City",
+    "lat": 37.5068,
+    "lon": -122.2119,
+    "state": "CA"
+  },
+  "9414750": {
+    "name": "Alameda",
+    "lat": 37.772,
+    "lon": -122.3003,
+    "state": "CA"
+  },
+  "9414863": {
+    "name": "Richmond",
+    "lat": 37.9283,
+    "lon": -122.4,
+    "state": "CA"
+  },
+  "9415020": {
+    "name": "Point Reyes",
+    "lat": 37.9942,
+    "lon": -122.9736,
+    "state": "CA"
+  },
+  "9415102": {
+    "name": "Martinez-Amorco Pier",
+    "lat": 38.0346,
+    "lon": -122.1252,
+    "state": "CA"
+  },
+  "9415144": {
+    "name": "Port Chicago",
+    "lat": 38.056,
+    "lon": -122.0395,
+    "state": "CA"
+  },
+  "9416131": {
+    "name": "Port of West Sacramento, Washington Lake",
+    "lat": 38.5622,
+    "lon": -121.5463,
+    "state": "CA"
+  },
+  "9416841": {
+    "name": "Arena Cove",
+    "lat": 38.9146,
+    "lon": -123.7111,
+    "state": "CA"
+  },
+  "9418767": {
+    "name": "North Spit",
+    "lat": 40.7669,
+    "lon": -124.2173,
+    "state": "CA"
+  },
+  "9419750": {
+    "name": "Crescent City",
+    "lat": 41.7456,
+    "lon": -124.1844,
+    "state": "CA"
+  },
+  "9431647": {
+    "name": "Port Orford",
+    "lat": 42.739,
+    "lon": -124.4983,
+    "state": "OR"
+  },
+  "9432780": {
+    "name": "Charleston",
+    "lat": 43.345,
+    "lon": -124.322,
+    "state": "OR"
+  },
+  "9435380": {
+    "name": "South Beach",
+    "lat": 44.6254,
+    "lon": -124.0449,
+    "state": "OR"
+  },
+  "9437540": {
+    "name": "Garibaldi",
+    "lat": 45.5545,
+    "lon": -123.9189,
+    "state": "OR"
+  },
+  "9439040": {
+    "name": "Astoria",
+    "lat": 46.2073,
+    "lon": -123.7683,
+    "state": "OR"
+  },
+  "9439099": {
+    "name": "Wauna",
+    "lat": 46.16,
+    "lon": -123.405,
+    "state": "OR"
+  },
+  "9439201": {
+    "name": "St Helens",
+    "lat": 45.865,
+    "lon": -122.797,
+    "state": "OR"
+  },
+  "9440083": {
+    "name": "Vancouver",
+    "lat": 45.6312,
+    "lon": -122.6958,
+    "state": "WA"
+  },
+  "9440357": {
+    "name": "TEMCO Kalama Terminal",
+    "lat": 45.9867,
+    "lon": -122.8367,
+    "state": "WA"
+  },
+  "9440422": {
+    "name": "Longview",
+    "lat": 46.1061,
+    "lon": -122.9542,
+    "state": "WA"
+  },
+  "9440569": {
+    "name": "Skamokawa",
+    "lat": 46.2703,
+    "lon": -123.4565,
+    "state": "WA"
+  },
+  "9440581": {
+    "name": "Cape Disappointment",
+    "lat": 46.281,
+    "lon": -124.0463,
+    "state": "WA"
+  },
+  "9440910": {
+    "name": "Toke Point",
+    "lat": 46.7075,
+    "lon": -123.9669,
+    "state": "WA"
+  },
+  "9441102": {
+    "name": "Westport",
+    "lat": 46.9043,
+    "lon": -124.1051,
+    "state": "WA"
+  },
+  "9442396": {
+    "name": "La Push, Quillayute River",
+    "lat": 47.9128,
+    "lon": -124.6357,
+    "state": "WA"
+  },
+  "9443090": {
+    "name": "Neah Bay",
+    "lat": 48.3707,
+    "lon": -124.6016,
+    "state": "WA"
+  },
+  "9444090": {
+    "name": "Port Angeles",
+    "lat": 48.125,
+    "lon": -123.44,
+    "state": "WA"
+  },
+  "9444900": {
+    "name": "Port Townsend",
+    "lat": 48.1112,
+    "lon": -122.7597,
+    "state": "WA"
+  },
+  "9445958": {
+    "name": "Bremerton",
+    "lat": 47.5617,
+    "lon": -122.623,
+    "state": "WA"
+  },
+  "9446484": {
+    "name": "Tacoma",
+    "lat": 47.2667,
+    "lon": -122.4133,
+    "state": "WA"
+  },
+  "9447130": {
+    "name": "Seattle",
+    "lat": 47.6026,
+    "lon": -122.3393,
+    "state": "WA"
+  },
+  "9449424": {
+    "name": "Cherry Point",
+    "lat": 48.8627,
+    "lon": -122.7586,
+    "state": "WA"
+  },
+  "9449880": {
+    "name": "Friday Harbor",
+    "lat": 48.5453,
+    "lon": -123.0125,
+    "state": "WA"
+  },
+  "9450460": {
+    "name": "Ketchikan",
+    "lat": 55.3319,
+    "lon": -131.6261,
+    "state": "AK"
+  },
+  "9451054": {
+    "name": "Port Alexander",
+    "lat": 56.2467,
+    "lon": -134.647,
+    "state": "AK"
+  },
+  "9451600": {
+    "name": "Sitka",
+    "lat": 57.0517,
+    "lon": -135.342,
+    "state": "AK"
+  },
+  "9452210": {
+    "name": "Juneau",
+    "lat": 58.2988,
+    "lon": -134.4106,
+    "state": "AK"
+  },
+  "9452400": {
+    "name": "Skagway, Taiya Inlet",
+    "lat": 59.4508,
+    "lon": -135.328,
+    "state": "AK"
+  },
+  "9452634": {
+    "name": "Elfin Cove",
+    "lat": 58.1947,
+    "lon": -136.3469,
+    "state": "AK"
+  },
+  "9453220": {
+    "name": "Yakutat, Yakutat Bay",
+    "lat": 59.5485,
+    "lon": -139.7334,
+    "state": "AK"
+  },
+  "9454050": {
+    "name": "Cordova",
+    "lat": 60.5583,
+    "lon": -145.753,
+    "state": "AK"
+  },
+  "9454240": {
+    "name": "Valdez",
+    "lat": 61.125,
+    "lon": -146.362,
+    "state": "AK"
+  },
+  "9455090": {
+    "name": "Seward",
+    "lat": 60.1193,
+    "lon": -149.4281,
+    "state": "AK"
+  },
+  "9455500": {
+    "name": "Seldovia",
+    "lat": 59.4405,
+    "lon": -151.7199,
+    "state": "AK"
+  },
+  "9455760": {
+    "name": "Nikiski",
+    "lat": 60.6833,
+    "lon": -151.398,
+    "state": "AK"
+  },
+  "9455920": {
+    "name": "Anchorage",
+    "lat": 61.2375,
+    "lon": -149.8904,
+    "state": "AK"
+  },
+  "9457292": {
+    "name": "Kodiak Island",
+    "lat": 57.7317,
+    "lon": -152.512,
+    "state": "AK"
+  },
+  "9457804": {
+    "name": "Alitak",
+    "lat": 56.8974,
+    "lon": -154.248,
+    "state": "AK"
+  },
+  "9459450": {
+    "name": "Sand Point",
+    "lat": 55.3317,
+    "lon": -160.5043,
+    "state": "AK"
+  },
+  "9459881": {
+    "name": "King Cove",
+    "lat": 55.0599,
+    "lon": -162.3261,
+    "state": "AK"
+  },
+  "9461380": {
+    "name": "Adak Island",
+    "lat": 51.8606,
+    "lon": -176.6376,
+    "state": "AK"
+  },
+  "9461710": {
+    "name": "Atka",
+    "lat": 52.2319,
+    "lon": -174.1725,
+    "state": "AK"
+  },
+  "9462450": {
+    "name": "Nikolski",
+    "lat": 52.9406,
+    "lon": -168.8713,
+    "state": "AK"
+  },
+  "9462620": {
+    "name": "Unalaska",
+    "lat": 53.8792,
+    "lon": -166.5403,
+    "state": "AK"
+  },
+  "9463502": {
+    "name": "Port Moller",
+    "lat": 55.9858,
+    "lon": -160.5736,
+    "state": "AK"
+  },
+  "9464212": {
+    "name": "Village Cove, St Paul Island",
+    "lat": 57.1253,
+    "lon": -170.2852,
+    "state": "AK"
+  },
+  "9468333": {
+    "name": "Unalakleet",
+    "lat": 63.875,
+    "lon": -160.788,
+    "state": "AK"
+  },
+  "9468756": {
+    "name": "Nome, Norton Sound",
+    "lat": 64.4946,
+    "lon": -165.4396,
+    "state": "AK"
+  },
+  "9491094": {
+    "name": "Red Dog Dock",
+    "lat": 67.5758,
+    "lon": -164.0644,
+    "state": "AK"
+  },
+  "9497645": {
+    "name": "Prudhoe Bay",
+    "lat": 70.4114,
+    "lon": -148.5317,
+    "state": "AK"
+  },
+  "9751364": {
+    "name": "Christiansted Harbor, St Croix",
+    "lat": 17.7477,
+    "lon": -64.6984,
+    "state": "VI"
+  },
+  "9751381": {
+    "name": "Lameshur Bay, St John",
+    "lat": 18.3182,
+    "lon": -64.7242,
+    "state": "VI"
+  },
+  "9751401": {
+    "name": "Limetree Bay",
+    "lat": 17.6947,
+    "lon": -64.7538,
+    "state": "VI"
+  },
+  "9751639": {
+    "name": "Charlotte Amalie",
+    "lat": 18.3306,
+    "lon": -64.9258,
+    "state": "VI"
+  },
+  "9752235": {
+    "name": "Culebra",
+    "lat": 18.3009,
+    "lon": -65.3025,
+    "state": "PR"
+  },
+  "9752621": {
+    "name": "Isabel Segunda, Vieques Island",
+    "lat": 18.1525,
+    "lon": -65.4438,
+    "state": "PR"
+  },
+  "9752695": {
+    "name": "Esperanza, Vieques Island",
+    "lat": 18.0939,
+    "lon": -65.4714,
+    "state": "PR"
+  },
+  "9753216": {
+    "name": "Fajardo",
+    "lat": 18.3353,
+    "lon": -65.6311,
+    "state": "PR"
+  },
+  "9754229": {
+    "name": "Yabucoa Harbor",
+    "lat": 18.0551,
+    "lon": -65.833,
+    "state": "PR"
+  },
+  "9755371": {
+    "name": "San Juan, La Puntilla, San Juan Bay",
+    "lat": 18.4589,
+    "lon": -66.1164,
+    "state": "PR"
+  },
+  "9755968": {
+    "name": "Salinas, Bahia de Jobos",
+    "lat": 17.9491,
+    "lon": -66.2259,
+    "state": "PR"
+  },
+  "9757811": {
+    "name": "Arecibo",
+    "lat": 18.4805,
+    "lon": -66.7024,
+    "state": "PR"
+  },
+  "9758066": {
+    "name": "Guayanilla, Bahia de Guayanilla",
+    "lat": 18.0059,
+    "lon": -66.7666,
+    "state": "PR"
+  },
+  "9759110": {
+    "name": "Magueyes Island",
+    "lat": 17.9701,
+    "lon": -67.0464,
+    "state": "PR"
+  },
+  "9759394": {
+    "name": "Mayaguez",
+    "lat": 18.2188,
+    "lon": -67.1624,
+    "state": "PR"
+  },
+  "9759413": {
+    "name": "Aguadilla, Crashboat Beach",
+    "lat": 18.4566,
+    "lon": -67.1646,
+    "state": "PR"
+  },
+  "9759938": {
+    "name": "Mona Island",
+    "lat": 18.0893,
+    "lon": -67.9382,
+    "state": "PR"
+  }
+}

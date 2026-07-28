@@ -1,0 +1,133 @@
+<mxfile host="65bd71144e">
+    <diagram name="VerificationChecksActivity" id="32">
+        <mxGraphModel dx="896" dy="827" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1200" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="31" value="Verification Checks Pipeline" style="text;html=1;fontSize=14;fontFamily=Helvetica;fontStyle=1;fontColor=#212121;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="225" y="20" width="300" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="ScenarioAssessment + Supporting Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="60" width="330" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="Absent input: NOT_EVALUATED, prerequisite MISSING" style="text;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#757575;fontStyle=2;align=right;" parent="1" vertex="1">
+                    <mxGeometry x="395" y="95" width="255" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="9 Verification Checks (fixed order)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#212121;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="120" width="550" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;1&lt;/td&gt;&lt;td&gt;&lt;b&gt;Hold-out station validation&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;arrival err &amp;gt; 5 min or amp err &amp;gt; 50% &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="160" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;2&lt;/td&gt;&lt;td&gt;&lt;b&gt;Sensitivity analysis&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;leave-one-out NNLS, active set change &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="196" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;3&lt;/td&gt;&lt;td&gt;&lt;b&gt;Posterior stability&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;leading scenario changed &amp;rarr; CONCERN&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="232" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;4&lt;/td&gt;&lt;td&gt;&lt;b&gt;Data coverage&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;&amp;lt; 2 DART &amp;rarr; FAIL; azimuth &amp;lt; 90&amp;deg; &amp;rarr; CONCERN&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="268" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;5&lt;/td&gt;&lt;td&gt;&lt;b&gt;Physical consistency&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;|M&lt;sub&gt;w,NNLS&lt;/sub&gt; &amp;minus; M&lt;sub&gt;w,seis&lt;/sub&gt;| &amp;gt; 0.6 &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="304" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;6&lt;/td&gt;&lt;td&gt;&lt;b&gt;Model fit quality&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;RMSE &amp;gt; 5 cm or systematic bias &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="340" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;7&lt;/td&gt;&lt;td&gt;&lt;b&gt;Tidal state review&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;uncorrected proxies when needed &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="376" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;8&lt;/td&gt;&lt;td&gt;&lt;b&gt;Meteotsunami discriminator&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;score &amp;gt; 0.6 &amp;rarr; FAIL&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="412" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="&lt;table style=&quot;font-family:Helvetica;font-size:11px;color:#212121;border-collapse:collapse;width:100%&quot;&gt;&lt;tr&gt;&lt;td style=&quot;width:24px;text-align:center;font-weight:bold&quot;&gt;9&lt;/td&gt;&lt;td&gt;&lt;b&gt;Rayleigh wave suspect&lt;/b&gt;&lt;/td&gt;&lt;td style=&quot;width:200px;font-size:10px;color:#616161&quot;&gt;timing match &amp;rarr; CONCERN only (never FAIL)&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=11;fontColor=#212121;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="448" width="550" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="27" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Outcome Aggregation" style="text;html=1;fontSize=12;fontFamily=Helvetica;fontStyle=1;fontColor=#212121;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="500" width="230" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="Evaluated over applicable checks only; NOT_APPLICABLE excluded.&lt;br&gt;No applicable check at this stage is itself INCOMPLETE." style="text;html=1;fontFamily=Helvetica;fontSize=10;fontColor=#757575;fontStyle=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="150" y="525" width="450" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Any FAIL?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="305" y="530" width="140" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="13" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="&lt;b&gt;FAIL&lt;/b&gt;&lt;br&gt;abstain_required = True" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="545" width="190" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="&lt;b&gt;ABSTAIN&lt;/b&gt;&lt;br&gt;(mandatory)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#C62828;" parent="1" vertex="1">
+                    <mxGeometry x="555" y="880" width="140" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="YES" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#C62828;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#C62828;" parent="1" source="3" target="26" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#C62828;strokeWidth=1.5;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" parent="1" source="26" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="775" y="570"/>
+                            <mxPoint x="775" y="902"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="Required check&lt;br&gt;prereq MISSING?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=11;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="650" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="&lt;b&gt;INCOMPLETE&lt;/b&gt;&lt;br&gt;abstain_required = True" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="655" width="190" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="YES" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#C62828;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#C62828;" parent="1" source="40" target="41" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#C62828;strokeWidth=1.5;" parent="1" source="41" target="2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="NO" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#424242;" parent="1" source="40" target="16" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Any CONCERN, or&lt;br&gt;OPTIONAL prereq&lt;br&gt;missing?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;rounded=1;" parent="1" vertex="1">
+                    <mxGeometry x="285" y="770" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="NO" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#424242;" parent="1" source="3" target="40" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="&lt;b&gt;PASS_WITH_CONCERNS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="975" width="190" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="YES" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#F9A825;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#F9A825;" parent="1" source="16" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="&lt;b&gt;PASS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="975" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="NO" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#2E7D32;strokeWidth=1.5;fontFamily=Helvetica;fontSize=10;fontColor=#2E7D32;" parent="1" source="16" target="30" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="VerificationResult" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#212121;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="1065" width="230" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="30" target="29" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="170" y="1040"/>
+                            <mxPoint x="375" y="1040"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#424242;strokeWidth=1.5;" parent="1" source="15" target="29" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="625" y="1040"/>
+                            <mxPoint x="375" y="1040"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

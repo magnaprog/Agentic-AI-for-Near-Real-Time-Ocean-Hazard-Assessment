@@ -1,0 +1,3134 @@
+{
+  "description": "Sensitivity of full-record anomaly scoring to the equal-timestamp duplicate policy in archived DART replay data. The frozen policy is 'first' (earliest row in native archive order wins, matching the live station buffer). Alternative policies exist only for this evaluation. Conflict fingerprints list every duplicate timestamp whose rows disagree in value, so archive re-sorts that change the winning record are visible as diffs here.",
+  "frozen_policy": "first",
+  "policies": [
+    "first",
+    "last",
+    "min",
+    "max",
+    "mean"
+  ],
+  "thresholds": {
+    "t1": 0.35,
+    "t2": 0.6,
+    "t3": 0.85
+  },
+  "events": {
+    "tohoku": {
+      "stations": {
+        "21401": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 0.291
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:00:00+00:00",
+              "values": [
+                5263.221,
+                5263.222
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:49:00+00:00",
+              "values": [
+                5263.324,
+                5263.31
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:50:00+00:00",
+              "values": [
+                5263.318,
+                5263.32
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:51:00+00:00",
+              "values": [
+                5263.271,
+                5263.324
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:52:00+00:00",
+              "values": [
+                5263.343,
+                5263.634
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.986003,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.966007,
+              "bocpd_score": 0.719209,
+              "statistical_score": 0.966007,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.98605,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.966121,
+              "bocpd_score": 0.725594,
+              "statistical_score": 0.966121,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.986001,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.966003,
+              "bocpd_score": 0.718481,
+              "statistical_score": 0.966003,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.986051,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.966123,
+              "bocpd_score": 0.725556,
+              "statistical_score": 0.966123,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.985991,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.965978,
+              "bocpd_score": 0.713854,
+              "statistical_score": 0.965978,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 4.8e-05,
+          "tier_flip": false
+        },
+        "21413": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 4,
+            "max_conflict_delta": 0.16
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:50:00+00:00",
+              "values": [
+                5824.761,
+                5824.775
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:51:00+00:00",
+              "values": [
+                5824.777,
+                5824.713
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:52:00+00:00",
+              "values": [
+                5824.807,
+                5824.797
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:53:00+00:00",
+              "values": [
+                5824.83,
+                5824.67
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.97761,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945623,
+              "bocpd_score": 0.829618,
+              "statistical_score": 0.945623,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.977588,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945571,
+              "bocpd_score": 0.836551,
+              "statistical_score": 0.945571,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.977588,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945571,
+              "bocpd_score": 0.83662,
+              "statistical_score": 0.945571,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.977608,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945619,
+              "bocpd_score": 0.829548,
+              "statistical_score": 0.945619,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.977584,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945561,
+              "bocpd_score": 0.830606,
+              "statistical_score": 0.945561,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 2.6e-05,
+          "tier_flip": false
+        },
+        "21418": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 4,
+            "max_conflict_delta": 0.653
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:49:00+00:00",
+              "values": [
+                5662.463,
+                5662.366
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:50:00+00:00",
+              "values": [
+                5662.015,
+                5661.362
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:51:00+00:00",
+              "values": [
+                5662.525,
+                5662.411
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:52:00+00:00",
+              "values": [
+                5662.317,
+                5662.039
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.995208,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.988362,
+              "bocpd_score": 0.860374,
+              "statistical_score": 0.988362,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.995259,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.988485,
+              "bocpd_score": 0.845626,
+              "statistical_score": 0.988485,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.995259,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.988485,
+              "bocpd_score": 0.845626,
+              "statistical_score": 0.988485,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.995208,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.988362,
+              "bocpd_score": 0.860374,
+              "statistical_score": 0.988362,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.995219,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.98839,
+              "bocpd_score": 0.854927,
+              "statistical_score": 0.98839,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 5.1e-05,
+          "tier_flip": false
+        },
+        "21419": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 0.291
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:00:00+00:00",
+              "values": [
+                5291.96,
+                5291.961
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:52:00+00:00",
+              "values": [
+                5292.109,
+                5292.035
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:53:00+00:00",
+              "values": [
+                5292.085,
+                5291.794
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:54:00+00:00",
+              "values": [
+                5292.016,
+                5291.771
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:55:00+00:00",
+              "values": [
+                5292.05,
+                5291.951
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.977775,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.946026,
+              "bocpd_score": 0.865392,
+              "statistical_score": 0.946026,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.977606,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945616,
+              "bocpd_score": 0.865309,
+              "statistical_score": 0.945616,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.977606,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945616,
+              "bocpd_score": 0.865309,
+              "statistical_score": 0.945616,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.977775,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.946026,
+              "bocpd_score": 0.865392,
+              "statistical_score": 0.946026,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.97759,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.945575,
+              "bocpd_score": 0.865396,
+              "statistical_score": 0.945575,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.000185,
+          "tier_flip": false
+        },
+        "46402": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 444,
+            "n_rows_out": 431,
+            "n_duplicate_rows": 13,
+            "n_conflict_timestamps": 10,
+            "max_conflict_delta": 1.003
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:45:00+00:00",
+              "values": [
+                4719.186,
+                4719.185
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:00:00+00:00",
+              "values": [
+                4719.177,
+                4719.173
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:05:00+00:00",
+              "values": [
+                4719.171,
+                4719.209
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:06:00+00:00",
+              "values": [
+                4719.163,
+                4719.187
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:07:00+00:00",
+              "values": [
+                4719.171,
+                4719.149
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:08:00+00:00",
+              "values": [
+                4719.17,
+                4719.173
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:17:00+00:00",
+              "values": [
+                4719.593,
+                4719.592
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:18:00+00:00",
+              "values": [
+                4719.595,
+                4718.592
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:19:00+00:00",
+              "values": [
+                4719.602,
+                4719.596
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:20:00+00:00",
+              "values": [
+                4719.617,
+                4719.607
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.991675,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.979783,
+              "bocpd_score": 0.819932,
+              "statistical_score": 0.979783,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.997149,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.993076,
+              "bocpd_score": 0.909134,
+              "statistical_score": 0.993076,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.997164,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.993112,
+              "bocpd_score": 0.909609,
+              "statistical_score": 0.993112,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.991542,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.979459,
+              "bocpd_score": 0.820116,
+              "statistical_score": 0.979459,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.99484,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.98747,
+              "bocpd_score": 0.906471,
+              "statistical_score": 0.98747,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.005489,
+          "tier_flip": false
+        },
+        "46403": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 460,
+            "n_rows_out": 443,
+            "n_duplicate_rows": 17,
+            "n_conflict_timestamps": 14,
+            "max_conflict_delta": 0.039
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:00:00+00:00",
+              "values": [
+                4514.369,
+                4514.368
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:15:00+00:00",
+              "values": [
+                4514.335,
+                4514.334
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:30:00+00:00",
+              "values": [
+                4514.301,
+                4514.3
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:08:00+00:00",
+              "values": [
+                4514.223,
+                4514.211
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:09:00+00:00",
+              "values": [
+                4514.231,
+                4514.208
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:10:00+00:00",
+              "values": [
+                4514.23,
+                4514.235
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:11:00+00:00",
+              "values": [
+                4514.228,
+                4514.267
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:24:00+00:00",
+              "values": [
+                4514.699,
+                4514.697
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:25:00+00:00",
+              "values": [
+                4514.705,
+                4514.703
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:26:00+00:00",
+              "values": [
+                4514.71,
+                4514.709
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:18:00+00:00",
+              "values": [
+                4514.929,
+                4514.928
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:19:00+00:00",
+              "values": [
+                4514.935,
+                4514.933
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:20:00+00:00",
+              "values": [
+                4514.939,
+                4514.937
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T11:21:00+00:00",
+              "values": [
+                4514.943,
+                4514.942
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.310657,
+              "threshold_score": 0.344069,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.262927,
+              "statistical_score": 0.262927,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.340492,
+              "threshold_score": 0.394823,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.262876,
+              "statistical_score": 0.262876,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.321487,
+              "threshold_score": 0.36273,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.262568,
+              "statistical_score": 0.262568,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.310735,
+              "threshold_score": 0.343984,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.263235,
+              "statistical_score": 0.263235,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.310995,
+              "threshold_score": 0.344647,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.262922,
+              "statistical_score": 0.262922,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.029835,
+          "tier_flip": false
+        },
+        "46408": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 460,
+            "n_rows_out": 443,
+            "n_duplicate_rows": 17,
+            "n_conflict_timestamps": 15,
+            "max_conflict_delta": 0.134
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:15:00+00:00",
+              "values": [
+                5378.626,
+                5378.625
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:30:00+00:00",
+              "values": [
+                5378.626,
+                5378.627
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:00:00+00:00",
+              "values": [
+                5378.631,
+                5378.634
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:03:00+00:00",
+              "values": [
+                5378.61,
+                5378.704
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:04:00+00:00",
+              "values": [
+                5378.649,
+                5378.783
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:05:00+00:00",
+              "values": [
+                5378.633,
+                5378.628
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:06:00+00:00",
+              "values": [
+                5378.643,
+                5378.645
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:17:00+00:00",
+              "values": [
+                5378.855,
+                5378.854
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:18:00+00:00",
+              "values": [
+                5378.86,
+                5378.858
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:19:00+00:00",
+              "values": [
+                5378.864,
+                5378.862
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:20:00+00:00",
+              "values": [
+                5378.874,
+                5378.871
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:23:00+00:00",
+              "values": [
+                5378.92,
+                5378.913
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:24:00+00:00",
+              "values": [
+                5378.944,
+                5378.933
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:25:00+00:00",
+              "values": [
+                5378.976,
+                5378.964
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T10:26:00+00:00",
+              "values": [
+                5379.008,
+                5378.997
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.995674,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989495,
+              "bocpd_score": 0.654938,
+              "statistical_score": 0.989495,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.995801,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989803,
+              "bocpd_score": 0.649344,
+              "statistical_score": 0.989803,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.995654,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989445,
+              "bocpd_score": 0.6568,
+              "statistical_score": 0.989445,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.995819,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989846,
+              "bocpd_score": 0.647562,
+              "statistical_score": 0.989846,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.995718,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989601,
+              "bocpd_score": 0.652765,
+              "statistical_score": 0.989601,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.000145,
+          "tier_flip": false
+        },
+        "46411": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 328,
+            "n_rows_out": 319,
+            "n_duplicate_rows": 9,
+            "n_conflict_timestamps": 7,
+            "max_conflict_delta": 0.037
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2011-03-11T05:00:00+00:00",
+              "values": [
+                4259.996,
+                4259.998
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:30:00+00:00",
+              "values": [
+                4260.038,
+                4260.04
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T05:45:00+00:00",
+              "values": [
+                4260.067,
+                4260.068
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:18:00+00:00",
+              "values": [
+                4260.152,
+                4260.189
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:19:00+00:00",
+              "values": [
+                4260.143,
+                4260.156
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:20:00+00:00",
+              "values": [
+                4260.16,
+                4260.153
+              ]
+            },
+            {
+              "timestamp_utc": "2011-03-11T06:21:00+00:00",
+              "values": [
+                4260.146,
+                4260.156
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.898272,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.752947,
+              "bocpd_score": 0.368637,
+              "statistical_score": 0.752947,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.889849,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.73249,
+              "bocpd_score": 0.370405,
+              "statistical_score": 0.73249,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.898171,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.752702,
+              "bocpd_score": 0.368637,
+              "statistical_score": 0.752702,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.889829,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.732441,
+              "bocpd_score": 0.370405,
+              "statistical_score": 0.732441,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.893847,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.7422,
+              "bocpd_score": 0.369612,
+              "statistical_score": 0.7422,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.008443,
+          "tier_flip": false
+        }
+      },
+      "event_max_abs_ensemble_delta": 0.029835,
+      "any_tier_flip": false
+    },
+    "chile": {
+      "stations": {
+        "21413": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "32411": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 367,
+            "n_rows_out": 360,
+            "n_duplicate_rows": 7,
+            "n_conflict_timestamps": 6,
+            "max_conflict_delta": 0.024
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2010-02-27T05:45:00+00:00",
+              "values": [
+                3244.513,
+                3244.514
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:00:00+00:00",
+              "values": [
+                3244.565,
+                3244.566
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:56:00+00:00",
+              "values": [
+                3244.652,
+                3244.676
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T12:23:00+00:00",
+              "values": [
+                3242.86,
+                3242.862
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T12:24:00+00:00",
+              "values": [
+                3242.856,
+                3242.858
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T12:26:00+00:00",
+              "values": [
+                3242.851,
+                3242.854
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.999635,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999113,
+              "bocpd_score": 0.953254,
+              "statistical_score": 0.999113,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.999635,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999113,
+              "bocpd_score": 0.953351,
+              "statistical_score": 0.999113,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.999635,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999113,
+              "bocpd_score": 0.953254,
+              "statistical_score": 0.999113,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.999635,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999113,
+              "bocpd_score": 0.953351,
+              "statistical_score": 0.999113,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.999635,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999113,
+              "bocpd_score": 0.953335,
+              "statistical_score": 0.999113,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "32412": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 454,
+            "n_rows_out": 444,
+            "n_duplicate_rows": 10,
+            "n_conflict_timestamps": 7,
+            "max_conflict_delta": 0.244
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2010-02-27T06:45:00+00:00",
+              "values": [
+                4325.539,
+                4325.783
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:46:00+00:00",
+              "values": [
+                4325.558,
+                4325.752
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:47:00+00:00",
+              "values": [
+                4325.483,
+                4325.497
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:48:00+00:00",
+              "values": [
+                4325.408,
+                4325.445
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T09:47:00+00:00",
+              "values": [
+                4325.729,
+                4325.712
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T09:48:00+00:00",
+              "values": [
+                4325.771,
+                4325.755
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T09:49:00+00:00",
+              "values": [
+                4325.805,
+                4325.794
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.99566,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989459,
+              "bocpd_score": 0.513487,
+              "statistical_score": 0.989459,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.995661,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989462,
+              "bocpd_score": 0.47182,
+              "statistical_score": 0.989462,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.9956,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989315,
+              "bocpd_score": 0.513487,
+              "statistical_score": 0.989315,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.995719,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989603,
+              "bocpd_score": 0.47182,
+              "statistical_score": 0.989603,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.99558,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.989265,
+              "bocpd_score": 0.48899,
+              "statistical_score": 0.989265,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 8e-05,
+          "tier_flip": false
+        },
+        "46411": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.060474,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.146865,
+              "statistical_score": 0.146865,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.060474,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.146865,
+              "statistical_score": 0.146865,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.060474,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.146865,
+              "statistical_score": 0.146865,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.060474,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.146865,
+              "statistical_score": 0.146865,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.060474,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.146865,
+              "statistical_score": 0.146865,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "46412": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 328,
+            "n_rows_out": 319,
+            "n_duplicate_rows": 9,
+            "n_conflict_timestamps": 8,
+            "max_conflict_delta": 0.06
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2010-02-27T06:00:00+00:00",
+              "values": [
+                3717.803,
+                3717.802
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:30:00+00:00",
+              "values": [
+                3717.699,
+                3717.698
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T06:45:00+00:00",
+              "values": [
+                3717.638,
+                3717.636
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T07:00:00+00:00",
+              "values": [
+                3717.579,
+                3717.576
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T07:14:00+00:00",
+              "values": [
+                3717.461,
+                3717.521
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T07:15:00+00:00",
+              "values": [
+                3717.446,
+                3717.5
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T07:16:00+00:00",
+              "values": [
+                3717.514,
+                3717.504
+              ]
+            },
+            {
+              "timestamp_utc": "2010-02-27T07:17:00+00:00",
+              "values": [
+                3717.477,
+                3717.52
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.336585,
+              "threshold_score": 0.169023,
+              "wavelet_score": 0.57596,
+              "bocpd_score": 0.132067,
+              "statistical_score": 0.57596,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.331273,
+              "threshold_score": 0.16646,
+              "wavelet_score": 0.566721,
+              "bocpd_score": 0.132292,
+              "statistical_score": 0.566721,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.335331,
+              "threshold_score": 0.169217,
+              "wavelet_score": 0.572638,
+              "bocpd_score": 0.131083,
+              "statistical_score": 0.572638,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.331025,
+              "threshold_score": 0.166266,
+              "wavelet_score": 0.566396,
+              "bocpd_score": 0.132283,
+              "statistical_score": 0.566396,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.329652,
+              "threshold_score": 0.167741,
+              "wavelet_score": 0.560952,
+              "bocpd_score": 0.133563,
+              "statistical_score": 0.560952,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.006933,
+          "tier_flip": false
+        },
+        "51407": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "54401": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.130141,
+              "threshold_score": 0.221239,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.130141,
+              "threshold_score": 0.221239,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.130141,
+              "threshold_score": 0.221239,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.130141,
+              "threshold_score": 0.221239,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.130141,
+              "threshold_score": 0.221239,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        }
+      },
+      "event_max_abs_ensemble_delta": 0.006933,
+      "any_tier_flip": false
+    },
+    "illapel": {
+      "stations": {
+        "32401": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 557,
+            "n_rows_out": 552,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 19.61
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2015-09-16T22:00:00+00:00",
+              "values": [
+                4829.955,
+                4829.957
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T23:00:00+00:00",
+              "values": [
+                4830.077,
+                4830.06
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T23:01:00+00:00",
+              "values": [
+                4830.053,
+                4849.663
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T23:02:00+00:00",
+              "values": [
+                4830.06,
+                4830.069
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T23:03:00+00:00",
+              "values": [
+                4830.132,
+                4830.016
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.753421,
+              "threshold_score": 0.913837,
+              "wavelet_score": 0.524254,
+              "bocpd_score": 0.363621,
+              "statistical_score": 0.524254,
+              "tier": "ASSESS"
+            },
+            "last": {
+              "ensemble_score": 0.999858,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999655,
+              "bocpd_score": 0.937271,
+              "statistical_score": 0.999655,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.814304,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.549024,
+              "bocpd_score": 0.364308,
+              "statistical_score": 0.549024,
+              "tier": "ASSESS"
+            },
+            "max": {
+              "ensemble_score": 0.999858,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999654,
+              "bocpd_score": 0.937271,
+              "statistical_score": 0.999654,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.999425,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.998604,
+              "bocpd_score": 0.92672,
+              "statistical_score": 0.998604,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.246437,
+          "tier_flip": true
+        },
+        "32402": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 557,
+            "n_rows_out": 552,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 4,
+            "max_conflict_delta": 0.149
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2015-09-16T22:57:00+00:00",
+              "values": [
+                4053.956,
+                4053.869
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T22:58:00+00:00",
+              "values": [
+                4053.95,
+                4054.003
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T22:59:00+00:00",
+              "values": [
+                4053.785,
+                4053.934
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-16T23:00:00+00:00",
+              "values": [
+                4053.95,
+                4054.043
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.992222,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.981109,
+              "bocpd_score": 0.303988,
+              "statistical_score": 0.981109,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.991996,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.980561,
+              "bocpd_score": 0.344597,
+              "statistical_score": 0.980561,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.992246,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.981168,
+              "bocpd_score": 0.297289,
+              "statistical_score": 0.981168,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.99194,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.980427,
+              "bocpd_score": 0.343001,
+              "statistical_score": 0.980427,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.992049,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.980691,
+              "bocpd_score": 0.33121,
+              "statistical_score": 0.980691,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.000282,
+          "tier_flip": false
+        },
+        "32412": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 568,
+            "n_rows_out": 555,
+            "n_duplicate_rows": 13,
+            "n_conflict_timestamps": 11,
+            "max_conflict_delta": 0.005
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2015-09-17T01:53:00+00:00",
+              "values": [
+                4335.772,
+                4335.776
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:53:15+00:00",
+              "values": [
+                4335.772,
+                4335.774
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:54:00+00:00",
+              "values": [
+                4335.759,
+                4335.764
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:54:15+00:00",
+              "values": [
+                4335.759,
+                4335.761
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:55:00+00:00",
+              "values": [
+                4335.751,
+                4335.752
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:56:00+00:00",
+              "values": [
+                4335.754,
+                4335.751
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T01:56:15+00:00",
+              "values": [
+                4335.754,
+                4335.753
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T02:17:00+00:00",
+              "values": [
+                4335.747,
+                4335.75
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T02:18:00+00:00",
+              "values": [
+                4335.75,
+                4335.747
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T02:19:00+00:00",
+              "values": [
+                4335.759,
+                4335.755
+              ]
+            },
+            {
+              "timestamp_utc": "2015-09-17T02:20:00+00:00",
+              "values": [
+                4335.765,
+                4335.764
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.492535,
+              "threshold_score": 0.538656,
+              "wavelet_score": 0.119911,
+              "bocpd_score": 0.426647,
+              "statistical_score": 0.426647,
+              "tier": "INVESTIGATE"
+            },
+            "last": {
+              "ensemble_score": 0.495597,
+              "threshold_score": 0.543803,
+              "wavelet_score": 0.118297,
+              "bocpd_score": 0.426733,
+              "statistical_score": 0.426733,
+              "tier": "INVESTIGATE"
+            },
+            "min": {
+              "ensemble_score": 0.494238,
+              "threshold_score": 0.541497,
+              "wavelet_score": 0.12228,
+              "bocpd_score": 0.426725,
+              "statistical_score": 0.426725,
+              "tier": "INVESTIGATE"
+            },
+            "max": {
+              "ensemble_score": 0.493894,
+              "threshold_score": 0.540962,
+              "wavelet_score": 0.115846,
+              "bocpd_score": 0.426654,
+              "statistical_score": 0.426654,
+              "tier": "INVESTIGATE"
+            },
+            "mean": {
+              "ensemble_score": 0.49406,
+              "threshold_score": 0.54123,
+              "wavelet_score": 0.118993,
+              "bocpd_score": 0.426676,
+              "statistical_score": 0.426676,
+              "tier": "INVESTIGATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.003062,
+          "tier_flip": false
+        },
+        "46403": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.000493,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.001196,
+              "statistical_score": 0.001196,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.000493,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.001196,
+              "statistical_score": 0.001196,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.000493,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.001196,
+              "statistical_score": 0.001196,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.000493,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.001196,
+              "statistical_score": 0.001196,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.000493,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.001196,
+              "statistical_score": 0.001196,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "46407": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "46411": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "51426": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        }
+      },
+      "event_max_abs_ensemble_delta": 0.246437,
+      "any_tier_flip": true
+    },
+    "iquique": {
+      "stations": {
+        "32401": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 561,
+            "n_rows_out": 555,
+            "n_duplicate_rows": 6,
+            "n_conflict_timestamps": 6,
+            "max_conflict_delta": 0.702
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2014-04-01T23:00:00+00:00",
+              "values": [
+                4797.163,
+                4797.165
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:48:00+00:00",
+              "values": [
+                4797.368,
+                4797.254
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:49:00+00:00",
+              "values": [
+                4797.22,
+                4797.638
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:50:00+00:00",
+              "values": [
+                4797.534,
+                4797.887
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:51:00+00:00",
+              "values": [
+                4797.238,
+                4796.536
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:23:00+00:00",
+              "values": [
+                4797.305,
+                4797.307
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.697802,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.266091,
+              "statistical_score": 0.266091,
+              "tier": "ASSESS"
+            },
+            "last": {
+              "ensemble_score": 0.697539,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.265453,
+              "statistical_score": 0.265453,
+              "tier": "ASSESS"
+            },
+            "min": {
+              "ensemble_score": 0.697241,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.264728,
+              "statistical_score": 0.264728,
+              "tier": "ASSESS"
+            },
+            "max": {
+              "ensemble_score": 0.698099,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.266811,
+              "statistical_score": 0.266811,
+              "tier": "ASSESS"
+            },
+            "mean": {
+              "ensemble_score": 0.697721,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.265893,
+              "statistical_score": 0.265893,
+              "tier": "ASSESS"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.000561,
+          "tier_flip": false
+        },
+        "32402": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 557,
+            "n_rows_out": 552,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 0.149
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2014-04-01T23:00:00+00:00",
+              "values": [
+                4067.231,
+                4067.232
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:50:00+00:00",
+              "values": [
+                4067.458,
+                4067.424
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:51:00+00:00",
+              "values": [
+                4067.435,
+                4067.286
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:52:00+00:00",
+              "values": [
+                4067.432,
+                4067.371
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:53:00+00:00",
+              "values": [
+                4067.412,
+                4067.395
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.81749,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.556762,
+              "statistical_score": 0.556762,
+              "tier": "ASSESS"
+            },
+            "last": {
+              "ensemble_score": 0.655937,
+              "threshold_score": 0.727478,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.553736,
+              "statistical_score": 0.553736,
+              "tier": "ASSESS"
+            },
+            "min": {
+              "ensemble_score": 0.656051,
+              "threshold_score": 0.727682,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.553721,
+              "statistical_score": 0.553721,
+              "tier": "ASSESS"
+            },
+            "max": {
+              "ensemble_score": 0.817495,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.556773,
+              "statistical_score": 0.556773,
+              "tier": "ASSESS"
+            },
+            "mean": {
+              "ensemble_score": 0.78227,
+              "threshold_score": 0.9413,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.555084,
+              "statistical_score": 0.555084,
+              "tier": "ASSESS"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.161553,
+          "tier_flip": false
+        },
+        "32412": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 637,
+            "n_rows_out": 612,
+            "n_duplicate_rows": 25,
+            "n_conflict_timestamps": 18,
+            "max_conflict_delta": 0.084
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2014-04-01T23:00:00+00:00",
+              "values": [
+                4335.799,
+                4335.798
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:54:00+00:00",
+              "values": [
+                4335.848,
+                4335.809
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:55:00+00:00",
+              "values": [
+                4335.775,
+                4335.691
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:56:00+00:00",
+              "values": [
+                4335.806,
+                4335.826
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:57:00+00:00",
+              "values": [
+                4335.802,
+                4335.857
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:02:00+00:00",
+              "values": [
+                4335.778,
+                4335.786
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:03:00+00:00",
+              "values": [
+                4335.753,
+                4335.763
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:04:00+00:00",
+              "values": [
+                4335.718,
+                4335.732
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:05:00+00:00",
+              "values": [
+                4335.69,
+                4335.697
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:08:00+00:00",
+              "values": [
+                4335.695,
+                4335.689
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:09:00+00:00",
+              "values": [
+                4335.706,
+                4335.703
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:10:00+00:00",
+              "values": [
+                4335.71,
+                4335.711
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:11:00+00:00",
+              "values": [
+                4335.703,
+                4335.706
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:18:00+00:00",
+              "values": [
+                4335.477,
+                4335.476
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:32:00+00:00",
+              "values": [
+                4335.476,
+                4335.475
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:33:00+00:00",
+              "values": [
+                4335.479,
+                4335.477
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:34:00+00:00",
+              "values": [
+                4335.482,
+                4335.481
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:35:00+00:00",
+              "values": [
+                4335.486,
+                4335.484
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.977736,
+              "threshold_score": 0.986356,
+              "wavelet_score": 0.965423,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.965423,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.985523,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.964841,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.964841,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.976863,
+              "threshold_score": 0.985438,
+              "wavelet_score": 0.964612,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.964612,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.98581,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.965539,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.965539,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.985526,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.964849,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.964849,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.008074,
+          "tier_flip": false
+        },
+        "32413": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 621,
+            "n_rows_out": 597,
+            "n_duplicate_rows": 24,
+            "n_conflict_timestamps": 22,
+            "max_conflict_delta": 0.032
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2014-04-01T23:00:00+00:00",
+              "values": [
+                3888.215,
+                3888.213
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-01T23:59:00+00:00",
+              "values": [
+                3888.021,
+                3888.028
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:00:00+00:00",
+              "values": [
+                3888.04,
+                3888.039
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:00:45+00:00",
+              "values": [
+                3888.04,
+                3888.011
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:01:00+00:00",
+              "values": [
+                3888.01,
+                3888.023
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:01:45+00:00",
+              "values": [
+                3888.01,
+                3888.0
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:02:00+00:00",
+              "values": [
+                3888.028,
+                3888.043
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T00:02:45+00:00",
+              "values": [
+                3888.028,
+                3887.996
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:33:00+00:00",
+              "values": [
+                3887.402,
+                3887.404
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:34:00+00:00",
+              "values": [
+                3887.399,
+                3887.401
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:35:00+00:00",
+              "values": [
+                3887.397,
+                3887.398
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:36:00+00:00",
+              "values": [
+                3887.393,
+                3887.395
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:38:00+00:00",
+              "values": [
+                3887.387,
+                3887.389
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:40:00+00:00",
+              "values": [
+                3887.382,
+                3887.383
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T02:41:00+00:00",
+              "values": [
+                3887.379,
+                3887.38
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:17:00+00:00",
+              "values": [
+                3887.329,
+                3887.33
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:18:00+00:00",
+              "values": [
+                3887.331,
+                3887.33
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:20:00+00:00",
+              "values": [
+                3887.333,
+                3887.335
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:23:00+00:00",
+              "values": [
+                3887.335,
+                3887.334
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:24:00+00:00",
+              "values": [
+                3887.34,
+                3887.338
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:25:00+00:00",
+              "values": [
+                3887.347,
+                3887.342
+              ]
+            },
+            {
+              "timestamp_utc": "2014-04-02T05:26:00+00:00",
+              "values": [
+                3887.35,
+                3887.348
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.999989,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999974,
+              "bocpd_score": 0.932186,
+              "statistical_score": 0.999974,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.999989,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999974,
+              "bocpd_score": 0.932189,
+              "statistical_score": 0.999974,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.999989,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999974,
+              "bocpd_score": 0.932212,
+              "statistical_score": 0.999974,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.999989,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999974,
+              "bocpd_score": 0.932161,
+              "statistical_score": 0.999974,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.999989,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.999974,
+              "bocpd_score": 0.932187,
+              "statistical_score": 0.999974,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "46403": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "51426": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        }
+      },
+      "event_max_abs_ensemble_delta": 0.161553,
+      "any_tier_flip": false
+    },
+    "samoa": {
+      "stations": {
+        "46403": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "46411": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "51407": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 28,
+            "n_rows_out": 28,
+            "n_duplicate_rows": 0,
+            "n_conflict_timestamps": 0,
+            "max_conflict_delta": 0.0
+          },
+          "conflict_fingerprint": [],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "last": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "min": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "max": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            },
+            "mean": {
+              "ensemble_score": 0.0,
+              "threshold_score": 0.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "MONITOR"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "51425": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 0.224
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2009-09-29T17:00:00+00:00",
+              "values": [
+                4962.832,
+                4962.831
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:52:00+00:00",
+              "values": [
+                4962.634,
+                4962.628
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:53:00+00:00",
+              "values": [
+                4962.604,
+                4962.38
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:54:00+00:00",
+              "values": [
+                4962.611,
+                4962.592
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:55:00+00:00",
+              "values": [
+                4962.623,
+                4962.583
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.588235,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "INVESTIGATE"
+            },
+            "last": {
+              "ensemble_score": 0.588235,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "INVESTIGATE"
+            },
+            "min": {
+              "ensemble_score": 0.588235,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "INVESTIGATE"
+            },
+            "max": {
+              "ensemble_score": 0.588235,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "INVESTIGATE"
+            },
+            "mean": {
+              "ensemble_score": 0.588235,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.0,
+              "tier": "INVESTIGATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.0,
+          "tier_flip": false
+        },
+        "51426": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 4,
+            "max_conflict_delta": 0.211
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2009-09-29T17:53:00+00:00",
+              "values": [
+                5680.684,
+                5680.895
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:54:00+00:00",
+              "values": [
+                5680.883,
+                5680.87
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:55:00+00:00",
+              "values": [
+                5680.815,
+                5680.923
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:56:00+00:00",
+              "values": [
+                5680.697,
+                5680.635
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.985822,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.965569,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.965569,
+              "tier": "ESCALATE"
+            },
+            "last": {
+              "ensemble_score": 0.987523,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.969698,
+              "bocpd_score": 0.02996,
+              "statistical_score": 0.969698,
+              "tier": "ESCALATE"
+            },
+            "min": {
+              "ensemble_score": 0.986009,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.966023,
+              "bocpd_score": 0.0,
+              "statistical_score": 0.966023,
+              "tier": "ESCALATE"
+            },
+            "max": {
+              "ensemble_score": 0.987271,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.969087,
+              "bocpd_score": 0.02996,
+              "statistical_score": 0.969087,
+              "tier": "ESCALATE"
+            },
+            "mean": {
+              "ensemble_score": 0.986415,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.967008,
+              "bocpd_score": 0.006317,
+              "statistical_score": 0.967008,
+              "tier": "ESCALATE"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.001701,
+          "tier_flip": false
+        },
+        "54401": {
+          "dedup_first": {
+            "policy": "first",
+            "n_rows_in": 437,
+            "n_rows_out": 432,
+            "n_duplicate_rows": 5,
+            "n_conflict_timestamps": 5,
+            "max_conflict_delta": 0.099
+          },
+          "conflict_fingerprint": [
+            {
+              "timestamp_utc": "2009-09-29T17:00:00+00:00",
+              "values": [
+                5836.7,
+                5836.699
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:56:00+00:00",
+              "values": [
+                5836.592,
+                5836.554
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:57:00+00:00",
+              "values": [
+                5836.559,
+                5836.539
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:58:00+00:00",
+              "values": [
+                5836.555,
+                5836.534
+              ]
+            },
+            {
+              "timestamp_utc": "2009-09-29T17:59:00+00:00",
+              "values": [
+                5836.552,
+                5836.651
+              ]
+            }
+          ],
+          "by_policy": {
+            "first": {
+              "ensemble_score": 0.760221,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.417679,
+              "statistical_score": 0.417679,
+              "tier": "ASSESS"
+            },
+            "last": {
+              "ensemble_score": 0.759821,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.416709,
+              "statistical_score": 0.416709,
+              "tier": "ASSESS"
+            },
+            "min": {
+              "ensemble_score": 0.759328,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.415511,
+              "statistical_score": 0.415511,
+              "tier": "ASSESS"
+            },
+            "max": {
+              "ensemble_score": 0.760712,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.418872,
+              "statistical_score": 0.418872,
+              "tier": "ASSESS"
+            },
+            "mean": {
+              "ensemble_score": 0.760216,
+              "threshold_score": 1.0,
+              "wavelet_score": 0.0,
+              "bocpd_score": 0.417666,
+              "statistical_score": 0.417666,
+              "tier": "ASSESS"
+            }
+          },
+          "max_abs_ensemble_delta_vs_first": 0.000893,
+          "tier_flip": false
+        }
+      },
+      "event_max_abs_ensemble_delta": 0.001701,
+      "any_tier_flip": false
+    }
+  },
+  "summary": {
+    "n_stations": 34,
+    "global_max_abs_ensemble_delta": 0.246437,
+    "n_stations_with_tier_flip": 1
+  }
+}
