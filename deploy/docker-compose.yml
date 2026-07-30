@@ -164,7 +164,9 @@ services:
       <<: [*app_env, *threshold_env]
       DB_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-${DB_PASSWORD:?}}
       HAZARD_API_KEY: ${HAZARD_API_KEY:?HAZARD_API_KEY environment variable is required}
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
       LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
       LLM_MODEL: ${LLM_MODEL:-}
       DB_ORCHESTRATOR_WRITER_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-}
       OTLP_ENDPOINT: http://jaeger:4317

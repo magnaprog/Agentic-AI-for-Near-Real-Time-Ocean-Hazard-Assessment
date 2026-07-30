@@ -1,12 +1,13 @@
-"""LLM model factory - one hosted provider for v0.1.
+"""Chat-model factory.
 
-Constructs a LangChain chat model from LLMSettings. Additional providers
-can be added by extending the if-branch and installing the corresponding
-langchain-* package.
+Constructs a LangChain chat model from LLMSettings for whichever provider is
+configured. This module names no vendor; the providers module holds the
+registry, and adding a provider is a data change there.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any, cast
 
 from langchain_core.language_models import BaseChatModel
@@ -14,8 +15,17 @@ from langchain_core.language_models import BaseChatModel
 if TYPE_CHECKING:
     from hazard_assessment.config.settings import LLMSettings
 
+#: Stand-in credential for an operator-run endpoint that needs none. Chosen to
+#: read as deliberate in a stack trace or request log.
+_PLACEHOLDER_API_KEY = "not-required-for-local-endpoint"
 
-def build_chat_model(settings: LLMSettings, *, purpose: str = "standard") -> BaseChatModel:
+
+def build_chat_model(
+    settings: LLMSettings,
+    *,
+    purpose: str = "standard",
+    tools: Sequence[Any] | None = None,
+) -> BaseChatModel:
     """Create a LangChain chat model for the configured provider.
 
     Args:
@@ -23,14 +33,26 @@ def build_chat_model(settings: LLMSettings, *, purpose: str = "standard") -> Bas
         purpose: Model tier - ``"fast"`` uses ``fast_model`` if set,
             ``"quality"`` uses ``quality_model`` if set, ``"standard"``
             uses the default ``model``.
+        tools: Tools to bind. Binding has to happen here rather than on the
+            returned object, because the retry wrapper this function applies is
+            a RunnableRetry, which has no ``bind_tools``. Calling it on the
+            result raised AttributeError before any request was made.
 
     Returns:
         A configured ``BaseChatModel`` with retry behavior attached.
 
     Raises:
-        ValueError: If no model identifier is configured, or if the
-            provider is not the supported one.
+        ValueError: If no model identifier is configured, if the provider is
+            not in the registry, or if a requested base URL was not applied.
+        ImportError: If the provider's integration package is not installed.
     """
+    from hazard_assessment.agents.llm_advisory.providers import (
+        base_url_applied,
+        load_chat_model_class,
+        resolve_spec,
+        retryable_exceptions,
+    )
+
     model_name = _resolve_model(settings, purpose)
 
     if not model_name:
@@ -39,36 +61,53 @@ def build_chat_model(settings: LLMSettings, *, purpose: str = "standard") -> Bas
             f"purpose-specific override for {purpose!r}) before enabling the LLM layer."
         )
 
-    if settings.provider != "anthropic":
-        raise ValueError(
-            f"Unsupported LLM provider: {settings.provider!r}. "
-            f"Only 'anthropic' is supported in v0.1."
-        )
+    spec = resolve_spec(settings.provider)
+    chat_model_class = load_chat_model_class(spec)
 
-    from langchain_anthropic import ChatAnthropic
-
-    # ChatAnthropic constructor signature varies across langchain-anthropic
-    # versions - use **kwargs to avoid version-specific type errors.
+    # These names are accepted by every registered integration, in some cases
+    # as an alias over a vendor-specific field. Passed as **kwargs because the
+    # underlying field names differ between them.
     kwargs: dict[str, Any] = {
         "model": model_name,
-        "api_key": settings.api_key,
         "timeout": float(settings.timeout_sec),
         "max_retries": 0,  # retry handled below via .with_retry()
     }
-    llm = ChatAnthropic(**kwargs)
+    if settings.base_url:
+        kwargs["base_url"] = settings.base_url
+    if settings.api_key:
+        kwargs["api_key"] = settings.api_key
+    elif settings.base_url:
+        # Locally served models generally want no credential, but the vendor
+        # SDKs refuse to construct without one: openai raises "Missing
+        # credentials" before any request is made. Since the endpoint is the
+        # operator's own, send a placeholder rather than make them invent one.
+        # It is not a secret, and against a real endpoint it simply fails
+        # authentication with the usual error.
+        kwargs["api_key"] = _PLACEHOLDER_API_KEY
 
-    # Only retry transient errors (timeouts, rate limits, server errors).
-    # Auth, validation, and bad-request errors should fail immediately.
-    from anthropic import (
-        APITimeoutError,
-        InternalServerError,
-        RateLimitError,
-    )
+    llm = chat_model_class(**kwargs)
 
+    # These models ignore arguments they do not recognize, so a base URL can be
+    # dropped in silence. Refusing here is the difference between a clear
+    # failure and quietly sending prompts to the vendor's public endpoint when
+    # the operator asked for their own.
+    if settings.base_url and not base_url_applied(llm, settings.base_url):
+        raise ValueError(
+            f"{spec.module}.{spec.class_name} did not apply LLM_BASE_URL="
+            f"{settings.base_url!r}. Refusing to run against a different "
+            "endpoint than the one configured."
+        )
+
+    # Bind before wrapping: with_retry returns a RunnableRetry, and tools must
+    # be attached to the chat model underneath it.
+    bound = llm.bind_tools(tools) if tools else llm
+
+    # Only retry transient failures. Authentication, validation and
+    # bad-request errors must fail immediately.
     return cast(
         BaseChatModel,
-        llm.with_retry(
-            retry_if_exception_type=(APITimeoutError, RateLimitError, InternalServerError),
+        bound.with_retry(
+            retry_if_exception_type=retryable_exceptions(spec),
             # stop_after_attempt counts total attempts, while the setting is
             # named and documented as retries, so the first attempt has to be
             # added. Passing max_retries directly made LLM_MAX_RETRIES=2 mean

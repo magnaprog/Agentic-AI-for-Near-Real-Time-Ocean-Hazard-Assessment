@@ -234,11 +234,16 @@ Changing these values changes FSM transition behavior and invalidates direct com
 Offline Report Agent commentary and the after-action API can use an LLM. Install the `llm` extra before configuring a key:
 
 ```bash
-LLM_API_KEY=<provider-api-key>   # LLM provider API key
+LLM_PROVIDER=anthropic           # anthropic (default), openai, or google_genai
+LLM_API_KEY=<provider-api-key>   # Not needed when LLM_BASE_URL is set
+LLM_BASE_URL=                    # Endpoint override; with openai reaches any
+                                 # OpenAI-compatible server, local models included
 LLM_MODEL=<provider-model-id>    # Provider model identifier; no default
 ```
 
-If `LLM_API_KEY` is not set, offline reports use deterministic templates and `/api/after-action` returns 501. The FSM and numerical outputs do not depend on LLM availability.
+The layer stays off until either `LLM_API_KEY` or `LLM_BASE_URL` is set. While it is off, offline reports use deterministic templates and `/api/after-action` returns 501. The FSM and numerical outputs do not depend on LLM availability.
+
+Each provider ships as its own extra, so only the one in use is installed: `.[llm-anthropic]`, `.[llm-openai]`, or `.[llm-google]`. To run against a model you host yourself, set `LLM_PROVIDER=openai` and point `LLM_BASE_URL` at it; no key is required, and the factory refuses to start if the provider integration ignores the URL rather than send prompts to the vendor's public endpoint instead.
 
 ---
 

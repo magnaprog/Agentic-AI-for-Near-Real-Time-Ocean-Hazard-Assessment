@@ -60,11 +60,15 @@ def build_after_action_graph(
     from hazard_assessment.agents.llm_advisory.factory import build_chat_model
     from hazard_assessment.agents.llm_advisory.tools import make_after_action_tools
 
-    quality_llm = build_chat_model(settings, purpose="quality")
     tools = make_after_action_tools(
         audit_logger, pinned_event_id=pinned_event_id, call_log=tool_call_log
     )
-    llm_with_tools = quality_llm.bind_tools(tools)
+    # Two clients over the same model: the draft node writes prose and must not
+    # be offered tools, while the timeline and gaps nodes need them. Tools are
+    # bound inside the factory because it returns a retry wrapper that cannot
+    # accept them afterwards.
+    quality_llm = build_chat_model(settings, purpose="quality")
+    llm_with_tools = build_chat_model(settings, purpose="quality", tools=tools)
 
     def timeline_node(state: AfterActionState) -> dict[str, Any]:
         """Reconstruct event timeline using tool-based audit queries."""

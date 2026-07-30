@@ -7,8 +7,6 @@ not runtime modification (Prohibited Action P8).
 
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings
 
@@ -160,21 +158,33 @@ class ConfidenceWeights(BaseSettings):
 class LLMSettings(BaseSettings):
     """LLM service configuration for synthesis and after-action analysis.
 
-    When ``api_key`` is empty, the LLM layer is disabled entirely and the
-    Report Agent uses template-based summaries only.
+    The layer stays off until either an API key or a base URL is set; see
+    ``is_enabled``. While it is off the Report Agent uses template-based
+    summaries only.
     """
 
-    provider: Literal["anthropic"] = Field(
+    provider: str = Field(
         default="anthropic",
-        description="LLM provider backend. One hosted provider is supported in v0.1.",
+        description=(
+            "Chat-model provider. Validated against the registry in "
+            "agents/llm_advisory/providers.py when the client is built, which "
+            "is also where the accepted names are listed."
+        ),
     )
     model: str = Field(
         default="",
-        description="Provider model identifier. Required whenever api_key is set.",
+        description="Provider model identifier. Required whenever the layer is enabled.",
     )
     api_key: str = Field(
         default="",
-        description="API key (empty string disables LLM; reports are template-only)",
+        description="API key. Not needed for an endpoint set through base_url.",
+    )
+    base_url: str = Field(
+        default="",
+        description=(
+            "Override the provider endpoint. With provider=openai this reaches "
+            "any OpenAI-compatible server, including a locally served model."
+        ),
     )
     fast_model: str = Field(
         default="",
@@ -188,3 +198,15 @@ class LLMSettings(BaseSettings):
     max_retries: int = Field(default=2, ge=1, description="Max retries on transient API errors")
 
     model_config = {"env_prefix": "LLM_"}
+
+    @property
+    def is_enabled(self) -> bool:
+        """Whether the operator has asked for a model at all.
+
+        Either an API key for a hosted provider, or a base URL for an endpoint
+        they run themselves, where authentication is their concern rather than
+        ours. The model identifier is deliberately not part of this test: a key
+        set without a model must fail loudly when the client is built, not
+        disable the layer in silence.
+        """
+        return bool(self.api_key or self.base_url)

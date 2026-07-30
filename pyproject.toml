@@ -40,11 +40,26 @@ dependencies = [
 Repository = "https://github.com/magnaprog/Agentic-AI-for-Near-Real-Time-Ocean-Hazard-Assessment"
 
 [project.optional-dependencies]
+# One extra per provider, because installing all of them to use one is waste.
+# The retry policy resolves each vendor SDK's own transient-error types, so the
+# SDK is named alongside its LangChain integration. "llm" keeps the previous
+# default working; see agents/llm_advisory/providers.py for the registry.
 llm = [
     "langchain-anthropic>=1.0,<2.0",
-    # The retry policy in llm_advisory/factory.py catches the provider SDK's
-    # own exception types, so it imports anthropic directly.
     "anthropic>=0.40.0",
+]
+llm-anthropic = [
+    "langchain-anthropic>=1.0,<2.0",
+    "anthropic>=0.40.0",
+]
+# Also the route to any OpenAI-compatible endpoint, local servers included,
+# via LLM_BASE_URL.
+llm-openai = [
+    "langchain-openai>=1.0,<2.0",
+    "openai>=1.40.0",
+]
+llm-google = [
+    "langchain-google-genai>=4.0,<5.0",
 ]
 dev = [
     "pytest>=8.3.0",

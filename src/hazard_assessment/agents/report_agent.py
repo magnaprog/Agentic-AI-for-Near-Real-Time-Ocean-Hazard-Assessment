@@ -173,7 +173,7 @@ class ReportAgent(BaseAgent):
         confidence_weights: ConfidenceWeights | None = None,
         audit_logger: Any | None = None,
     ) -> None:
-        llm_enabled = bool(llm_settings and llm_settings.api_key)
+        llm_enabled = bool(llm_settings and llm_settings.is_enabled)
         super().__init__(manifest=_build_manifest(llm_enabled))
         self._llm_settings = llm_settings
         self._confidence_weights = confidence_weights

@@ -1266,10 +1266,13 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
         ) from exc
 
     settings = LLMSettings()
-    if not settings.api_key:
+    if not settings.is_enabled:
         raise HTTPException(
             status_code=501,
-            detail="LLM API key not configured (LLM_API_KEY env var)",
+            detail=(
+                "LLM layer not configured. Set LLM_API_KEY for a hosted "
+                "provider, or LLM_BASE_URL for an endpoint you run yourself."
+            ),
         )
     # Nonactive-event gate: refuse the current event and events the audit
     # trail has never seen. This does not establish trusted event closure.

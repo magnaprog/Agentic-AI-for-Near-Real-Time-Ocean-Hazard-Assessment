@@ -226,8 +226,10 @@ Copy `deploy/.env.example` and configure:
 | `KAFKA_BOOTSTRAP_SERVERS`| No       | Kafka broker address. Messaging is disabled when empty; no implicit localhost broker is used. Compose pins it to the `kafka` service. |
 | `METRICS_PORT`           | No       | Worker Prometheus exporter port. Empty disables the exporter; Compose sets `9100` |
 | `GRAFANA_PASSWORD`      | Yes in Compose | Grafana admin password |
-| `LLM_API_KEY`           | No       | Enables model-backed after-action analysis and optional offline commentary. After-action returns 501 when empty; offline reports remain template-only. |
-| `LLM_MODEL`             | No       | Provider model identifier. No default; required whenever `LLM_API_KEY` is set |
+| `LLM_PROVIDER`          | No       | Chat-model provider: `anthropic` (default), `openai`, or `google_genai`. Install the matching extra, e.g. `pip install -e ".[llm-openai]"` |
+| `LLM_API_KEY`           | No       | Enables model-backed after-action analysis and optional offline commentary. After-action returns 501 while the layer is off; offline reports remain template-only. |
+| `LLM_BASE_URL`          | No       | Endpoint override. With `LLM_PROVIDER=openai` this reaches any OpenAI-compatible server, so a locally served model needs no API key. Enables the layer on its own. |
+| `LLM_MODEL`             | No       | Provider model identifier. No default; required whenever the layer is enabled |
 | `APP_ENVIRONMENT`       | No       | Environment label set by Compose. No source code reads it; it does not make database or Kafka mandatory |
 | `APP_LOG_LEVEL`         | No       | Worker logging level (default: `INFO`). Read by the pipeline and ingest workers only; the core API does not configure logging from it |
 
