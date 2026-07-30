@@ -138,9 +138,10 @@ async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
     global _investigator_db
     if _db_client is not None:
         _db_client.close()
-    if _investigator_db is not None:
-        _investigator_db.close()
-        _investigator_db = None
+    with _investigator_db_lock:
+        if _investigator_db is not None:
+            _investigator_db.close()
+            _investigator_db = None
 
 
 app = FastAPI(
@@ -184,6 +185,7 @@ _db_client: Any = None  # Optional[DatabaseClient], typed as Any to avoid import
 #: findings must be written as investigator_writer, a role the API's own
 #: orchestrator_writer identity is deliberately not granted.
 _investigator_db: Any | None = None
+_investigator_db_lock = threading.Lock()
 _audit = AuditLogger()
 _fsm = FSMOrchestrator(audit_writer=_audit)
 _permission_matrix = load_permission_matrix()
@@ -503,7 +505,7 @@ class PolicyCheckRequest(BaseModel):
     human_decision_present: bool = False
 
 
-# ---------- Existing endpoints ----------
+# ---------- State and audit endpoints ----------
 
 
 @app.get("/health")
@@ -511,7 +513,7 @@ async def health_check() -> dict[str, str]:
     """Liveness probe for container orchestration.
 
     Declared async deliberately. Every other route here is a sync def, so it
-    runs in Starlette's bounded threadpool, and eight of them call
+    runs in Starlette's bounded threadpool, and nine of them call
     _refresh_fsm_from_db, which blocks for the pool timeout when the database
     is unreachable. With Mission Control polling and Prometheus scraping on
     timers, a database outage fills that threadpool and a sync liveness probe
@@ -1247,17 +1249,23 @@ def _open_investigator_db() -> Any | None:
         return _investigator_db
     if not os.getenv("DB_HOST", "").strip():
         return None
-    try:
-        from hazard_assessment.storage.client import ClientConfig, DatabaseClient
+    # Sync endpoints run in Starlette's threadpool, so two callers can arrive
+    # here at once. Without the lock both would build a pool and one would be
+    # dropped on the floor still holding its connections.
+    with _investigator_db_lock:
+        if _investigator_db is not None:
+            return _investigator_db
+        try:
+            from hazard_assessment.storage.client import ClientConfig, DatabaseClient
 
-        candidate = DatabaseClient(ClientConfig.from_env(role="investigator_writer"))
-        if not candidate.is_connected:
-            candidate.close()
+            candidate = DatabaseClient(ClientConfig.from_env(role="investigator_writer"))
+            if not candidate.is_connected:
+                candidate.close()
+                return None
+            _investigator_db = candidate
+        except Exception:
+            logger.exception("Could not open a connection as investigator_writer")
             return None
-        _investigator_db = candidate
-    except Exception:
-        logger.exception("Could not open a connection as investigator_writer")
-        return None
     return _investigator_db
 
 
@@ -1274,16 +1282,20 @@ def investigate_active_event() -> dict[str, Any]:
     - Findings are written to evidence_issue_results, which migration 009
       grants to investigator_writer alone. pipeline_worker, which drives the
       FSM, has no INSERT there, so a finding cannot re-enter the decision path.
-    - It reads a checkpoint the worker already persisted, so it is not on the
-      detection path and cannot delay or block ingest, scoring, or a
-      transition.
+    - It runs only once the worker has persisted a checkpoint, and binds its
+      findings to that row while reading the event's audit trail for
+      evidence. Either way it sits off the detection path and cannot delay or
+      block ingest, scoring, or a transition.
     - Every finding is guardrail-scanned before persistence, and one that
       reaches for reserved alert wording is dropped rather than stored.
 
     Contract enforced here:
     - 409 when no event is active, since there is nothing to investigate.
-    - 503 without durable storage: an unpersisted finding would be advice with
-      no record of what it was based on.
+    - 503 when durable storage is not configured at all, since the normal path
+      has to be able to record what advice was given and on what evidence.
+      A single insert that then fails is reported per finding as
+      persistence="error" and the finding is still returned: losing it would
+      be worse than returning it with the record plainly marked missing.
     - 404 when the active event has no persisted assessment checkpoint yet,
       which is the normal state early in an event.
     - Re-invocation for the same checkpoint, issue, model and prompt version
@@ -1291,6 +1303,15 @@ def investigate_active_event() -> dict[str, Any]:
       rather than stored twice.
     """
     try:
+        # investigator imports langchain only inside its functions, so importing
+        # it proves nothing about whether the provider stack is installed. The
+        # factory does import langchain_core at module level, so naming it here
+        # is what makes this 501 real rather than decorative: without it a
+        # missing dependency surfaced as three separately failed issues and an
+        # HTTP 200.
+        from hazard_assessment.agents.llm_advisory.factory import (  # noqa: F401
+            build_chat_model,
+        )
         from hazard_assessment.agents.llm_advisory.investigator import (
             ISSUE_NAMES,
             investigate_assessment,
@@ -1393,12 +1414,44 @@ def investigate_active_event() -> dict[str, Any]:
     # Naming the issues that produced nothing keeps a partial run legible; the
     # investigator keeps going when one issue fails.
     missing = sorted(set(ISSUE_NAMES) - {r["issue_name"] for r in recorded})
+    # Each insert is its own transaction, so a run can leave one issue on record
+    # and another not. Reporting the counts stops a caller reading HTTP 200 and
+    # a populated issues_recorded as "everything was saved".
+    not_stored = sorted(
+        str(r["issue_name"]) for r in recorded if r["persistence"] not in ("inserted", "existing")
+    )
+
+    # An investigation is a model acting on a live event, so the fact that it
+    # ran belongs in the audit trail whether or not the findings landed. Without
+    # this a failed set of inserts left no record anywhere that anyone asked.
+    _audit.append(
+        AuditEntry(
+            event_id=event_id,
+            event_type="evidence_investigation",
+            producer="evidence_investigator",
+            data={
+                "assessment_row_id": assessment_row_id,
+                "issues_recorded": [str(r["issue_name"]) for r in recorded],
+                "issues_failed": missing,
+                "issues_not_stored": not_stored,
+                "guardrail_withheld": sorted(
+                    str(r["issue_name"]) for r in recorded if r["guardrail_violations"]
+                ),
+            },
+        )
+    )
 
     return {
         "event_id": str(event_id),
         "assessment_row_id": assessment_row_id,
         "issues_recorded": recorded,
         "issues_failed": missing,
+        "issues_not_stored": not_stored,
+        # Everything on record for this checkpoint, including findings from an
+        # earlier run. Without this the table is write-only from the API's side,
+        # and a "conflict" or "existing" result would name a row the caller
+        # could not see.
+        "on_record": investigator_db.get_evidence_issue_results(assessment_row_id),
         "non_authoritative": True,
     }
 
@@ -1408,8 +1461,8 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
     """Run LLM-powered analysis for a nonactive event with audit history.
 
     Uses a 3-node LangGraph graph with tool use (timeline -> gaps -> draft).
-    The LLM decides which audit queries to run via bound tools. This is
-    separate from the planned active-event evidence investigator.
+    The LLM decides which audit queries to run via bound tools. This is the
+    counterpart of /api/investigate, which handles the active event.
     The current system has no trusted event-disposition record, so this gate
     proves only that the requested event is not active in the current FSM and
     has audit history. It does not prove event closure.
@@ -1561,15 +1614,16 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
     }
 
 
-# ---------- Activity report endpoint (3C) ----------
+# ---------- Activity report endpoint ----------
 
 
 @app.get("/api/activity-report/{event_id}", dependencies=[Depends(require_internal_api_key)])
 def get_activity_report(event_id: str) -> dict[str, Any]:
     """Return structured activity report for paper analysis.
 
-    Groups audit entries by type: FSM transitions, permission checks,
-    LLM calls, guardrail scans, tool invocations, station coverage.
+    Groups audit entries by type: FSM transitions, permission checks, LLM
+    calls and guardrail scans. ``entries_by_type`` carries every type present,
+    so it is not limited to the ones the summary counts.
     """
     parsed = _parse_uuid_param(event_id, "event_id")
     if parsed is None:
@@ -1612,19 +1666,19 @@ def get_activity_report(event_id: str) -> dict[str, Any]:
             "permission_checks_denied": sum(
                 1 for p in permission_checks if not p.get("data", {}).get("allowed", True)
             ),
-            # station_coverage_reports used to sit here, counting an audit event
-            # type nothing writes. The worker evaluates DART coverage and
-            # surfaces it as the sensor_degraded flag on /api/fsm rather than as
-            # an audit entry, so the count could only ever be zero. A field with
-            # one possible value is not information, so it is gone rather than
-            # documented.
-            "tool_invocations": len(grouped.get("tool_invocation", [])),
+            # Two counters used to sit here, station_coverage_reports and
+            # tool_invocations, each counting an audit event type nothing
+            # writes: coverage surfaces as the sensor_degraded flag on
+            # /api/fsm, and tool calls are recorded inside the entry of the
+            # path that made them, the after-action report or the findings
+            # payload, rather than as separate rows. Both could only ever read
+            # zero, and a field with one possible value is not information.
         },
         "entries_by_type": grouped,
     }
 
 
-# ---------- Prometheus metrics endpoint (6B) ----------
+# ---------- Prometheus metrics endpoint ----------
 
 
 @app.get("/metrics")

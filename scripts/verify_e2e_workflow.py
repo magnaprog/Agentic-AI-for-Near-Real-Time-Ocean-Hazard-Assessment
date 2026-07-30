@@ -640,7 +640,7 @@ def verify_verification_pass() -> None:
 
 
 # ===================================================================
-# Stage 6c: Verification Agent (INCOMPLETE / ABSTAIN path)
+# Stage 6b: Verification Agent (INCOMPLETE / ABSTAIN path)
 # ===================================================================
 def verify_verification_incomplete() -> None:
     assert _dart_scenario_result is not None, "Stage 5 must run first"
@@ -665,7 +665,7 @@ def verify_verification_incomplete() -> None:
 
 
 # ===================================================================
-# Stage 6b: Verification Agent (FAIL / ABSTAIN path)
+# Stage 6c: Verification Agent (FAIL / ABSTAIN path)
 # ===================================================================
 def verify_verification_fail() -> None:
     assert _dart_scenario_result is not None, "Stage 5 must run first"

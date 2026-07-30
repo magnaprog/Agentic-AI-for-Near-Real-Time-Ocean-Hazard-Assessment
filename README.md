@@ -262,8 +262,22 @@ Kevin Lee and Alison J. March. Agentic AI for Near-Real-Time Ocean Hazard Assess
 for government, public safety, research, and educational organizations. Commercial use
 needs written permission from the authors. The archived observations under `data/` are
 United States Government works from NOAA and USGS and are not ours to license. Vendored
-third-party files keep their own terms, including the Unicode, Inc. confusables table in
-`src/hazard_assessment/policy/_confusables.py` and `paper/neurips_2025.sty`.
+third-party files keep their own terms. The Unicode, Inc. confusables table in
+`src/hazard_assessment/policy/_confusables.py` carries its copyright, license URL and
+the UTS #39 version it came from. `paper/neurips_2025.sty` is the conference style
+file, redistributed as conference templates customarily are; it credits its authors in
+a header comment but states no license of its own, so we cannot grant terms for it.
+
+This repository ships no dependency code: `node_modules/`, `dist/` and font binaries are
+all untracked. A build does ship it, so the notices travel with whoever distributes one
+rather than with the source. Two in the frontend bundle carry obligations worth knowing
+before you distribute: the `@fontsource` families are OFL-1.1, which asks that its notice
+travel with the fonts, and `react-leaflet` is Hippocratic-2.1, a non-OSI license adding
+use restrictions of its own, which some legal reviews decline on principle. On the Python
+side `psycopg` is LGPL, so keep it an ordinary installed dependency rather than vendoring
+or statically bundling it. `mission-control/frontend/package-lock.json` and
+`pyproject.toml` are the authoritative lists; the exact terms are whatever those resolve
+to at the version you build.
 
 ## Contributing
 

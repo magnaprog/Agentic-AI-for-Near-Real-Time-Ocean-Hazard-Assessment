@@ -7,9 +7,12 @@ for questions the pipeline does not answer about its own evidence.
 Why it cannot influence the assessment, structurally rather than by
 instruction:
 
-* It runs after a checkpoint is persisted and reads that row. It is not on the
-  detection path, so it adds no latency and no network dependency to the FSM
-  loop, and a failure here cannot stall ingest or scoring.
+* It runs only once the worker has persisted an assessment checkpoint, and
+  binds its findings to that row. The evidence it reads is the event's audit
+  trail rather than the row's contents; the row supplies identity and the
+  foreign key. Either way it sits off the detection path, so it adds no
+  latency and no network dependency to the FSM loop, and a failure here
+  cannot stall ingest or scoring.
 * Its tools are the same read-only, event-scoped queries the after-action
   analysis uses. The event identifier is bound by the caller and the model
   cannot widen it.
@@ -17,8 +20,10 @@ instruction:
   there to ``investigator_writer`` only. ``pipeline_worker``, which drives the
   FSM, is denied it. So a finding cannot be read back as evidence by the code
   that escalates.
-* Output is guardrail-scanned before persistence. A finding that reaches for
-  reserved alert wording is dropped rather than stored.
+* Everything the model authors is guardrail-scanned before persistence, which
+  means the finding text and the tool-call log, since the model chooses tool
+  names and arguments and both are recorded. Whichever reaches for reserved
+  alert wording is withheld rather than stored.
 
 The three issues below were chosen because each is answerable from records the
 pipeline already writes, and none is already answered by it:
@@ -76,7 +81,6 @@ class IssueFinding:
     issue_name: str
     invocation_id: str
     finding: str
-    result_sha256: str
     tool_calls: list[dict[str, Any]]
     guardrail_violations: list[str]
 
@@ -89,6 +93,26 @@ class IssueFinding:
             "guardrail_violations": self.guardrail_violations,
             "prompt_version": PROMPT_VERSION,
         }
+
+    @property
+    def result_sha256(self) -> str:
+        """Digest of the stored payload, for the column of the same name.
+
+        Derived rather than stored so it cannot drift from what it describes.
+        Computed over the whole of ``to_result_payload()``: an earlier version
+        hashed only the finding text and the tool log, which left
+        ``guardrail_violations`` outside the digest, so the one field recording
+        that a finding was withheld was the one a hash could not detect a
+        change to.
+        """
+        return hashlib.sha256(
+            json.dumps(
+                self.to_result_payload(),
+                sort_keys=True,
+                separators=(",", ":"),
+                default=str,
+            ).encode("utf-8")
+        ).hexdigest()
 
 
 def compute_invocation_id(
@@ -170,12 +194,20 @@ def investigate_issue(
         node=issue_name,
     )
 
-    # A finding is operator-facing text, so it goes through the same scanner as
-    # every other emitted narrative. Violations are dropped, not redacted:
-    # a partially rewritten finding would misrepresent what the model said.
-    scan = scan_text(finding)
-    violations = [v.term for v in scan.violations]
+    # Everything operator-facing goes through the same scanner as any other
+    # emitted narrative, and the finding text is not the only such string. The
+    # model also chooses tool names and tool arguments, and both are persisted
+    # and returned: an unknown-tool request echoes the name it asked for, and a
+    # recorded call echoes its arguments. Scanning only the finding left a route
+    # for reserved wording to reach an operator while the finding itself came
+    # back clean.
+    violations = [v.term for v in scan_text(finding).violations]
+    tool_call_text = json.dumps(call_log, sort_keys=True, default=str)
+    tool_violations = [v.term for v in scan_text(tool_call_text).violations]
+
     if violations:
+        # Dropped, not redacted: a partially rewritten finding would
+        # misrepresent what the model said.
         logger.warning(
             "Investigator finding for %s dropped on reserved terms: %s",
             issue_name,
@@ -186,14 +218,25 @@ def investigate_issue(
             "terminology and was dropped by the guardrail scanner)"
         )
 
-    payload_digest = hashlib.sha256(
-        json.dumps(
-            {"finding": finding, "tool_calls": call_log},
-            sort_keys=True,
-            separators=(",", ":"),
-            default=str,
-        ).encode("utf-8")
-    ).hexdigest()
+    if tool_violations:
+        # The log is evidence of what the model did, so replacing entries would
+        # destroy the record. Withhold the whole log instead and say why, while
+        # keeping the counts, which carry no model-authored text.
+        logger.warning(
+            "Investigator tool log for %s withheld on reserved terms: %s",
+            issue_name,
+            ", ".join(sorted(set(tool_violations))),
+        )
+        call_log = [
+            {
+                "withheld": (
+                    "tool-call log used reserved alert terminology and was "
+                    "dropped by the guardrail scanner"
+                ),
+                "n_calls": len(call_log),
+            }
+        ]
+        violations = sorted(set(violations) | set(tool_violations))
 
     return IssueFinding(
         issue_name=issue_name,
@@ -203,7 +246,6 @@ def investigate_issue(
             model=settings.quality_model or settings.model,
         ),
         finding=finding,
-        result_sha256=payload_digest,
         tool_calls=call_log,
         guardrail_violations=sorted(set(violations)),
     )
@@ -216,6 +258,7 @@ def investigate_assessment(
     event_id: UUID,
     assessment_row_id: int,
     issue_names: tuple[str, ...] = ISSUE_NAMES,
+    max_rounds: int = 3,
 ) -> list[IssueFinding]:
     """Investigate each issue in turn, keeping going if one fails.
 
@@ -234,6 +277,7 @@ def investigate_assessment(
                     event_id=event_id,
                     assessment_row_id=assessment_row_id,
                     issue_name=issue_name,
+                    max_rounds=max_rounds,
                 )
             )
         except Exception:

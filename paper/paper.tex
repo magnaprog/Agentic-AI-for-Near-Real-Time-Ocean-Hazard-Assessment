@@ -236,8 +236,8 @@ The earliest detections (2.7\,min post-earthquake) correspond to
 coseismic seafloor deformation, not the tsunami wave itself;
 actual tsunami arrivals appear on longer timescales depending on
 source--station distance.
-The complete implementation is publicly available as open
-source.\footnotemark[1]
+The complete implementation is publicly available under a
+noncommercial license.\footnotemark[1]
 \end{abstract}
 
 \noindent\textbf{Keywords:}
@@ -354,7 +354,8 @@ assessment:
     (including Rayleigh wave suspect detection) and an
     explicit ABSTAIN output that suppresses probabilistic guidance
     when evidence is insufficient.
-  \item A public open-source implementation with extensive automated tests
+  \item A publicly available implementation, free for noncommercial use
+    under PolyForm Noncommercial 1.0.0, with extensive automated tests
     across the deterministic pipeline, LLM advisory layer, and
     tsunami-relevant safety properties (no autonomous public
     communication, mandatory human review, deterministic detection).
@@ -1554,9 +1555,10 @@ dedicated \texttt{investigator\_writer} role alone; the \texttt{pipeline\_worker
 role that drives the FSM has no insert privilege on it, and neither does the
 API's own role, so a finding cannot be read back as evidence by the code that
 escalates.  Each is verified against a provisioned database rather than
-assumed.  The investigator also reads a checkpoint the worker has already
-persisted, so it sits off the detection path and cannot add latency to
-ingest, scoring, or a transition, and every finding passes the same guardrail
+assumed.  The investigator also runs only once the worker has persisted a
+checkpoint, binding its findings to that row while reading the event's audit
+trail for evidence, so it sits off the detection path and cannot add latency
+to ingest, scoring, or a transition, and every finding passes the same guardrail
 scanner as any other emitted narrative, with a violating finding dropped
 whole rather than partly rewritten.  Re-running an issue over the same
 checkpoint, model and prompt version yields the same deterministic invocation
@@ -3129,7 +3131,7 @@ and outer-rise normal-faulting mechanisms; the earliest
 detections reflect coseismic pressure perturbations rather than
 confirmed tsunami wave arrivals.  Systematic threshold
 calibration from a broader event catalog remains necessary before
-operational deployment.  The open-source implementation and
+operational deployment.  The published implementation and
 structured audit trail provide a foundation for community-driven
 calibration and extension to additional ocean hazard types.
 

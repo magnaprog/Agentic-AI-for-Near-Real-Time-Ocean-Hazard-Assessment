@@ -1,7 +1,7 @@
 # Agentic AI for Near-Real-Time Ocean Hazard Assessment: User Manual
 
 **Version:** 0.1.0
-**Date:** 2026-03-11
+**Date:** 2026-07-30
 **Status:** Active
 
 ---
@@ -173,7 +173,7 @@ This installs the core package plus development tools (pytest, ruff, mypy). Opti
 
 ```bash
 pip install -e ".[telemetry]"      # OpenTelemetry OTLP exporter
-pip install -e ".[llm]"            # Model-backed after-action and commentary paths
+pip install -e ".[llm-anthropic]"  # Model paths; swap for llm-openai or llm-google
 ```
 
 ### 4.4 Verify the Installation
@@ -231,7 +231,7 @@ Changing these values changes FSM transition behavior and invalidates direct com
 
 ### 5.3 LLM Configuration (Optional)
 
-Offline Report Agent commentary and the after-action API can use an LLM. Install the `llm` extra before configuring a key:
+Offline Report Agent commentary and the after-action API can use an LLM. Install the extra for your provider before configuring a key:
 
 ```bash
 LLM_PROVIDER=anthropic           # anthropic (default), openai, or google_genai
@@ -243,7 +243,7 @@ LLM_MODEL=<provider-model-id>    # Provider model identifier; no default
 
 The layer stays off until either `LLM_API_KEY` or `LLM_BASE_URL` is set. While it is off, offline reports use deterministic templates and `/api/after-action` returns 501. The FSM and numerical outputs do not depend on LLM availability.
 
-Each provider ships as its own extra, so only the one in use is installed: `.[llm-anthropic]`, `.[llm-openai]`, or `.[llm-google]`. To run against a model you host yourself, set `LLM_PROVIDER=openai` and point `LLM_BASE_URL` at it; no key is required, and the factory refuses to start if the provider integration ignores the URL rather than send prompts to the vendor's public endpoint instead.
+Each provider ships as its own extra, so only the one in use is installed: `.[llm-anthropic]`, `.[llm-openai]`, or `.[llm-google]`. To run against a model you host yourself, set `LLM_PROVIDER=openai` and point `LLM_BASE_URL` at it; no key is required, and the factory refuses to start if the provider integration ignores that URL, rather than quietly sending prompts to the vendor's public endpoint.
 
 ---
 
@@ -560,7 +560,7 @@ Returns recent audit trail entries. Query parameters:
 | `trace_id` | UUID (optional) | Filter by pipeline trace |
 | `limit` | int (optional, 1-200, default 50) | Maximum entries to return |
 
-**Event types include:** `state_transition`, `verification_complete`, `report_generated`, `report_generation_failed`, `abstain_triggered`, `assessment_formatted`, `assessment_persisted`, `assessment_redelivery`, `assessment_gap`, `assessment_review_decision`, `escalation_packet_generated`, `escalation_packet_persisted`, `escalation_packet_conflict`, `qc_complete`, `anomaly_scored`, `input_provenance`, `seismic_provenance`, `provenance_capped`, `guardrail_scan`, `permission_check`, `policy_denial`, `llm_call`, `fsm_recovery_failed`, `after_action_report`
+**Event types include:** `state_transition`, `verification_complete`, `report_generated`, `report_generation_failed`, `abstain_triggered`, `assessment_formatted`, `assessment_persisted`, `assessment_redelivery`, `assessment_gap`, `assessment_review_decision`, `escalation_packet_generated`, `escalation_packet_persisted`, `escalation_packet_conflict`, `qc_complete`, `anomaly_scored`, `input_provenance`, `seismic_provenance`, `provenance_capped`, `guardrail_scan`, `permission_check`, `policy_denial`, `llm_call`, `fsm_recovery_failed`, `after_action_report`, `reviewer_packet_gap`, `evidence_investigation`
 
 (The live worker writes `anomaly_scored` entries as lineage companions to its `processed_features` rows; the Mission Control demo snapshot also includes a synthetic one mirroring the validated offline trace.)
 
@@ -625,13 +625,19 @@ Three issues are investigated, each a question the pipeline records evidence for
 | `evidence_gaps` | `sensor_degraded` is one boolean. Which stations produced no scored window, and does quality control explain it? |
 | `timeline_consistency` | Are the transitions coherent against the seismic origin, for instance did escalation precede any ocean evidence? |
 
-The findings are advisory and cannot reach the assessment. That is enforced by the database, not by prompt wording: findings are written to `evidence_issue_results`, which migration 009 grants to `investigator_writer` alone, and `pipeline_worker` (which drives the FSM) has no INSERT there. The investigator also reads a checkpoint the worker already persisted, so it is not on the detection path and cannot delay ingest, scoring, or a transition.
+The findings are advisory and cannot reach the assessment. That is enforced by the database, not by prompt wording: findings are written to `evidence_issue_results`, which migration 009 grants to `investigator_writer` alone, and `pipeline_worker` (which drives the FSM) has no INSERT there. The investigator also runs only once the worker has persisted a checkpoint, and binds its findings to that row while reading the event's audit trail for evidence, so it is not on the detection path and cannot delay ingest, scoring, or a transition.
 
 Each finding is guardrail-scanned before persistence. One that uses reserved alert terminology is dropped whole rather than partially rewritten, and the response says so.
 
 Re-invoking for the same checkpoint, issue, model and prompt version computes the same deterministic `invocation_id`, so the repeat is reported as `existing` instead of recording a second opinion on the same evidence. If one issue fails the others are still returned, and the failed ones are named in `issues_failed`.
 
-**Responses:** 409 when no event is active. 501 when the LLM layer is off. 503 without durable storage, since an unpersisted finding would be advice with no record of its basis. 404 when the active event has no persisted assessment checkpoint yet, which is normal early in an event.
+**Responses:** 409 when no event is active. 501 when the LLM layer is off. 503 when durable storage is not configured at all, since the normal path has to be able to record what advice was given and on what evidence. 404 when the active event has no persisted assessment checkpoint yet, which is normal early in an event.
+
+Each insert is its own transaction, so a run can leave one issue on record and another not. `persistence` is `inserted`, `existing` for a repeat of the identical investigation, `conflict` when the same invocation id already holds a *different* result, or `error`. Any issue that did not reach the table is also listed in `issues_not_stored`, so a caller cannot read HTTP 200 plus a populated `issues_recorded` as "everything was saved". A finding whose insert failed is still returned: losing it would be worse than returning it with the missing record plainly marked.
+
+`conflict` is the case worth understanding. The invocation id covers the checkpoint, the issue, the model and the prompt version, but not the evidence, and an open event keeps accumulating evidence. So a first run that failed to converge claims the identity, and a later, better-informed run over the same checkpoint reports `conflict` rather than replacing it. The response carries `on_record` for exactly this: every finding already stored against the checkpoint, so the conflicting row can be seen rather than merely named.
+
+The response also records the run in the audit trail as an `evidence_investigation` entry, whether or not the findings landed.
 
 ---
 
@@ -671,7 +677,7 @@ Every tool call is recorded and returned in `tool_calls` (including unknown-tool
 
 **Response 409:** the requested event is still active.
 **Response 404:** no audit records exist for the requested event.
-**Response 501:** `LLM_API_KEY` is missing.
+**Response 501:** the LLM layer is off (neither `LLM_API_KEY` nor `LLM_BASE_URL` set), or the base LLM dependencies are not installed.
 **Response 503:** durable audit storage is unavailable or report commit fails.
 **Response 500:** graph/provider execution failure, including a missing provider package.
 
@@ -746,7 +752,7 @@ opposed to the decision lineage above.
 
 ### GET /api/activity-report/{event_id}
 
-Returns a structured activity report for a given event, summarizing all agentic AI activities: LLM calls, guardrail scans, tool invocations, permission checks, and station coverage.
+Returns a structured activity report for a given event, summarizing all agentic AI activities: LLM calls, guardrail scans, tool invocations, and permission checks.
 
 **Response 200:**
 ```json
@@ -762,8 +768,7 @@ Returns a structured activity report for a given event, summarizing all agentic 
     "guardrail_violations": 0,
     "permission_checks_total": 0,
     "permission_checks_allowed": 0,
-    "permission_checks_denied": 0,
-    "tool_invocations": 3
+    "permission_checks_denied": 0
   },
   "entries_by_type": {
     "state_transition": [...],
@@ -945,7 +950,7 @@ Nine checks validate the scenario assessment before a report is generated:
 | 2 - Situational Summary | Duty scientists | Condensed probabilistic guidance; uncertainty summary |
 | 3 - Post-Event | Post-event review | Narrative reconstruction; for archival and research |
 
-**LLM narrative synthesis (optional).** When the `llm` dependency is installed and `LLM_MODEL` is configured, reports can include a narrative generated by a 4-node LangGraph synthesis graph (Retrieval -> Evidence -> Scenario -> Narrative), gated by the deterministic system-confidence score (skipped below 0.35). The deterministic template is always the emitted `summary`; the LLM narrative is stored separately in the `model_commentary` field and never replaces or alters deterministic report content. All LLM output passes through the guardrail scanner; a violating narrative is dropped and the report ships template-only. The LLM cannot modify the deterministic report text, numerical results, report tier, or assessment status.
+**LLM narrative synthesis (optional).** When the `llm` dependency is installed and `LLM_MODEL` is configured, reports can include a narrative generated by a 4-node LangGraph synthesis graph (retrieval, then evidence, then scenario, then narrative), gated by the deterministic system-confidence score (skipped below 0.35). The deterministic template is always the emitted `summary`; the LLM narrative is stored separately in the `model_commentary` field and never replaces or alters deterministic report content. All LLM output passes through the guardrail scanner; a violating narrative is dropped and the report ships template-only. The LLM cannot modify the deterministic report text, numerical results, report tier, or assessment status.
 
 All reports carry a mandatory non-authoritative disclaimer that cannot be suppressed or modified.
 
@@ -1079,6 +1084,7 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `assessment_persisted` | Live checkpoint assessment committed |
 | `assessment_redelivery` | Existing checkpoint assessment adopted on Kafka redelivery |
 | `assessment_gap` | Required checkpoint assessment could not be persisted |
+| `reviewer_packet_gap` | An ESCALATE checkpoint found no escalation packet on record for the event; disclosed once per event |
 | `escalation_packet_generated` | Legacy process-memory packet created |
 | `escalation_packet_persisted` | Durable packet of record committed |
 | `qc_complete` | Worker QC summary for a station batch (audit metadata only) |
@@ -1088,6 +1094,7 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `guardrail_scan` | Terminology guardrail scan recorded |
 | `permission_check` | Permission matrix queried through `/api/policy/check`. Not emitted by pipeline processing |
 | `policy_denial` | A permission-matrix query returned a denial. Recorded for audit; no action was blocked |
+| `evidence_investigation` | An active-event investigation ran. Records which issues produced findings, which failed, which were not stored, and which were guardrail-withheld |
 | `llm_call` | LLM advisory call recorded |
 | `anomaly_scored` | Worker anomaly assessment persisted as a lineage feature row |
 | `fsm_recovery_failed` | FSM state recovery from the database failed; event context lost |
@@ -1450,7 +1457,7 @@ The system includes a simplified analytic simulation module (`src/hazard_assessm
 
 | Script | Description |
 |---|---|
-| `scripts/run_physics_validation.py` | Runs 4 synthetic scenarios (M9.1 Tohoku-like, M7.2 moderate Pacific, meteotsunami false positive, degraded-mode) |
+| `scripts/run_physics_validation.py` | Runs 4 synthetic scenarios (M8.5 Aleutian large tsunami, M7.0 Aleutian moderate earthquake, meteotsunami false positive, partial network outage) |
 | `scripts/run_synthetic_pipeline.py` | Generates sliding-window score timelines and full inter-agent pipeline traces |
 | `scripts/validate_tohoku.py` | Retrospective validation on archived 2011 Tohoku DART data |
 | `scripts/validate_chile.py` | Retrospective validation on archived 2010 Chile DART data |
@@ -1477,7 +1484,7 @@ This exercises QC, anomaly detection, FSM transitions, scenario assessment, veri
 
 ### 15.3 Reproducing the paper artifacts
 
-The evaluation results in `results/` and the figures in `paper/figures/` are regenerated by a single script:
+The evaluation results in `results/` and almost all the figures in `paper/figures/` are regenerated by a single script. Two exceptions, so that a regeneration run's output can be compared against the tree without surprises: `fig_dashboard_layout_updated.png` is a hand-made screenshot asset that no script produces, and the script still emits four figures the current paper no longer includes (`fig5b_detection_timeline.pdf`, `fig_dashboard_layout.pdf`, `fig_simulation_score_overlay.pdf`, `fig_synthetic_multistation.pdf`), left in place so a regeneration does not leave the tree dirty.
 
 ```bash
 pip install -e ".[dev,paper]"         # paper extra: matplotlib, cartopy, pandas
@@ -1517,8 +1524,6 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 
 **BOCPD**: Bayesian Online Changepoint Detection. A probabilistic method for detecting abrupt distributional shifts in time series, used to detect tsunami onset before the full waveform arrives.
 
-**Evidence investigator**: The one component in which a model acts while an event is open. For each of three issues it chooses which read-only audit queries to run and reports what the records support. Its findings are advisory: they are written under the `investigator_writer` role, which is the only role granted insert on `evidence_issue_results`, and the `pipeline_worker` role that drives the state machine is denied it, so a finding cannot become input to an escalation. See `POST /api/investigate`.
-
 **CO-OPS**: NOAA Center for Operational Oceanographic Products and Services. Provides coastal water-level observations.
 
 **DART**: Deep-ocean Assessment and Reporting of Tsunamis. NOAA's network of bottom pressure recorder buoys for detecting tsunamis in the open ocean.
@@ -1530,6 +1535,8 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 **EscalationPacket**: Legacy Pydantic packet schema used by the process-memory generator path. It is not review authority; `/api/review` accepts only the durable packet of record.
 
 **Event mode**: DART operational mode in which buoys transmit at high frequency (15-second or 1-minute intervals) in response to a detected pressure anomaly.
+
+**Evidence investigator**: The one component in which a model acts while an event is open. For each of three issues it chooses which read-only audit queries to run and reports what the records support. Its findings are advisory: they are written under the `investigator_writer` role, which is the only role granted insert on `evidence_issue_results`, and the `pipeline_worker` role that drives the state machine is denied it, so a finding cannot become input to an escalation. See `POST /api/investigate`.
 
 **FinalAssessment**: Terminal Pydantic schema used by offline pipeline formatting. Its status can be PROVISIONAL, ABSTAIN, or APPROVED_INTERNAL; this does not imply those transitions exist in the live worker.
 

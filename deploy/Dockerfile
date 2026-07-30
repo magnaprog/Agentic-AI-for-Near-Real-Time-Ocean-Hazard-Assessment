@@ -14,7 +14,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml README.md ./
 COPY src/ ./src/
 
-RUN pip install --no-cache-dir --prefix=/install ".[telemetry,llm]"
+# Every provider integration, not just one. LLM_PROVIDER is selected at run
+# time and Compose passes it through, but an extra cannot be installed into an
+# image that is already built, so shipping only the anthropic extra made the
+# openai and google_genai settings that .env.example documents fail with an
+# ImportError in the deployed stack. The integrations are small; the alternative
+# is a stack that cannot honor its own configuration.
+RUN pip install --no-cache-dir --prefix=/install \
+    ".[telemetry,llm-anthropic,llm-openai,llm-google]"
 
 # --- Runtime stage ---
 FROM python:3.11-slim

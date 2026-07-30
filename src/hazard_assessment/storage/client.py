@@ -715,12 +715,29 @@ class DatabaseClient:
 
         ``invocation_id`` is a deterministic digest of what was investigated,
         so re-running the same issue over the same assessment collides on the
-        unique index instead of appending a second opinion. That is the point:
-        migration 009 makes these rows append-only, so a repeat has to be
-        recognized rather than layered on top.
+        unique index instead of appending a second opinion. These rows are
+        append-only (migration 009), so a repeat has to be recognized rather
+        than layered on top.
 
-        Returns "inserted", "existing", or "error". "existing" is not a
-        failure; it means this exact investigation was already on record.
+        Returns one of:
+
+        "inserted"
+            This call created the row.
+        "existing"
+            The row was already there and its ``result_sha256`` matches, so the
+            same investigation is already on record. Not a failure.
+        "conflict"
+            The row was already there under this invocation id but records a
+            *different* result. Migration 009 states the contract this
+            implements: "a repeated run with a different result hash fails the
+            unique constraint and is surfaced as a conflict instead of silently
+            coexisting". Returning "existing" here would hand the caller a
+            finding while the database kept another one, which matters most for
+            the case that motivated it: a first run that failed to converge
+            claims the identity, and the real finding that follows must not be
+            discarded in silence.
+        "error"
+            No pool, or the statement failed.
         """
         if not self._pool:
             return "error"
@@ -743,7 +760,23 @@ class DatabaseClient:
                         result_sha256,
                     ),
                 ).fetchone()
-                return "inserted" if row else "existing"
+                if row:
+                    return "inserted"
+                existing = conn.execute(
+                    "SELECT result_sha256 FROM evidence_issue_results "
+                    "WHERE invocation_id = %s",
+                    (invocation_id,),
+                ).fetchone()
+                if existing is None:
+                    # The conflicting row vanished between the two statements,
+                    # which append-only rows make impossible; report rather
+                    # than guess.
+                    return "error"
+                return (
+                    "existing"
+                    if str(existing["result_sha256"]) == result_sha256
+                    else "conflict"
+                )
         except Exception:
             logger.exception("Failed to insert evidence issue result")
             return "error"

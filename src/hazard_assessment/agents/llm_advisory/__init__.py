@@ -23,5 +23,6 @@ per-call logging have one implementation rather than two.
 Every path degrades rather than failing the caller: synthesis falls back to
 template output, the investigator drops the affected issue and keeps the
 others, and after-action returns an error response. Provider selection lives
-in ``providers`` and ``factory``; no module here names a vendor.
+in ``providers``, which is the one module that names vendors; nothing
+else in the package does.
 """

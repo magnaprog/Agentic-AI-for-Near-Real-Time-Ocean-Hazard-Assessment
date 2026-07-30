@@ -1185,3 +1185,112 @@ def test_status_rejects_non_ascii_api_key_with_401_not_500() -> None:
         )
 
         assert response.status_code == 401
+
+
+# ---------------------------------------------------------------------------
+# Active-event investigation endpoint
+# ---------------------------------------------------------------------------
+#
+# The gates are the mirror image of /api/after-action: that one refuses the
+# active event, this one requires it. They are pinned here because the endpoint
+# writes findings under a role the API is deliberately not granted, so a gate
+# quietly regressing would either lose the separation or fail in production
+# rather than in a test.
+
+
+def test_investigate_requires_an_active_event(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
+    monkeypatch.setenv("LLM_MODEL", "test-model")
+    with _app_client() as (_app_module, client):
+        resp = client.post("/api/investigate", headers=AUTH)
+
+    assert resp.status_code == 409
+    assert "no event is currently active" in resp.json()["detail"].lower()
+
+
+def test_investigate_requires_the_llm_layer(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Config failure is reported before event state, and names both routes."""
+    monkeypatch.delenv("LLM_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_BASE_URL", raising=False)
+    with _app_client() as (_app_module, client):
+        resp = client.post("/api/investigate", headers=AUTH)
+
+    assert resp.status_code == 501
+    detail = resp.json()["detail"]
+    assert "LLM_API_KEY" in detail
+    assert "LLM_BASE_URL" in detail
+
+
+def test_investigate_requires_durable_storage(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """An in-memory audit trail leaves no record of the advice given."""
+    monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
+    monkeypatch.setenv("LLM_MODEL", "test-model")
+    with _app_client() as (app_module, client):
+        _escalate_in_memory(app_module)
+        resp = client.post("/api/investigate", headers=AUTH)
+
+    assert resp.status_code == 503
+    assert "durable storage" in resp.json()["detail"].lower()
+
+
+def test_investigate_requires_a_persisted_checkpoint(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Normal early in an event: nothing to investigate until one is written."""
+    from hazard_assessment.audit.logger import AuditLogger
+
+    monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
+    monkeypatch.setenv("LLM_MODEL", "test-model")
+    with _app_client() as (app_module, client):
+        db = DurableReviewDb(None)
+        db.get_latest_assessment_for_event = lambda event_id: None  # type: ignore[method-assign]
+        app_module._db_client = db
+        app_module._audit = AuditLogger(db_client=db)
+        # Stand in for the investigator's own connection so the test exercises
+        # the checkpoint gate rather than the role-connection gate.
+        app_module._investigator_db = db
+        try:
+            _escalate_in_memory(app_module)
+            resp = client.post("/api/investigate", headers=AUTH)
+        finally:
+            app_module._investigator_db = None
+
+    assert resp.status_code == 404
+    assert "assessment checkpoint" in resp.json()["detail"].lower()
+
+
+def test_investigate_refuses_without_the_investigator_role(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Findings must not be written through the API's own database identity.
+
+    migration 009 grants INSERT on evidence_issue_results to
+    investigator_writer alone, so failing to reach the database as that role is
+    a refusal rather than a reason to fall back to orchestrator_writer.
+    """
+    from hazard_assessment.audit.logger import AuditLogger
+
+    monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
+    monkeypatch.setenv("LLM_MODEL", "test-model")
+    monkeypatch.delenv("DB_HOST", raising=False)
+    with _app_client() as (app_module, client):
+        db = DurableReviewDb(None)
+        app_module._db_client = db
+        app_module._audit = AuditLogger(db_client=db)
+        app_module._investigator_db = None
+        _escalate_in_memory(app_module)
+        resp = client.post("/api/investigate", headers=AUTH)
+
+    assert resp.status_code == 503
+    assert "investigator_writer" in resp.json()["detail"]
+
+
+def test_investigate_requires_the_api_key() -> None:
+    with _app_client() as (_app_module, client):
+        assert client.post("/api/investigate").status_code == 401

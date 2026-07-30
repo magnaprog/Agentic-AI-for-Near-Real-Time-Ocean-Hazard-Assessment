@@ -1590,15 +1590,34 @@ def test_insert_evidence_issue_result_is_idempotent(
         )
         assert first == "inserted"
 
-        # Same investigation again, even with a different result digest.
-        repeat = db.insert_evidence_issue_result(
+        # The identical investigation again is recognized, not duplicated.
+        assert db.insert_evidence_issue_result(
             invocation_id=invocation,
             assessment_row_id=row_id,
             issue_name="station_agreement",
             result=payload,
+            result_sha256=_hex64(0x5D1),
+        ) == "existing"
+
+        # Same invocation id but a different result must surface as a conflict.
+        # Migration 009 states the contract: "a repeated run with a different
+        # result hash fails the unique constraint and is surfaced as a conflict
+        # instead of silently coexisting." Returning "existing" here would hand
+        # a caller one finding while the database kept another, which is exactly
+        # what happens when a first run fails to converge, claims the identity,
+        # and the real finding follows.
+        assert db.insert_evidence_issue_result(
+            invocation_id=invocation,
+            assessment_row_id=row_id,
+            issue_name="station_agreement",
+            result={"issue_name": "station_agreement", "finding": "revised"},
             result_sha256=_hex64(0x5D2),
-        )
-        assert repeat == "existing"
+        ) == "conflict"
+
+        # The conflict left the original on record rather than overwriting it.
+        stored_first = db.get_evidence_issue_results(row_id)[0]
+        assert stored_first["result_sha256"] == _hex64(0x5D1)
+        assert stored_first["result"]["finding"] == "one station only"
 
         # A different issue over the same assessment is a distinct finding.
         other = db.insert_evidence_issue_result(

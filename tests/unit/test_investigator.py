@@ -12,6 +12,7 @@ round cap, the call log and the guardrail decision, rather than a vendor SDK.
 
 from __future__ import annotations
 
+import json
 from typing import Any
 from uuid import uuid4
 
@@ -83,6 +84,51 @@ class TestIssueSet:
             assert "not deciding anything" in prompt, name
 
 
+class TestDependencyProbe:
+    """The endpoint's 501 has to depend on something that needs langchain.
+
+    investigator.py imports langchain only inside function bodies, so importing
+    it succeeds whether or not the provider stack is installed. The endpoint's
+    guarded import therefore has to name a module that does import langchain at
+    module level, or a missing dependency surfaces as three separately failed
+    issues and an HTTP 200 instead of a 501.
+    """
+
+    def test_investigator_defers_its_langchain_imports(self) -> None:
+        import ast
+        import pathlib
+
+        tree = ast.parse(
+            pathlib.Path(inv.__file__).read_text(encoding="utf-8")
+        )
+        top_level = [
+            n for n in tree.body if isinstance(n, ast.Import | ast.ImportFrom)
+        ]
+        names = [
+            (n.module or "") if isinstance(n, ast.ImportFrom)
+            else ",".join(a.name for a in n.names)
+            for n in top_level
+        ]
+        assert not [n for n in names if n.startswith(("langchain", "langgraph"))]
+
+    def test_the_factory_does_not(self) -> None:
+        """So importing the factory is a genuine probe for the provider stack."""
+        import ast
+        import pathlib
+
+        from hazard_assessment.agents.llm_advisory import factory
+
+        tree = ast.parse(
+            pathlib.Path(factory.__file__).read_text(encoding="utf-8")
+        )
+        module_level = [
+            (n.module or "")
+            for n in tree.body
+            if isinstance(n, ast.ImportFrom)
+        ]
+        assert any(m.startswith("langchain") for m in module_level)
+
+
 class TestInvocationIdentity:
     def test_shape_satisfies_the_column_check(self) -> None:
         """Migration 009 constrains this to 64 lowercase hex characters."""
@@ -117,6 +163,57 @@ class TestInvocationIdentity:
         assert inv.compute_invocation_id(**base) != inv.compute_invocation_id(
             **{**base, **changed}
         )
+
+
+class TestResultDigest:
+    """The digest must cover the payload it is stored beside.
+
+    It first covered only the finding text and the tool log, so
+    guardrail_violations sat outside it: the one field recording that a finding
+    was withheld was the one field a hash could not detect a change to.
+    """
+
+    def _finding(self, **overrides: Any) -> inv.IssueFinding:
+        base: dict[str, Any] = {
+            "issue_name": "station_agreement",
+            "invocation_id": "a" * 64,
+            "finding": "two of six stations agree",
+            "tool_calls": [{"tool": "query_audit_trail"}],
+            "guardrail_violations": [],
+        }
+        return inv.IssueFinding(**{**base, **overrides})
+
+    def test_digest_is_the_hash_of_the_stored_payload(self) -> None:
+        import hashlib
+        import json
+
+        finding = self._finding()
+        expected = hashlib.sha256(
+            json.dumps(
+                finding.to_result_payload(),
+                sort_keys=True,
+                separators=(",", ":"),
+                default=str,
+            ).encode("utf-8")
+        ).hexdigest()
+        assert finding.result_sha256 == expected
+
+    @pytest.mark.parametrize(
+        "overrides",
+        [
+            {"finding": "a different finding"},
+            {"tool_calls": [{"tool": "query_fsm_transitions"}]},
+            {"issue_name": "evidence_gaps"},
+            {"guardrail_violations": ["Warning"]},
+        ],
+    )
+    def test_every_stored_field_changes_the_digest(self, overrides: dict[str, Any]) -> None:
+        assert self._finding().result_sha256 != self._finding(**overrides).result_sha256
+
+    def test_shape_satisfies_the_column_check(self) -> None:
+        import re
+
+        assert re.fullmatch(r"[0-9a-f]{64}", self._finding().result_sha256)
 
 
 class TestToolLoop:
@@ -245,6 +342,69 @@ class TestInvestigateIssue:
         # Same assessment, issue and model, so the identity is unchanged: the
         # unique index is what refuses the second opinion.
         assert first.invocation_id == second.invocation_id
+
+    def test_reserved_terms_in_the_tool_log_are_withheld_too(
+        self, monkeypatch: pytest.MonkeyPatch, settings: LLMSettings
+    ) -> None:
+        """The model also authors tool names and arguments, and both are stored.
+
+        Scanning only the finding let a reserved term ride through in the
+        tool-call log while the finding itself came back clean.
+        """
+        reserved = "Tsunami Warning for the outer coast"
+        self._patch_model(
+            monkeypatch,
+            [
+                _Reply("", [{"name": reserved, "args": {}, "id": "c1"}]),
+                _Reply("three of five stations produced a scored window"),
+            ],
+        )
+        finding = inv.investigate_issue(
+            settings, AuditLogger(), event_id=EVENT_ID,
+            assessment_row_id=11, issue_name="station_agreement",
+        )
+
+        # The finding itself was clean and is kept.
+        assert "three of five" in finding.finding
+        # The log is withheld rather than rewritten, and the violation surfaces.
+        assert "Warning" in finding.guardrail_violations
+        payload = json.dumps(finding.to_result_payload())
+        assert "Tsunami Warning" not in payload
+        assert finding.tool_calls[0]["withheld"]
+        assert finding.tool_calls[0]["n_calls"] == 1
+
+    @pytest.mark.parametrize(("max_rounds", "expected_invocations"), [(1, 2), (2, 3), (3, 4)])
+    def test_max_rounds_reaches_the_loop(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        settings: LLMSettings,
+        max_rounds: int,
+        expected_invocations: int,
+    ) -> None:
+        """investigate_assessment forwards it; it used to be unreachable.
+
+        The budget is one invocation by the caller plus ``max_rounds`` inside
+        the loop, so N rounds allow N+1 model calls. Pinned here because the
+        parameter is the only bound on how much work one issue can ask for.
+        """
+        from hazard_assessment.agents.llm_advisory import factory
+
+        models: list[_ScriptedModel] = []
+
+        def build(*args: Any, **kwargs: Any) -> _ScriptedModel:
+            m = _ScriptedModel(
+                [_Reply("", [_tool_call("query_audit_trail")])] * 10
+            )
+            models.append(m)
+            return m
+
+        monkeypatch.setattr(factory, "build_chat_model", build)
+        inv.investigate_assessment(
+            settings, AuditLogger(), event_id=EVENT_ID,
+            assessment_row_id=1, issue_names=("station_agreement",),
+            max_rounds=max_rounds,
+        )
+        assert models[0].invocations == expected_invocations
 
     def test_unknown_issue_raises(
         self, monkeypatch: pytest.MonkeyPatch, settings: LLMSettings

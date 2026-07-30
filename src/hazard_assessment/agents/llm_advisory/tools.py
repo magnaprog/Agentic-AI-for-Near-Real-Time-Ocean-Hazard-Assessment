@@ -1,12 +1,18 @@
-"""Read-only query tools for the after-action analysis graph.
+"""Read-only query tools, and the bounded loop that runs them.
 
-These tools give the LLM the ability to decide which data to retrieve,
-making the after-action graph genuinely agentic (tool-use pattern).
-All tools are read-only - they cannot modify any system state.
+Shared by the active-event investigator and the after-action analysis. These
+tools are what let the model decide which data to retrieve, which is where the
+agency in both paths lives. All of them are read-only and cannot modify any
+system state.
 
-The tools operate on an AuditLogger instance injected at graph
-construction time via closure.  The event_id is pinned at construction
-time so the LLM cannot query data for a different event.
+The tools operate on an AuditLogger instance injected at construction time via
+closure. The event_id is pinned there too, so the model cannot widen the query
+to another event.
+
+They read the audit trail, not the ``processed_features`` table. The name
+``query_processed_features`` describes the kind of record it selects, the
+pipeline evidence entries listed in ``_FEATURE_EVENT_TYPES``, rather than the
+table it comes from.
 
 Contract: every tool invocation is recorded into the caller's
 ``call_log`` (name, arguments, match counts, truncation), and every
@@ -34,8 +40,8 @@ _MAX_TOOL_ENTRIES = 200
 
 # Agent-output and live-evidence event types the pipeline actually
 # writes. qc_complete and anomaly_scored are the live worker's QC and
-# anomaly evidence records: the after-action analysis must be able to
-# see them, not only FSM transitions.
+# anomaly evidence records: both callers must be able to see them, not
+# only FSM transitions.
 _FEATURE_EVENT_TYPES = (
     "qc_complete",
     "anomaly_scored",
@@ -197,29 +203,35 @@ def resolve_tool_calls(
             break
 
         for tc in result.tool_calls:
-            tool_fn = tool_map.get(tc["name"])
+            # Every field here comes from the provider. Indexing "name" or "id"
+            # directly meant a response missing either one raised out of this
+            # loop and lost the whole analysis, so read them defensively and
+            # treat a nameless call the same as an unknown tool.
+            name = str(tc.get("name") or "")
+            call_id = str(tc.get("id") or "")
+            tool_fn = tool_map.get(name) if name else None
             if tool_fn is None:
                 if call_log is not None:
                     call_log.append({
                         "node": node,
-                        "tool": tc["name"],
+                        "tool": name,
                         "args": dict(tc.get("args") or {}),
                         "error": "unknown_tool",
                     })
                 messages.append(
-                    ToolMessage(content=f"Unknown tool: {tc['name']}", tool_call_id=tc["id"])
+                    ToolMessage(content=f"Unknown tool: {name}", tool_call_id=call_id)
                 )
                 continue
             before = len(call_log) if call_log is not None else 0
             try:
                 output = tool_fn.invoke(tc["args"])
             except Exception as exc:
-                logger.warning("Tool %s failed: %s", tc["name"], exc)
+                logger.warning("Tool %s failed: %s", name, exc)
                 output = f"Tool error: {type(exc).__name__}"
                 if call_log is not None:
                     call_log.append({
                         "node": node,
-                        "tool": tc["name"],
+                        "tool": name,
                         "args": dict(tc.get("args") or {}),
                         "error": type(exc).__name__,
                     })
@@ -227,7 +239,7 @@ def resolve_tool_calls(
                 # Stamp records the tool itself appended with the node.
                 for record in call_log[before:]:
                     record.setdefault("node", node)
-            messages.append(ToolMessage(content=str(output), tool_call_id=tc["id"]))
+            messages.append(ToolMessage(content=str(output), tool_call_id=call_id))
 
         result = llm_with_tools.invoke(messages)
         messages.append(result)
