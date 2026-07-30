@@ -1612,8 +1612,13 @@ def get_activity_report(event_id: str) -> dict[str, Any]:
             "permission_checks_denied": sum(
                 1 for p in permission_checks if not p.get("data", {}).get("allowed", True)
             ),
+            # station_coverage_reports used to sit here, counting an audit event
+            # type nothing writes. The worker evaluates DART coverage and
+            # surfaces it as the sensor_degraded flag on /api/fsm rather than as
+            # an audit entry, so the count could only ever be zero. A field with
+            # one possible value is not information, so it is gone rather than
+            # documented.
             "tool_invocations": len(grouped.get("tool_invocation", [])),
-            "station_coverage_reports": len(grouped.get("station_coverage", [])),
         },
         "entries_by_type": grouped,
     }

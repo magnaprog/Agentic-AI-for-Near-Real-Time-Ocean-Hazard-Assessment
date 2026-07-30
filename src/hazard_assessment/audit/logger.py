@@ -358,6 +358,11 @@ class AuditLogger:
             event_type="llm_call",
             producer=agent,
             data={
+                # audit_events carries an llm_invoked column that the storage
+                # client fills from this key. Nothing set it, so the column read
+                # FALSE on every row including the model calls themselves, which
+                # made a column named for the question unable to answer it.
+                "llm_invoked": True,
                 "model": model,
                 "prompt_tokens": prompt_tokens,
                 "response_tokens": response_tokens,

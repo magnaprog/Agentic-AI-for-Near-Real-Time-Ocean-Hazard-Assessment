@@ -5,6 +5,15 @@ tests
 docs
 mission-control
 deploy
+# The Dockerfile copies only pyproject.toml, README.md and src/, so everything
+# below is transfer cost with nothing consuming it. paper/ alone is about 30 MB
+# because of the built PDF and the figures. data/ reaches the containers as a
+# read-only bind mount (see docker-compose.yml), not through the image, and no
+# service command runs anything from scripts/; they are all python -m modules.
+paper
+results
+data
+scripts
 *.md
 !README.md
 .env*

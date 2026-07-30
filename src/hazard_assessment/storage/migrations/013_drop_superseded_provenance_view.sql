@@ -1,0 +1,23 @@
+-- 013_drop_superseded_provenance_view.sql
+-- Remove the provenance_chain view, which 003 replaced but left in place.
+--
+-- 001 created the view and 002 rebuilt it as a three-table join. 003 then
+-- introduced get_provenance(), and its own header says the function "Replaces
+-- the LATERAL UNNEST provenance_chain view from 002", because the view's
+-- LATERAL join prevents TimescaleDB chunk exclusion and forces a full-table
+-- scan while the function lets the planner push WHERE trace_id down.
+--
+-- The replacement never removed what it replaced. The view stayed in the
+-- schema with SELECT still granted to audit_reader, so the exact query shape
+-- 003 was written to eliminate remained the most discoverable one: a reader
+-- looking for provenance finds a view named for the job before finding the
+-- function that does it properly. No application code, test fixture, dashboard
+-- or document queries the view; the API reaches lineage through the SECURITY
+-- DEFINER get_provenance() instead.
+--
+-- Dropping it leaves one provenance path rather than a fast one and a slow one
+-- that look interchangeable. DROP VIEW removes the dependent grants with it, so
+-- no separate REVOKE is needed, and IF EXISTS keeps this idempotent on a
+-- database that never had the view.
+
+DROP VIEW IF EXISTS provenance_chain;

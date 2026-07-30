@@ -315,19 +315,18 @@ def test_migration_applies_twice_and_enforces_access_controls(
         assert "SELECT" in grants[("audit_reader", "raw_observations")]
         assert "SELECT" in grants[("audit_reader", "processed_features")]
 
-        provenance_grants = conn.execute(
-            """
-            SELECT grantee
-            FROM information_schema.role_table_grants
-            WHERE table_name = 'provenance_chain'
-              AND privilege_type = 'SELECT'
-              AND grantee = ANY(%s)
-            """,
-            (["audit_reader", "agent_reader"],),
-        ).fetchall()
-        provenance_grantees = {str(row[0]) for row in provenance_grants}
-        assert "audit_reader" in provenance_grantees
-        assert "agent_reader" not in provenance_grantees
+        # 001 created provenance_chain and 002 rebuilt it; 003 replaced it with
+        # get_provenance() because the view's LATERAL join defeats chunk
+        # exclusion, but left the view in place. 013 drops it, so a fully
+        # migrated database offers one provenance path rather than a fast
+        # function beside the slow view it superseded.
+        assert conn.execute(
+            "SELECT COUNT(*) FROM information_schema.views "
+            "WHERE table_name = 'provenance_chain'"
+        ).fetchone()[0] == 0, "provenance_chain should be dropped by 013"
+        assert conn.execute(
+            "SELECT COUNT(*) FROM pg_proc WHERE proname = 'get_provenance'"
+        ).fetchone()[0] == 1, "get_provenance() is the surviving provenance path"
 
         no_update_delete_rows = conn.execute(
             """

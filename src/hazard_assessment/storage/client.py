@@ -336,6 +336,8 @@ class DatabaseClient:
                             or entry.event_type  # fallback to action name
                         ),
                         entry.data.get("input_hashes"),
+                        # Set by AuditLogger.log_llm_call; every other producer
+                        # leaves it at the column default.
                         entry.data.get("llm_invoked", False),
                         entry.data.get("reasoning_trace"),
                         entry.timestamp_utc,

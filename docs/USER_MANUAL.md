@@ -763,8 +763,7 @@ Returns a structured activity report for a given event, summarizing all agentic 
     "permission_checks_total": 0,
     "permission_checks_allowed": 0,
     "permission_checks_denied": 0,
-    "tool_invocations": 3,
-    "station_coverage_reports": 5
+    "tool_invocations": 3
   },
   "entries_by_type": {
     "state_transition": [...],
@@ -1517,6 +1516,8 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 **Bounded agency**: The design principle that each agent has an explicitly declared, limited set of permissions. In this system the declaration lives in the permission matrix, while the bounds are held by per-role database grants, the terminology guardrail scanner, fail-closed ABSTAIN routing, and the human review gate. Human escalation is required for all critical decisions.
 
 **BOCPD**: Bayesian Online Changepoint Detection. A probabilistic method for detecting abrupt distributional shifts in time series, used to detect tsunami onset before the full waveform arrives.
+
+**Evidence investigator**: The one component in which a model acts while an event is open. For each of three issues it chooses which read-only audit queries to run and reports what the records support. Its findings are advisory: they are written under the `investigator_writer` role, which is the only role granted insert on `evidence_issue_results`, and the `pipeline_worker` role that drives the state machine is denied it, so a finding cannot become input to an escalation. See `POST /api/investigate`.
 
 **CO-OPS**: NOAA Center for Operational Oceanographic Products and Services. Provides coastal water-level observations.
 
