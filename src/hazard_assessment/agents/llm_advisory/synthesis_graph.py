@@ -3,7 +3,7 @@
 Graph topology: START -> retrieval -> evidence -> scenario -> narrative -> END
 
 - retrieval_node: pure Python (no LLM). Retrieves similar historical events.
-- evidence_node: LLM (fast model). Summarises sensor evidence.
+- evidence_node: LLM (fast model). Summarizes sensor evidence.
 - scenario_node: LLM (fast model). Interprets NNLS scenario results.
 - narrative_node: LLM (standard model). Produces full operator narrative.
 
@@ -71,7 +71,7 @@ def build_synthesis_graph(settings: LLMSettings) -> CompiledStateGraph:  # type:
         return {"similar_events_json": similar}
 
     def evidence_node(state: LLMSynthesisState) -> dict[str, Any]:
-        """LLM: summarise sensor evidence in plain language."""
+        """LLM: summarize sensor evidence in plain language."""
         try:
             llm = fast_llm.with_structured_output(EvidenceSynthesisOutput)
             result = llm.invoke([

@@ -2,8 +2,14 @@
 
 Scans emitted report, ABSTAIN, decision, and escalation-packet text for
 prohibited NOAA alert terminology before emission.
-These terms are defined under NWSPD 10-7 and are reserved for
-Tsunami Warning Centers.
+
+Six of the eight terms are product terminology defined in NWS Instruction
+10-701, Tsunami Warning Center Operations, Sections 2.1.1 to 2.1.5 and
+2.2, and are reserved for the Tsunami Warning Centers. NWS Policy
+Directive 10-7, which 10-701 is issued under, sets roles and
+responsibilities and does not itself define the products. The other two
+terms are not product names; PROHIBITED_TERMS below says why each is
+scanned anyway.
 
 """
 
@@ -109,16 +115,27 @@ _CONFUSABLE_TRANS = str.maketrans(
 
 
 PROHIBITED_TERMS: list[str] = [
+    # Product terminology from NWSI 10-701. Warning, Advisory, Watch and
+    # Information Statement are Sections 2.1.1 to 2.1.4; Cancellation is
+    # 2.1.5; Threat Message is the product PTWC issues to its international
+    # service area, Section 2.2.
     "Warning",
     "Advisory",
     "Watch",
     "Information Statement",
     "Threat Message",
     "Cancellation",
+    # The last two are not product names, and are scanned anyway.
+    #
+    # "All Clear" appears in neither NWSI 10-701 nor NWSPD 10-7, but it reads
+    # as an authoritative statement that the threat has ended, which is the
+    # role 10-701 gives the Cancellation product. A non-authoritative system
+    # saying it would be making exactly the call it must not make.
     "All Clear",
-    # Additional NWS/PTWC product types defined in NWSPD 10-7 and PTWC
-    # operational procedures. These are reserved alert product categories
-    # that our non-authoritative system must not reproduce.
+    # "Bulletin" is not on the TWC product list either. NWSI 10-701 uses it
+    # for the numbered messages of a product sequence, labeling its own
+    # worked examples "Bulletin 1: Initial Watch" and "Bulletin 2: Upgrade
+    # Watch to Warning", so the word carries the voice of a TWC message.
     "Bulletin",
 ]
 
@@ -389,7 +406,7 @@ def scan_text(text: str) -> ScanResult:
     # normalization but is mangled by the alternate one ("Tsunam˛ Warning
     # Center", where OGONEK becomes a space) had its allowlist entry missed
     # and the alternate pass reported the reserved word inside an
-    # organisation name. Carrying the suppression across restores that.
+    # organization name. Carrying the suppression across restores that.
     allowlisted_terms: set[str] = set()
     for patterns, haystack, context_source in (
         (_PROHIBITED_PATTERNS, normalized, normalized),

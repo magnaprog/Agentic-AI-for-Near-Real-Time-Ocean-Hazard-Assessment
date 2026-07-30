@@ -258,7 +258,7 @@
    World Ocean overlay adds bathymetric depth shading. The base is lifted with
    brightness so land and station markers stay legible against the abyssal
    field, and the overlay is multiply-blended so the ocean keeps its depth
-   gradient without greying the land. */
+   gradient without graying the land. */
 .base-tiles {
   filter: brightness(2.1) saturate(0.85);
 }
@@ -742,7 +742,7 @@
   /* Opaque, not a 6% tint. The block is sticky, so a translucent background
      let the evidence scrolling underneath show through it: the rationale
      placeholder and packet fields read straight across the recorded decision.
-     The tint is layered over the rail colour instead of replacing it, so the
+     The tint is layered over the rail color instead of replacing it, so the
      block still reads as the same green-tinted card. */
   background:
     linear-gradient(rgba(58, 168, 127, 0.06), rgba(58, 168, 127, 0.06)),

@@ -81,7 +81,7 @@ REVIEWER_ID_MAX_LENGTH = 128
 _LINEAGE_QUERY_LIMIT = 1000
 _api_key_header = APIKeyHeader(name=API_KEY_HEADER_NAME, auto_error=False)
 
-# Set during lifespan startup; empty string signals "not yet initialised".
+# Set during lifespan startup; empty string signals "not yet initialized".
 _HAZARD_API_KEY: str = ""
 
 

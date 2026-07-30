@@ -242,7 +242,9 @@ def log_denial(
     entry = AuditEntry(
         event_id=event_id,
         event_type="policy_denial",
-        producer="policy_middleware",
+        # Named for the one code path that writes it. There is no policy
+        # middleware: the check runs only when /api/policy/check is called.
+        producer="policy_check_endpoint",
         data={
             "agent_name": denial.agent_name,
             "capability": denial.capability,

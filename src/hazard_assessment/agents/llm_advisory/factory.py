@@ -25,7 +25,7 @@ def build_chat_model(settings: LLMSettings, *, purpose: str = "standard") -> Bas
             uses the default ``model``.
 
     Returns:
-        A configured ``BaseChatModel`` with retry behaviour attached.
+        A configured ``BaseChatModel`` with retry behavior attached.
 
     Raises:
         ValueError: If no model identifier is configured, or if the

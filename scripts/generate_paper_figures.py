@@ -962,7 +962,7 @@ def _station_map_plain(
 ) -> None:
     """Station map with coastlines using cartopy PlateCarree projection.
 
-    Uses a Pacific-centred central_longitude to avoid date-line clipping.
+    Uses a Pacific-centered central_longitude to avoid date-line clipping.
     label_offsets values are (lon_offset_deg, lat_offset_deg, ha).
     """
     import cartopy.crs as ccrs
@@ -970,7 +970,7 @@ def _station_map_plain(
 
     # Choose central longitude as midpoint of all longitudes
     all_lons = [epicenter_lon] + [lon for _, _, _, lon in station_meta]
-    # Shift to 0-360 to find a good centre for Pacific views
+    # Shift to 0-360 to find a good center for Pacific views
     shifted = [lon % 360 for lon in all_lons]
     central_lon = (min(shifted) + max(shifted)) / 2
     if central_lon > 180:

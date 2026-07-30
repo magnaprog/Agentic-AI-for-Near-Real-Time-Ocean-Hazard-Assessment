@@ -359,7 +359,7 @@ counted from the browser's own clock so the two clocks do not need to agree.
 |---|---|
 | `3s ago`, green | The BFF polled the core API successfully that recently. Silence in the other panels means nothing changed. |
 | `waiting` | The console just connected and the first heartbeat has not landed. It arrives within about five seconds. |
-| `2m 14s ago`, red, labelled `Core API poll failing` | The BFF has not reached the core API since that time. Everything on screen is the last state it received. |
+| `2m 14s ago`, red, labeled `Core API poll failing` | The BFF has not reached the core API since that time. Everything on screen is the last state it received. |
 | `no contact`, red | The BFF reported its upstream down and has no successful poll to report on this connection. |
 | `demo` | No `MISSION_CONTROL_HAZARD_API_KEY` is set. The console is serving the built-in Tohoku snapshot and no core API is being polled. |
 
@@ -733,8 +733,8 @@ Returns a structured activity report for a given event, summarizing all agentic 
     "llm_total_latency_ms": 1840,
     "guardrail_scans": 6,
     "guardrail_violations": 0,
-    "permission_checks_total": 12,
-    "permission_checks_allowed": 12,
+    "permission_checks_total": 0,
+    "permission_checks_allowed": 0,
     "permission_checks_denied": 0,
     "tool_invocations": 3,
     "station_coverage_reports": 5
@@ -747,6 +747,13 @@ Returns a structured activity report for a given event, summarizing all agentic 
   }
 }
 ```
+
+The permission counters are shown as zero deliberately. Pipeline processing
+never queries the permission matrix, so they stay at zero for an ordinary
+event. They rise only if someone calls `/api/policy/check` by hand while that
+event is the active one, since that endpoint attributes the check to whichever
+event the FSM currently holds rather than to one the caller names. See that
+endpoint below.
 
 ---
 
@@ -772,7 +779,16 @@ The domain counters increment in the worker process and are exposed by the worke
 
 ### POST /api/policy/check
 
-Validates whether a named agent is permitted to perform a given action.
+Reports whether the permission matrix declares a named agent to be permitted
+to perform a given action.
+
+This endpoint is a query, not a gate. Nothing in the pipeline calls it, so a
+denial recorded here does not stop anything; the matrix documents the intended
+capability envelope. The bounds themselves are held by other mechanisms:
+per-role database grants, the terminology guardrail scanner, the fail-closed
+ABSTAIN routing, and the human review gate. Both `agent_name` and
+`human_decision_present` are supplied by the caller and are not
+independently established.
 
 **Request body:**
 ```json
@@ -1044,8 +1060,8 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `seismic_provenance` | Seismic trigger record linked to the FSM event |
 | `provenance_capped` | Per-event observation provenance cap reached |
 | `guardrail_scan` | Terminology guardrail scan recorded |
-| `permission_check` | Agent permission matrix check recorded |
-| `policy_denial` | Action denied by the policy layer |
+| `permission_check` | Permission matrix queried through `/api/policy/check`. Not emitted by pipeline processing |
+| `policy_denial` | A permission-matrix query returned a denial. Recorded for audit; no action was blocked |
 | `llm_call` | LLM advisory call recorded |
 | `anomaly_scored` | Worker anomaly assessment persisted as a lineage feature row |
 | `fsm_recovery_failed` | FSM state recovery from the database failed; event context lost |
@@ -1216,7 +1232,7 @@ Francisco, 9413450 Monterey, and 9410230 La Jolla.
 
 ### Changing Thresholds
 
-Thresholds are read at startup and cannot be changed without restarting the service. This is intentional (prohibited action P8 in the agent permission matrix). To update thresholds:
+Thresholds are read at startup and cannot be changed without restarting the service. That comes from how configuration is loaded, and it is intentional; prohibited action P8 in the permission matrix records the intent but does not implement it. To update thresholds:
 
 1. Stop the system: `docker compose down`
 2. Edit `deploy/.env`
@@ -1470,7 +1486,7 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 
 **Audit trail**: The append-only log of all significant system events. No records can be modified or deleted.
 
-**Bounded agency**: The design principle that agents have explicitly declared, limited permissions and cannot take actions outside those bounds. Human escalation is required for all critical decisions.
+**Bounded agency**: The design principle that each agent has an explicitly declared, limited set of permissions. In this system the declaration lives in the permission matrix, while the bounds are held by per-role database grants, the terminology guardrail scanner, fail-closed ABSTAIN routing, and the human review gate. Human escalation is required for all critical decisions.
 
 **BOCPD**: Bayesian Online Changepoint Detection. A probabilistic method for detecting abrupt distributional shifts in time series, used to detect tsunami onset before the full waveform arrives.
 

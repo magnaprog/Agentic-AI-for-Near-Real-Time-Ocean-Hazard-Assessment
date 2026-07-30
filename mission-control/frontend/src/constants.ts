@@ -76,7 +76,7 @@ export interface StateColor {
   solid: string;
   tintBg: string;
   tintBorder: string;
-  /** Text colour for a chip whose background is `tintBorder`. `solid` is the
+  /** Text color for a chip whose background is `tintBorder`. `solid` is the
    *  full-strength hue and is readable on the dark bar, but on its own 30%
    *  tint every state fell under WCAG AA 4.5:1 (idle 3.75, monitor 4.44,
    *  warning 3.71, emergency 3.31). These are the same hues lightened until

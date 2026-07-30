@@ -20,7 +20,7 @@ DEEP_OCEAN_WAVE_SPEED_KM_S: float = DEEP_OCEAN_SPEED_M_S / 1000.0  # 0.198
 
 
 # ---------------------------------------------------------------------------
-# Average deep-ocean depth (metres) for dispersion calculations
+# Average deep-ocean depth (meters) for dispersion calculations
 # ---------------------------------------------------------------------------
 MEAN_OCEAN_DEPTH_M: float = 4000.0
 

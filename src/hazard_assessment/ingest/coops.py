@@ -35,7 +35,7 @@ COOPS_PRODUCT_EXPECTED_INTERVAL_SEC: Final[dict[str, int]] = {
 # NOAA CO-OPS tsunami-capable tide gauge stations in the
 # Pacific basin.  Station IDs are 7-digit NOS identifiers verified against the
 # official NOAA Tides & Currents station pages (tidesandcurrents.noaa.gov).
-# Organised west-to-east so the tuple is human-readable.
+# Organized west-to-east so the tuple is human-readable.
 #
 # Coverage rationale:
 #   - Hawaii: first-arrival stations for trans-Pacific tsunamis from Aleutians/Japan
@@ -45,9 +45,14 @@ COOPS_PRODUCT_EXPECTED_INTERVAL_SEC: Final[dict[str, int]] = {
 #   - Alaska (Adak, Kodiak, St. Paul): Aleutian arc sources; Adak is the westernmost
 #     US station and the earliest US land detector for Aleutian events
 #   - US West Coast (WA -> CA): receiving coast; Crescent City is included because
-#     its harbour geometry historically produces 3-4x amplification of tsunami waves
-#   - Note: only stations with 1-minute water-level product are retained (the
-#     connector tries one_minute_water_level first, then falls back to water_level)
+#     its harbor geometry historically produces 3-4x amplification of tsunami waves
+#   - Note: this list is curated for coverage, not filtered on product
+#     availability. The connector asks each station for one_minute_water_level
+#     and falls back to the 6-minute water_level product, keeping the station
+#     either way. The fallback matters downstream: 6-minute sampling sits above
+#     the anomaly detector's Nyquist limit for its 5-minute high cutoff, so a
+#     station is scored with filter_degraded set and its threshold and wavelet
+#     scores are flagged unreliable.
 COOPS_PACIFIC_STATION_IDS: Final[tuple[str, ...]] = (
     # Hawaii
     "1612340",  # Honolulu, HI
@@ -69,7 +74,7 @@ COOPS_PACIFIC_STATION_IDS: Final[tuple[str, ...]] = (
     "9432780",  # Charleston, OR
     # California (north to south)
     "9418767",  # North Spit (Eureka), CA
-    "9419750",  # Crescent City, CA  (high amplification harbour)
+    "9419750",  # Crescent City, CA  (high amplification harbor)
     "9414290",  # San Francisco, CA
     "9413450",  # Monterey, CA
     "9410230",  # La Jolla (San Diego), CA

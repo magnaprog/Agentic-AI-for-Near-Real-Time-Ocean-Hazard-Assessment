@@ -501,10 +501,11 @@ systematically review AI for early warning systems and find that only
 6\% of 324~papers address warning dissemination and communication (a
 gap our system partially addresses) while calling for concrete guardrails beyond
 guiding principles. Our bounded autonomy model declares each agent's
-capability envelope in a machine-readable permission matrix, and
-enforces the safety properties themselves through restricted database
-write access, structural separation of the LLM layer from the control
-path, and a mandatory Human Review Gate. The ABSTAIN path
+capability envelope in a machine-readable permission matrix. That
+matrix is a declaration rather than an interceptor; the safety
+properties themselves are held by restricted database write access,
+structural separation of the LLM layer from the control path, and a
+mandatory Human Review Gate. The ABSTAIN path
 implements the ``if in doubt, do not'' principle: when verification
 fails, probabilistic guidance is withheld and replaced with a
 structured abstention document.
@@ -1089,7 +1090,10 @@ deviation exceeds approximately 30\,mm from the predicted
 value~\citep{bernard2011history}.
 After a large earthquake, seismic Rayleigh surface waves can cause
 transient seafloor pressure perturbations exceeding this threshold,
-producing a false event-mode trigger. This is an amplitude/timing
+producing a false event-mode trigger.  The detection algorithm's own
+documentation anticipates this, noting that a DART gauge would be set
+into rapid reporting mode by the first group of Rayleigh
+waves~\citep{mofjeld1997tsunami}. This is an amplitude/timing
 mechanism, not spectral: Rayleigh waves from typical crustal earthquakes
 have dominant periods of 10--50\,s~\citep{lay1995modern}; for great
 earthquakes ($M_w > 8.5$~\citep{hanks1979moment}), significant energy extends to 100--300\,s,
@@ -1194,7 +1198,7 @@ specification.}
 
 % ---- Escalation transitions ----
 %  Connect at 35% down from node top (draw.io exitY/entryY=0.35), keeping
-%  them visually above centre and well clear of the de-escalation arrows below.
+%  them visually above center and well clear of the de-escalation arrows below.
 \draw[fwd]
   ($(idle.north east)!0.35!(idle.south east)$) --
   node[lbl, midway, above=3pt]{$M{\geq}M_\text{min}$}
@@ -1381,7 +1385,13 @@ summarizes the checks.
 \begin{table}[t]
 \centering
 \caption{Verification checks. Any FAIL verdict triggers
-  \texttt{abstain\_required=true}.}
+  \texttt{abstain\_required=true}. Rows marked $\dagger$ state policy
+  that the shipped pipeline cannot currently reach, because no
+  component supplies the input the condition tests: the
+  posterior-stability comparison receives no previous assessment and
+  no meteotsunami score is computed, so both report NOT\_EVALUATED,
+  and the tidal FAIL condition needs a correction flag that nothing
+  sets. See the fifth limitation in Section~\ref{sec:discussion}.}
 \label{tab:verification}
 \begin{tabular}{lll}
 \toprule
@@ -1391,7 +1401,7 @@ Hold-out station     & Amplitude error $>50\%$ or   & $>30\%$ or     \\
                      & arrival error $>5$\,min        & $>3$\,min      \\
 Sensitivity (LOO)    & Active-set flips on           & Weight shift   \\
                      & leave-one-out                  & $>30\%$        \\
-Posterior stability  & ---                           & Source set     \\
+Posterior stab.$\dagger$ & ---                       & Source set     \\
                      &                               & changed        \\
 Data coverage        & $<2$ stations                 & Azimuthal spread \\
                      &                               & $<90^\circ$    \\
@@ -1399,9 +1409,9 @@ Physical consistency & $\Delta M_w$(NNLS vs            & $> 0.3$        \\
                      & seismic) $> 0.6$              &                \\
 Model fit            & RMSE $> 5$\,cm or bias        & RMSE $> 3$\,cm \\
                      & $> 1$\,cm AND $> 3\sigma$     &                \\
-Tidal state          & Needed + uncorrected           & Uncorrected    \\
+Tidal state          & Needed + uncorrected$\dagger$  & Uncorrected    \\
                      &                               & coastal proxies\\
-Meteotsunami         & Non-tsun.\ energy $> 60\%$    & $> 30\%$       \\
+Meteotsunami$\dagger$ & Non-tsun.\ energy $> 60\%$   & $> 30\%$       \\
 Rayleigh wave        & ---                           & Timing match   \\
                      &                               & (haversine/$3.6$\,km/s $\pm 20\%$)\\
 \bottomrule
@@ -1459,10 +1469,19 @@ Appendix~\ref{sec:appendix-prompts}.
 \paragraph{Guardrail scanning.}
 All generated text (report summaries, uncertainty descriptions,
 recommended actions, decision reasons) is scanned for eight prohibited
-terms reserved for official NOAA products~\citep{nwspd107}:
-``Warning,'' ``Advisory,'' ``Watch,'' ``Information Statement,''
-``Threat Message'' (an international TWC product type),
-``Cancellation,'' ``All Clear,'' and ``Bulletin.'' Prior to matching,
+terms.  Six are official product terminology defined in NWS Instruction
+10-701, the Tsunami Warning Center operations instruction issued under
+NWS Policy Directive 10-7~\citep{nwsi10701,nwspd107}: ``Warning,''
+``Advisory,'' ``Watch'' and ``Information Statement'' (Sections 2.1.1
+to 2.1.4), ``Cancellation'' (Section 2.1.5), and ``Threat Message,''
+the product the Pacific Tsunami Warning Center issues to its
+international service area (Section 2.2).  The remaining two are not
+product names but are scanned all the same.  ``Bulletin''
+is the label that instruction gives the numbered messages of a product
+sequence.  ``All Clear'' appears in neither document, and is scanned
+because it reads as an authoritative end-of-threat statement, which is
+the role NWSI 10-701 assigns to the Cancellation product.
+Prior to matching,
 zero-width characters (U+200B--U+200F, U+2060--U+2064, and related)
 are stripped to prevent term-splitting bypass.  The scanner then folds
 visually confusable characters to their Latin equivalents, applies NFKC
@@ -2779,14 +2798,26 @@ marks the four inversion-dependent checks (hold-out validation,
 sensitivity analysis, DART coverage geometry, waveform fit quality)
 NOT\_APPLICABLE and leaves physical consistency as the only REQUIRED
 check, so only one check is required to have run.  The four OPTIONAL
-checks still execute, but none of them can currently fail: no component
-supplies a meteotsunami score or sets the tidal-correction flag, so
-those two checks always report NOT\_EVALUATED with a MISSING
-prerequisite, and Rayleigh screening returns CONCERN by construction.
-A side effect is that PASS is unreachable in the shipped
-configuration, because an OPTIONAL check without its prerequisite
-degrades the aggregate to PASS\_WITH\_CONCERNS; every computed outcome
-we record is PASS\_WITH\_CONCERNS for this reason.
+checks still execute, but none of them can fail on the inputs the
+pipeline currently supplies, and they divide into two groups.  Posterior
+stability and the meteotsunami discriminator report NOT\_EVALUATED with
+a MISSING prerequisite, the first because no previous assessment is
+passed for comparison and the second because no component computes a
+meteotsunami score.  The tidal-state and Rayleigh checks do run, and
+neither can reach FAIL: the tidal FAIL branch requires a
+tidal-correction flag that nothing sets, and the Rayleigh check has no
+FAIL branch at all, returning CONCERN at worst when the anomaly layer
+marks a station suspect.
+The consequence reaches past this stage.  A single OPTIONAL check
+blocked on a missing prerequisite degrades the aggregate to
+PASS\_WITH\_CONCERNS, and the meteotsunami check is OPTIONAL at all
+three constraint stages with a prerequisite that is never satisfied.
+PASS is therefore unreachable in the shipped configuration at every
+stage, not only this one.  No computed verification outcome appears in
+the released artifacts, because the offline evaluation stops at
+detection and the live worker fail-closes before assembling a scenario;
+the outcome shown in Appendix~\ref{sec:appendix-trace} is a hand-built
+illustration of the envelope shape, labeled as such there.
 ABSTAIN still activates at this stage: a missing seismic
 magnitude leaves that required check without its prerequisite and the
 outcome is INCOMPLETE, and a prior scenario whose $M_w$ differs from
@@ -2872,6 +2903,23 @@ CO-OPS 6-minute water-level records were retrieved for all five evaluation
 events (Figures~\ref{fig:coops-tohoku}--\ref{fig:coops-samoa}), confirming
 that tsunami signals are visible at Pacific tide gauges, but the
 retrospective detection evaluation uses only DART bottom-pressure records.
+That exclusion follows from the archived records rather than from the
+sensor class.  The retrieved series are the verified 6-minute water-level
+product and sample at exactly 360\,s throughout, whereas the detector
+marks any station reaching 150\,s as filter-degraded, that being the
+Nyquist limit for its 5-minute high cutoff.  Every retrieved series would
+therefore be scored with threshold and wavelet values the detector itself
+flags as unreliable, and the QC spike test, which needs consecutive
+samples no more than 240\,s apart, would not run at all.  CO-OPS also
+publishes a one-minute product that clears both limits, and the live
+connector requests it before falling back to the 6-minute one; the
+synthetic validation in Section~\ref{sec:eval-physics-sim} samples its
+three CO-OPS stations at 60\,s for the same reason.  Re-collecting the
+archive at one-minute resolution would make the tide gauges scoreable,
+but that product returns only a timestamp and a value, without the sigma
+and quality flags carried by the verified 6-minute records, and it would
+need per-station calibration baselines the present corpus does not
+contain.
 Running CO-OPS through scenario inversion and verification remains future
 work, as does validating the deployed Kafka worker end-to-end; the worker
 currently performs ingest, QC, anomaly scoring, and FSM transitions, and
@@ -3149,7 +3197,10 @@ architecture, generated from the draw.io source files in
   Ingest (R2), QC Agent (R3), Anomaly Agent (R4), Scenario Agent
   (R5), Coastal Proxies (R6), Audit Trail (R7), Permission Matrix
   and Guardrails (R8), Verification Agent and ABSTAIN (R9), and
-  Decision Trace (R10).}
+  Decision Trace (R10). The two components shown against R8, bounded
+  autonomy, contribute differently: the guardrail scanner blocks
+  emission, while the permission matrix declares the capability
+  envelope and is evaluated only when queried.}
 \label{fig:uml-traceability}
 \end{figure}
 
@@ -4033,14 +4084,21 @@ To further extend the magnitude range, we evaluate the 2014 Iquique
 $M_w$\,8.2 earthquake (2014-04-01 23:46:47 UTC; 19.610\textdegree S,
 70.769\textdegree W; depth 25\,km; USGS event usc000nzvd).
 Six DART stations are selected (Table~\ref{tab:iquique-stations});
-four operated in event mode (1-min or 45-sec sampling) during the
-event window.
+four operated in event mode during the event window.
 
 \begin{table}[!htb]
 \centering
 \caption{DART stations used in the Iquique 2014 retrospective validation
   (epicenter 19.610\textdegree{}S, 70.769\textdegree{}W).
-  Distances computed via haversine.}
+  Distances computed via haversine. The interval given for an
+  event-mode station is the median spacing of its retained record
+  rather than a fixed instrument setting. These records mix 15\,s and
+  60\,s sampling, the 15\,s stretches falling in the hours after
+  origin, with 45\,s spacings where samples are missing from a 15\,s
+  stretch. The median therefore lands at 45\,s on the two stations
+  that retained the most 15\,s samples and at 60\,s on the other two
+  event-mode stations, which is a property of the record and not of
+  the mode.}
 \label{tab:iquique-stations}
 \small
 \begin{tabular}{lrll}

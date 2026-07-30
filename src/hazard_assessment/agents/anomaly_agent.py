@@ -83,7 +83,7 @@ _MANIFEST = AgentManifest(
 # matter and neither is expressed by this constant. NOAA scopes the value
 # regionally: "a reasonable threshold for the North Pacific is 3 cm (or 30 mm)".
 # And it is not a constant on the instrument, since the DART II command set lets
-# a warning centre set it anywhere in the 30 to 90 mm range. Four of the five
+# a warning center set it anywhere in the 30 to 90 mm range. Four of the five
 # evaluated events are South Pacific or South American, so applying the North
 # Pacific figure to them is an extrapolation this system does not calibrate.
 DEFAULT_DART_THRESHOLD_M = 0.03

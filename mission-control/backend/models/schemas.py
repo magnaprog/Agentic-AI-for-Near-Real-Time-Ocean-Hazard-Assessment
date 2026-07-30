@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 
 class EventContextOut(BaseModel):
-    """Serialisable snapshot of the FSM EventContext."""
+    """Serializable snapshot of the FSM EventContext."""
 
     event_id: str
     seismic_magnitude: float

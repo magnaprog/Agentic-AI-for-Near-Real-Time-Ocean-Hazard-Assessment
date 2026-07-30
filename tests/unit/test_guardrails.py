@@ -523,7 +523,7 @@ class TestUnicodeConfusableCoverage:
         assert result.violations, f"{spelling!r} evaded the scanner"
 
     def test_shape_collapse_does_not_break_the_allowlist(self) -> None:
-        """The collapsed pass must recognise organisation names too."""
+        """The collapsed pass must recognize organization names too."""
         result = scan_text(
             f"Pacific Tsunami Warning Center issued guidance. {NON_AUTHORITATIVE_DISCLAIMER}"
         )
@@ -637,7 +637,7 @@ class TestAllowlistSurvivesBothNormalizations:
 
     The allowlist is evaluated per haystack, because the two normalizations
     differ in length and an offset from one does not index the other. That
-    makes the alternate pass additive only, so an organisation name that the
+    makes the alternate pass additive only, so an organization name that the
     primary normalization preserves but the alternate one mangles had its
     allowlist entry missed and the reserved word inside it was reported.
     """

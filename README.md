@@ -36,7 +36,7 @@ The system is composed of two web services: one holds the current state and the 
 │   ├── ingest/             # DART, CO-OPS, and USGS seismic connectors
 │   ├── messaging/          # Kafka producer and consumer
 │   ├── orchestrator/       # Deterministic state machine and pipeline runner
-│   ├── policy/             # Permission enforcement and output guardrails
+│   ├── policy/             # Output guardrails (enforcing) and the declared permission matrix
 │   ├── schemas/            # Pydantic handoff schemas
 │   ├── simulation/         # Simplified analytic tsunami simulation, not a propagation model
 │   ├── storage/            # Database migrations and role provisioning

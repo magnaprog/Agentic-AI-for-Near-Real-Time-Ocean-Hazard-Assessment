@@ -372,7 +372,7 @@ def _verify_template_safety() -> None:
     development time. Note: this only verifies the template skeleton, not
     dynamic inputs (event IDs, evidence strings, etc.). Runtime guardrail
     scanning in ``ReportAgent.synthesize()`` via ``scan_text()`` provides
-    the second layer of defence against prohibited terms in dynamic data.
+    the second layer of defense against prohibited terms in dynamic data.
     """
     from datetime import UTC, datetime
 

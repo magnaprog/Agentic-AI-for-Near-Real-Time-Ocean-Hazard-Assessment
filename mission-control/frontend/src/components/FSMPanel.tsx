@@ -58,7 +58,7 @@ function FSMPanel({ currentState, transitions }: Props) {
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       {STATES.map((s) => {
         const status = rowStatus(s, currentState, transitions);
-        // The active row takes the colour of the state it is showing, not a
+        // The active row takes the color of the state it is showing, not a
         // fixed emergency red. A console sits at IDLE for nearly every shift,
         // and a red row every night would both contradict the green IDLE in
         // the topbar and stop meaning anything.

@@ -1,7 +1,7 @@
 """Safety tests for bounded agency enforcement.
 
 These tests verify that the system's safety invariants hold:
-1. Agents cannot operate outside declared capabilities
+1. Agent manifests are strict and declare their capabilities
 2. FAIL verification always triggers ABSTAIN
 3. Alert-language guardrails block prohibited terminology
 4. All envelopes reject unknown fields
@@ -45,7 +45,12 @@ from hazard_assessment.schemas.verification import (
 
 
 class TestBoundedAgencyManifest:
-    """Verify that agent manifests enforce capability boundaries."""
+    """Verify that agent manifests are strict and declare capabilities.
+
+    These assert the manifest model's own strictness, not that any capability
+    is enforced at an action site. Nothing consults the declared set at run
+    time.
+    """
 
     def test_manifest_rejects_unknown_fields(self) -> None:
         with pytest.raises(ValidationError):
@@ -662,7 +667,7 @@ class TestAbstainRoutingIsDefenceInDepth:
     coverage always set the outcome and the flag together, so it asserted
     only that the pair routes correctly.
 
-    These cases pin the behaviour, not one particular branch: the explicit
+    These cases pin the behavior, not one particular branch: the explicit
     FAIL/INCOMPLETE test and the fail-closed default at the end of the router
     are deliberately redundant, and removing either one alone leaves these
     assertions passing. What they do catch is the default turning fail-open,

@@ -1,9 +1,15 @@
-"""Unit tests for the human-approval policy check middleware.
+"""Unit tests for the permission-matrix policy check.
 
-Validates that the permission matrix is enforced, human approval is
-required for critical outputs in ESCALATE state, and denials are
-structured and auditable.
+Validates what check_policy returns: that a capability outside an agent's
+declared set is reported as denied, that EMIT_REPORT in ESCALATE is reported
+as denied without a human decision, and that denials are structured and
+auditable.
 
+These are tests of a query function. The function is not wired into any
+execution path, so nothing here shows that an action was prevented. What
+actually holds the bounds is tested elsewhere: database grants in
+tests/integration, terminology in test_guardrails.py, and ABSTAIN routing
+and the review gate in tests/safety.
 """
 
 from __future__ import annotations
@@ -386,7 +392,7 @@ class TestDenialAuditLogging:
         assert audit.count == 1
         entries = audit.get_entries(event_type="policy_denial")
         assert len(entries) == 1
-        assert entries[0].producer == "policy_middleware"
+        assert entries[0].producer == "policy_check_endpoint"
         assert entries[0].data["reason"] == "HUMAN_APPROVAL_REQUIRED"
 
     def test_log_denial_includes_event_id(self) -> None:

@@ -171,10 +171,19 @@ def main() -> None:
                 n = save_csv(records, filepath)
                 print(f"    -> {n} records saved to {filepath.name}")
             else:
+                # A gauge can simply have no record for the window. Hilo
+                # (1617760) has none for Chile 2010 in either the 6-minute or
+                # the 1-minute product.
                 print("    -> No data returned")
             time.sleep(1.0)
 
-            # Fetch tidal predictions
+            # Predictions come from harmonic constants, so the API returns them
+            # for any window whether or not the gauge recorded anything. Every
+            # consumer plots them against observations, so fetching them for a
+            # station with no observations only produces an orphan file.
+            if not records:
+                continue
+
             print(f"  Fetching {station_name} ({station_id}) predictions...")
             preds = fetch_coops_predictions(
                 station_id,
