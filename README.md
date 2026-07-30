@@ -49,7 +49,7 @@ The system is composed of two web services: one holds the current state and the 
 ├── paper/                  # NOAA AI Workshop 2026 manuscript
 │   ├── paper.tex           # Manuscript source
 │   ├── paper.pdf           # Built manuscript
-│   ├── references.bib      # Bibliography, 55 entries
+│   ├── references.bib      # Bibliography, 57 entries
 │   ├── neurips_2025.sty    # Conference style file, third party
 │   ├── drawio/             # Editable sources for the appendix UML diagrams
 │   └── figures/            # Generated figures
@@ -210,7 +210,7 @@ Copy `deploy/.env.example` and configure:
 | `DB_ADMIN_USER`         | No       | TimescaleDB bootstrap/migration admin user for `init-db` (default: `hazard_admin`) |
 | `DB_ADMIN_PASSWORD`     | Yes in Compose | TimescaleDB bootstrap/migration admin password for `init-db` |
 | `DB_HOST`               | No       | Database host. API and worker disable database use when empty; Compose sets `timescaledb`. |
-| `DB_PORT` / `DB_NAME`   | No       | Database port/name (defaults: `5432`, `hazard_assessment`) |
+| `DB_PORT` / `DB_NAME`   | No       | Database port/name (defaults: `5432`, `hazard_assessment`). Compose pins both to the service, so setting them in `.env` has no effect there |
 | `DB_CONNECT_TIMEOUT`    | No       | Database connection timeout in seconds (default: `10`) |
 | `DB_PASSWORD`           | Yes in Compose | Fallback password for fixed runtime roles and provisioning |
 | `DB_INGEST_WRITER_PASSWORD` | No  | Optional `ingest_writer` override used by ingest entrypoints |
@@ -220,10 +220,10 @@ Copy `deploy/.env.example` and configure:
 | `DB_AGENT_WRITER_PASSWORD` / `DB_AGENT_READER_PASSWORD` / `DB_AUDIT_READER_PASSWORD` | No | Optional provisioning overrides for offline/read roles |
 | `HAZARD_API_KEY`         | Yes (for API access) | Shared internal API key used by core API (`X-Hazard-Api-Key`) and, by default in Docker Compose, Mission Control upstream calls |
 | `MISSION_CONTROL_HAZARD_API_KEY`      | No       | Mission Control key for live core API auth. Not listed in `deploy/.env.example`: Compose supplies it from `HAZARD_API_KEY`. If empty, the Mission Control backend deliberately serves demo data. Live upstream failures never trigger demo fallback. |
-| `MISSION_CONTROL_API_KEY`             | Yes (for dashboard access) | Mission Control backend API key required on HTTP `/api/mc/*` routes; WebSocket auth uses `api_key` |
+| `MISSION_CONTROL_API_KEY`             | Yes (for dashboard access) | Mission Control backend API key required on HTTP `/api/mc/*` routes. The WebSocket accepts the same key by `mc-key.` subprotocol (what the browser uses, and the only transport that keeps it out of the access log), by header, or by `api_key` query parameter |
 | `INGEST_DART_EVENT_MODE_TIMEOUT_SEC` | No | DART event-mode expiration timeout in seconds (default: `14400`) |
 | `CALIBRATION_DIR`        | No       | Pipeline-worker station calibration directory; no calibrations load when empty |
-| `KAFKA_BOOTSTRAP_SERVERS`| No       | Kafka broker address. Messaging is disabled when empty; no implicit localhost broker is used. |
+| `KAFKA_BOOTSTRAP_SERVERS`| No       | Kafka broker address. Messaging is disabled when empty; no implicit localhost broker is used. Compose pins it to the `kafka` service. |
 | `METRICS_PORT`           | No       | Worker Prometheus exporter port. Empty disables the exporter; Compose sets `9100` |
 | `GRAFANA_PASSWORD`      | Yes in Compose | Grafana admin password |
 | `LLM_API_KEY`           | No       | Enables model-backed after-action analysis and optional offline commentary. After-action returns 501 when empty; offline reports remain template-only. |

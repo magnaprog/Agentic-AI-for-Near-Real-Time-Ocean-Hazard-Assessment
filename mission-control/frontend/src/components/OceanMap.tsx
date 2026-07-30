@@ -157,7 +157,7 @@ function OceanMap({ eventContext }: Props) {
             tabIndex="0" and role="button" on each icon. That guard reads
             options.keyboard, NOT options.interactive, so interactive={false}
             did not stop it: 39 DART + 81 CO-OPS + 12 labels across three world
-            copies put ~400 unlabelled buttons in the tab order ahead of the
+            copies put ~400 unlabeled buttons in the tab order ahead of the
             review gate (measured: 402 tabs to reach ACKNOWLEDGE). The map is a
             reference visualisation and every datum it carries is also rendered
             as text in the side panels, so it is excluded from the tab order

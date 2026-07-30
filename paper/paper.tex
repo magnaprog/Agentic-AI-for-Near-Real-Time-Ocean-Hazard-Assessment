@@ -1385,13 +1385,11 @@ summarizes the checks.
 \begin{table}[t]
 \centering
 \caption{Verification checks. Any FAIL verdict triggers
-  \texttt{abstain\_required=true}. Rows marked $\dagger$ state policy
-  that the shipped pipeline cannot currently reach, because no
-  component supplies the input the condition tests: the
-  posterior-stability comparison receives no previous assessment and
-  no meteotsunami score is computed, so both report NOT\_EVALUATED,
-  and the tidal FAIL condition needs a correction flag that nothing
-  sets. See the fifth limitation in Section~\ref{sec:discussion}.}
+  \texttt{abstain\_required=true}. The four rows marked $\dagger$ state
+  policy the shipped pipeline does not reach: nothing supplies the
+  input each condition tests, so all four report NOT\_EVALUATED with a
+  missing prerequisite and the conditions shown are never evaluated.
+  See the fifth limitation in Section~\ref{sec:discussion}.}
 \label{tab:verification}
 \begin{tabular}{lll}
 \toprule
@@ -1409,10 +1407,10 @@ Physical consistency & $\Delta M_w$(NNLS vs            & $> 0.3$        \\
                      & seismic) $> 0.6$              &                \\
 Model fit            & RMSE $> 5$\,cm or bias        & RMSE $> 3$\,cm \\
                      & $> 1$\,cm AND $> 3\sigma$     &                \\
-Tidal state          & Needed + uncorrected$\dagger$  & Uncorrected    \\
+Tidal state$\dagger$ & Needed + uncorrected          & Uncorrected    \\
                      &                               & coastal proxies\\
 Meteotsunami$\dagger$ & Non-tsun.\ energy $> 60\%$   & $> 30\%$       \\
-Rayleigh wave        & ---                           & Timing match   \\
+Rayleigh wave$\dagger$ & ---                         & Timing match   \\
                      &                               & (haversine/$3.6$\,km/s $\pm 20\%$)\\
 \bottomrule
 \end{tabular}
@@ -1469,16 +1467,22 @@ Appendix~\ref{sec:appendix-prompts}.
 \paragraph{Guardrail scanning.}
 All generated text (report summaries, uncertainty descriptions,
 recommended actions, decision reasons) is scanned for eight prohibited
-terms.  Six are official product terminology defined in NWS Instruction
+terms.  Six are official product terminology from NWS Instruction
 10-701, the Tsunami Warning Center operations instruction issued under
-NWS Policy Directive 10-7~\citep{nwsi10701,nwspd107}: ``Warning,''
-``Advisory,'' ``Watch'' and ``Information Statement'' (Sections 2.1.1
-to 2.1.4), ``Cancellation'' (Section 2.1.5), and ``Threat Message,''
-the product the Pacific Tsunami Warning Center issues to its
-international service area (Section 2.2).  The remaining two are not
-product names but are scanned all the same.  ``Bulletin''
-is the label that instruction gives the numbered messages of a product
-sequence.  ``All Clear'' appears in neither document, and is scanned
+NWS Policy Directive 10-7~\citep{nwsi10701,nwspd107}.  Five are defined
+there: ``Warning,'' ``Advisory,'' ``Watch'' and ``Information
+Statement'' in Sections 2.1.1 to 2.1.4, and ``Cancellation'' in
+Section 2.1.5.  The sixth, ``Threat Message,'' is named in Section 2.2
+as a product the Pacific Tsunami Warning Center issues to its
+international designated service area, with the definition itself left
+to the regional intergovernmental coordination groups.  The other two
+are not current product names, and are scanned anyway.  ``Bulletin'' is
+how NWS Policy Directive 10-7 refers to the products collectively, in
+directing the centers to issue ``Tsunami Warning, Advisory, Watch, and
+Information Bulletins,'' and NWSI 10-701 numbers its worked-example
+messages the same way, so the word carries the voice of a center
+product even though no entry on the current product list contains it.
+``All Clear'' appears in neither document, and is scanned
 because it reads as an authoritative end-of-threat statement, which is
 the role NWSI 10-701 assigns to the Cancellation product.
 Prior to matching,
@@ -1508,8 +1512,8 @@ en, or em, separates clauses rather than building a compound, so
 A violation in the deterministic summary raises a
 \texttt{GuardrailScanError} and blocks emission. A violation in the
 optional LLM commentary drops the commentary and leaves the
-deterministic report intact.  The test suite exercises 56~guardrail test functions with
-106~assertions covering prohibited-term detection, disclaimer
+deterministic report intact.  The test suite exercises 67~guardrail test functions with
+118~assertions covering prohibited-term detection, disclaimer
 enforcement, homoglyph and small-capital bypass attempts, characters
 normalization would otherwise destroy, shape-collapsed spellings,
 whitespace and hyphen splitting of multi-word terms, and zero-width
@@ -2375,6 +2379,14 @@ other factors.  The seismic quiet penalty (which raises the effective
 detection threshold by 30\% when no $M \geq 6.5$ earthquake is
 reported within 90 minutes) provides an additional suppression layer
 but is not the primary rejection mechanism in this scenario.
+The rejection should therefore be read as conditional on that
+threshold, which is a screening default rather than a calibrated
+figure, and the margin is not large: the injection sits a third below
+the 0.15\,m level, and it is that level rather than the quiet-period
+penalty that rejects it.  The operational levels are higher again,
+with NWSI 10-701 Section 3.4 reserving an Advisory for a forecast of
+0.3 to 1.0\,m and canceling products once height falls below
+0.3\,m~\citep{nwsi10701}.
 
 \paragraph{Scenario~4: Partial network outage.}
 Four of six DART stations offline.  Both remaining online stations
@@ -2797,27 +2809,23 @@ Fifth, at the SEISMIC\_ONLY constraint stage the requirement matrix
 marks the four inversion-dependent checks (hold-out validation,
 sensitivity analysis, DART coverage geometry, waveform fit quality)
 NOT\_APPLICABLE and leaves physical consistency as the only REQUIRED
-check, so only one check is required to have run.  The four OPTIONAL
-checks still execute, but none of them can fail on the inputs the
-pipeline currently supplies, and they divide into two groups.  Posterior
-stability and the meteotsunami discriminator report NOT\_EVALUATED with
-a MISSING prerequisite, the first because no previous assessment is
-passed for comparison and the second because no component computes a
-meteotsunami score.  The tidal-state and Rayleigh checks do run, and
-neither can reach FAIL: the tidal FAIL branch requires a
-tidal-correction flag that nothing sets, and the Rayleigh check has no
-FAIL branch at all, returning CONCERN at worst when the anomaly layer
-marks a station suspect.
-The consequence reaches past this stage.  A single OPTIONAL check
-blocked on a missing prerequisite degrades the aggregate to
-PASS\_WITH\_CONCERNS, and the meteotsunami check is OPTIONAL at all
-three constraint stages with a prerequisite that is never satisfied.
-PASS is therefore unreachable in the shipped configuration at every
-stage, not only this one.  No computed verification outcome appears in
-the released artifacts, because the offline evaluation stops at
-detection and the live worker fail-closes before assembling a scenario;
-the outcome shown in Appendix~\ref{sec:appendix-trace} is a hand-built
-illustration of the envelope shape, labeled as such there.
+check, so only one check is required to have run.  All four OPTIONAL
+checks then report NOT\_EVALUATED with a MISSING prerequisite on the
+inputs available at that stage: no earlier assessment is supplied for
+the posterior-stability comparison, no component computes a
+meteotsunami score, no coastal proxies are attached for the tidal-state
+review, and the Rayleigh flag is left unset.  None of the four can
+fail, and none contributes evidence either.
+The consequence reaches past this stage.  One OPTIONAL check blocked on
+a missing prerequisite is enough to degrade the aggregate to
+PASS\_WITH\_CONCERNS, and the meteotsunami check alone is OPTIONAL at
+all three constraint stages with a prerequisite nothing satisfies, so
+PASS is unreachable everywhere rather than only here.  The broader
+point is that no component assembles a \texttt{VerificationInput} at
+all: the pipeline node that would run these checks reads a
+caller-supplied dictionary, and the live worker fail-closes before a
+scenario exists to verify.  What this describes is the policy the
+checks encode, not behavior observed in a run.
 ABSTAIN still activates at this stage: a missing seismic
 magnitude leaves that required check without its prerequisite and the
 outcome is INCOMPLETE, and a prior scenario whose $M_w$ differs from
@@ -4091,14 +4099,13 @@ four operated in event mode during the event window.
 \caption{DART stations used in the Iquique 2014 retrospective validation
   (epicenter 19.610\textdegree{}S, 70.769\textdegree{}W).
   Distances computed via haversine. The interval given for an
-  event-mode station is the median spacing of its retained record
-  rather than a fixed instrument setting. These records mix 15\,s and
-  60\,s sampling, the 15\,s stretches falling in the hours after
-  origin, with 45\,s spacings where samples are missing from a 15\,s
-  stretch. The median therefore lands at 45\,s on the two stations
-  that retained the most 15\,s samples and at 60\,s on the other two
-  event-mode stations, which is a property of the record and not of
-  the mode.}
+  event-mode station is the median spacing of its retained record, not
+  an instrument setting. These records interleave samples that the
+  NDBC archive tags as 15-second and 1-minute mode, and the median
+  lands at 45\,s on the two stations that kept the most 15-second
+  samples, 120 and 103 against 25 and 20 on the other two. The
+  per-sample mode is preserved in the native records under
+  \texttt{data/iquique/native/}, whose manifest documents the tag.}
 \label{tab:iquique-stations}
 \small
 \begin{tabular}{lrll}
@@ -4303,8 +4310,8 @@ Station 51425 (804\,km) crosses $T_2$ at +17.8\,min in the
 sliding timeline; over the full 6-hour window its ensemble is
 0.588, with threshold as the sole contributing component
 (wavelet and BOCPD both zero), demonstrating that the ensemble's
-threshold-heavy renormalization preserves detection even when
-two of three detectors produce no signal.
+threshold-heavy renormalization preserves detection even when the
+statistical component contributes nothing.
 Audit trail:
 (1)~\texttt{state\_transition}: IDLE~$\to$~MONITOR ($M$\,8.1);
 (2)~\texttt{state\_transition}: MONITOR~$\to$~ESCALATE

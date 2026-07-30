@@ -87,6 +87,27 @@ def test_mission_control_health_is_public() -> None:
     assert response.json()["status"] == "healthy"
 
 
+@pytest.mark.parametrize("path", ["/docs", "/redoc", "/openapi.json"])
+def test_mission_control_does_not_serve_api_schema(path: str) -> None:
+    """The generated schema and docs pages must be off, as on the core API.
+
+    They answer before any API key is checked, and they name every route,
+    parameter and model. The core API disables them in its FastAPI
+    constructor; the BFF did not, and served all three with status 200 to an
+    unauthenticated caller. This is the service a browser reaches, so the
+    setting has to match there too.
+    """
+    mc_main = _load_mission_control_app(mission_control_api_key="mc-key")
+
+    with TestClient(mc_main.app) as client:
+        response = client.get(path)
+
+    assert response.status_code == 404, (
+        f"{path} is exposed without authentication; disable it on the "
+        "FastAPI constructor"
+    )
+
+
 def test_mission_control_http_routes_require_api_key() -> None:
     mc_main = _load_mission_control_app(mission_control_api_key="mc-key")
 

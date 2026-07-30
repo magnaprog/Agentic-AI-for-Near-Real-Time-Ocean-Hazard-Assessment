@@ -87,6 +87,17 @@ _MANIFEST = AgentManifest(
 # evaluated events are South Pacific or South American, so applying the North
 # Pacific figure to them is an extrapolation this system does not calibrate.
 DEFAULT_DART_THRESHOLD_M = 0.03
+
+# A screening level for coastal gauges. Unlike the DART figure above it has no
+# published source, and this repository neither derives nor calibrates it.
+# For scale, NWSI 10-701 Section 3.4 puts the operational levels higher: a
+# tsunami Warning needs a forecast or observed height above 1 m, an Advisory a
+# forecast of 0.3 to 1.0 m, and products are canceled once height falls below
+# 0.3 m and is diminishing. Screening below the product levels is the intent,
+# but the particular number is a default rather than a result. It is not inert:
+# the synthetic meteotsunami in the physics validation is rejected because its
+# 0.10 m injection sits under this line, so the value chosen decides that
+# outcome.
 DEFAULT_COOPS_THRESHOLD_M = 0.15
 
 

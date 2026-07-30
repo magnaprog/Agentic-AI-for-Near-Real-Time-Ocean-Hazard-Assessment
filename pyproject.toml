@@ -15,6 +15,8 @@ authors = [
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.0",
+    # Imported directly by telemetry/metrics.py, not only through fastapi.
+    "starlette>=0.40.0",
     "uvicorn>=0.32.0",
     "pydantic>=2.10.0",
     "pydantic-settings>=2.6.0",
@@ -40,6 +42,9 @@ Repository = "https://github.com/magnaprog/Agentic-AI-for-Near-Real-Time-Ocean-H
 [project.optional-dependencies]
 llm = [
     "langchain-anthropic>=1.0,<2.0",
+    # The retry policy in llm_advisory/factory.py catches the provider SDK's
+    # own exception types, so it imports anthropic directly.
+    "anthropic>=0.40.0",
 ]
 dev = [
     "pytest>=8.3.0",

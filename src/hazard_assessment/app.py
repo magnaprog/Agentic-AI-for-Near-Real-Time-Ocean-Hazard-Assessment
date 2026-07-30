@@ -498,8 +498,17 @@ class PolicyCheckRequest(BaseModel):
 
 
 @app.get("/health")
-def health_check() -> dict[str, str]:
-    """Liveness probe for container orchestration."""
+async def health_check() -> dict[str, str]:
+    """Liveness probe for container orchestration.
+
+    Declared async deliberately. Every other route here is a sync def, so it
+    runs in Starlette's bounded threadpool, and eight of them call
+    _refresh_fsm_from_db, which blocks for the pool timeout when the database
+    is unreachable. With Mission Control polling and Prometheus scraping on
+    timers, a database outage fills that threadpool and a sync liveness probe
+    queues behind the very failure it exists to report independently. This
+    body touches nothing, so running it on the event loop keeps it answering.
+    """
     return {"status": "healthy", "version": __version__}
 
 

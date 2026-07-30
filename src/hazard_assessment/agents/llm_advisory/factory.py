@@ -69,7 +69,12 @@ def build_chat_model(settings: LLMSettings, *, purpose: str = "standard") -> Bas
         BaseChatModel,
         llm.with_retry(
             retry_if_exception_type=(APITimeoutError, RateLimitError, InternalServerError),
-            stop_after_attempt=settings.max_retries,
+            # stop_after_attempt counts total attempts, while the setting is
+            # named and documented as retries, so the first attempt has to be
+            # added. Passing max_retries directly made LLM_MAX_RETRIES=2 mean
+            # one retry, and LLM_MAX_RETRIES=1 mean none at all despite the
+            # field's ge=1 floor.
+            stop_after_attempt=settings.max_retries + 1,
             wait_exponential_jitter=True,
         ),
     )

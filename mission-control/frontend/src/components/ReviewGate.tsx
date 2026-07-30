@@ -20,7 +20,7 @@ interface Props {
  *
  *  The previous version sliced the first 19 characters and appended "Z". The
  *  core writes datetime.now(UTC).isoformat(), so that happened to be right, but
- *  any record carrying a non-UTC offset would have been relabelled as UTC
+ *  any record carrying a non-UTC offset would have been relabeled as UTC
  *  rather than converted, which is the wrong thing to do to a review record's
  *  time. An unparseable value falls back to the trimmed original with no
  *  timezone claimed. */

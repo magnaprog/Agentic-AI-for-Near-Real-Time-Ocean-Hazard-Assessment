@@ -57,6 +57,14 @@ app = FastAPI(
     title="Mission Control",
     version="0.1.0",
     description="Mission control dashboard: Agentic AI for Near-Real-Time Ocean Hazard Assessment",
+    # Off for the same reason as the core API: the schema names every route,
+    # parameter and model, and the generated pages answer before any API key is
+    # checked. The /api/mc routers below are behind a key, but the auto-docs are
+    # not routers and would not be. This is the service a browser reaches, so
+    # leaving them on here would undo the core API's setting rather than match it.
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
     lifespan=lifespan,
 )
 
@@ -95,7 +103,9 @@ app.include_router(
 )
 # WebSocket router has no Depends(require_mission_control_api_key) because FastAPI
 # dependency injection does not work with WebSocket endpoints in the same
-# way. Auth is handled inside the WS handler via query-param API key.
+# way. The handler authenticates instead, accepting the key by "mc-key."
+# subprotocol, by header, or by api_key query parameter; see
+# security.websocket_has_valid_api_key for why the subprotocol is preferred.
 app.include_router(ws.router, prefix="/api/mc")
 
 if STATIC_DIR.is_dir():

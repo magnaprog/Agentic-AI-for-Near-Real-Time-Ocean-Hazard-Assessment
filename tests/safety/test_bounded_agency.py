@@ -658,7 +658,7 @@ class TestNonDistributableWithoutHumanDecision:
             )
 
 
-class TestAbstainRoutingIsDefenceInDepth:
+class TestAbstainRoutingIsDefenseInDepth:
     """A FAIL or INCOMPLETE outcome must reach ABSTAIN on its own.
 
     ``PipelineState`` carries plain dicts, so the Pydantic validator that

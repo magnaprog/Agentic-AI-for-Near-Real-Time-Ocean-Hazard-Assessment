@@ -12,6 +12,7 @@ milliseconds, so unlike the reproduction tests it belongs in the normal suite.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from pathlib import Path
@@ -214,3 +215,67 @@ def test_synthetic_grid_matches_the_paper_and_is_complete() -> None:
         f"only {payload['total_completed']} of {expected} configurations completed; "
         "the minimum-detectable-signal discussion assumes the full grid"
     )
+
+
+def test_guardrail_test_counts_match_the_paper() -> None:
+    """The paper prints how much the guardrail suite covers; keep it honest.
+
+    These two numbers drifted once already, from 56/106 to 67/118, because
+    nothing tied them to the file they describe. Counting the source rather
+    than pytest's collected total is deliberate: the paper says "test
+    functions", and parametrization would make the collected count say
+    something different from what the sentence claims.
+    """
+    sentence = re.search(
+        r"exercises (\d+)~guardrail test functions with\s*\n?(\d+)~assertions",
+        PAPER.read_text(),
+    )
+    assert sentence is not None, "the paper's guardrail-coverage sentence has changed shape"
+    claimed_functions, claimed_assertions = (int(g) for g in sentence.groups())
+
+    tree = ast.parse((REPO_ROOT / "tests" / "unit" / "test_guardrails.py").read_text())
+    functions = sum(
+        isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef)
+        and node.name.startswith("test_")
+        for node in ast.walk(tree)
+    )
+    assertions = sum(isinstance(node, ast.Assert) for node in ast.walk(tree))
+
+    assert claimed_functions == functions, (
+        f"paper claims {claimed_functions} guardrail test functions, "
+        f"test_guardrails.py defines {functions}"
+    )
+    assert claimed_assertions == assertions, (
+        f"paper claims {claimed_assertions} assertions, "
+        f"test_guardrails.py has {assertions}"
+    )
+
+
+def test_script_threshold_literals_match_the_settings_defaults() -> None:
+    """Every script that hardcodes T1/T2/T3 must agree with the settings.
+
+    The artifact generators do not read ThresholdSettings; they carry their own
+    literals, and the crossing counts in results/*_detection.json come from
+    those literals. Because tests/artifacts/ reproduces the artifacts by
+    re-running the same scripts, a change to the settings default would leave
+    the published counts on the old thresholds with every check still green.
+    Nothing else ties the two together, so this does.
+    """
+    from hazard_assessment.config.settings import ThresholdSettings
+
+    settings = ThresholdSettings()
+    expected = {"1": settings.t1, "2": settings.t2, "3": settings.t3}
+
+    pattern = re.compile(r"^T([123])(?:_[A-Z_]+)?\s*=\s*([0-9.]+)\s*$", re.M)
+    checked = 0
+    for path in sorted((REPO_ROOT / "scripts").glob("*.py")):
+        for tier, literal in pattern.findall(path.read_text()):
+            checked += 1
+            assert float(literal) == expected[tier], (
+                f"{path.name} sets T{tier}={literal}, but "
+                f"ThresholdSettings default is {expected[tier]}"
+            )
+
+    # Guard the guard: if the naming changes and the regex stops matching, this
+    # test would pass while checking nothing.
+    assert checked >= 15, f"only matched {checked} threshold literals; regex is stale"

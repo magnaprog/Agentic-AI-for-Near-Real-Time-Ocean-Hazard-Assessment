@@ -15,6 +15,11 @@ on:
     branches: [main]
     paths:
       - "src/hazard_assessment/agents/**"
+      # anomaly_agent reads ThresholdSettings from config/settings.py and emits
+      # the schemas/ envelopes, so a change to either can move the numbers in
+      # results/*_detection.json without touching agents/.
+      - "src/hazard_assessment/config/**"
+      - "src/hazard_assessment/schemas/**"
       - "src/hazard_assessment/tidal.py"
       - "src/hazard_assessment/geo.py"
       - "scripts/validate_*.py"
@@ -28,6 +33,11 @@ on:
   pull_request:
     paths:
       - "src/hazard_assessment/agents/**"
+      # anomaly_agent reads ThresholdSettings from config/settings.py and emits
+      # the schemas/ envelopes, so a change to either can move the numbers in
+      # results/*_detection.json without touching agents/.
+      - "src/hazard_assessment/config/**"
+      - "src/hazard_assessment/schemas/**"
       - "src/hazard_assessment/tidal.py"
       - "src/hazard_assessment/geo.py"
       - "scripts/validate_*.py"

@@ -24,10 +24,16 @@ x-app-common: &app_common
     context: ..
     dockerfile: deploy/Dockerfile
   environment: &app_env
+    # Pinned, not templated: these three name Compose services, and DB_NAME is
+    # pinned again by the timescaledb service's POSTGRES_DB. Setting them in
+    # .env has no effect here, which deploy/.env.example now says.
     DB_HOST: timescaledb
     DB_PORT: "5432"
     DB_NAME: hazard_assessment
     DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD environment variable is required}
+    # Genuinely tunable and read by storage/client.py, so forward it rather
+    # than let the documented value be silently ignored.
+    DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-10}
     KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
     APP_LOG_LEVEL: ${APP_LOG_LEVEL:-INFO}

@@ -292,6 +292,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    # Without this every message below is discarded: they are all logger.info
+    # and the root logger defaults to WARNING. init-db then exits 0 having
+    # printed nothing at all, including the "Database not ready yet" retries
+    # during a wait that can run to two minutes. Same setup as the two workers.
+    logging.basicConfig(
+        level=os.environ.get("APP_LOG_LEVEL", "INFO").upper(),
+        format="%(asctime)s %(levelname)s %(name)s  %(message)s",
+    )
     args = parse_args(argv)
     config = DatabaseConfig.from_env()
     migrations = discover_migrations(args.migrations_dir)

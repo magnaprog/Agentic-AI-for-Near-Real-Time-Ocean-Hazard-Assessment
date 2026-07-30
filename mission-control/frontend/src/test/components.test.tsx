@@ -598,8 +598,8 @@ describe("ReviewGate recorded decision", () => {
     expect(screen.getByText(/write a reason to enable the decision/i)).toBeInTheDocument();
   });
 
-  it("converts a non-UTC decision time instead of relabelling it", async () => {
-    // The core writes UTC, but relabelling an offset as Z would misstate when a
+  it("converts a non-UTC decision time instead of relabeling it", async () => {
+    // The core writes UTC, but relabeling an offset as Z would misstate when a
     // review was recorded, which is exactly what an audit record must not do.
     vi.mocked(fetchEscalationPacket).mockResolvedValue(packet());
     render(

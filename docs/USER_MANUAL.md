@@ -1204,7 +1204,7 @@ Francisco, 9413450 Monterey, and 9410230 La Jolla.
 | `DB_ADMIN_USER` | `hazard_admin` | Bootstrap/migration role |
 | `DB_ADMIN_PASSWORD` | required in Compose | Bootstrap/migration password |
 | `DB_HOST` | empty at process gate | Empty disables database use in API/workers; Compose sets `timescaledb` |
-| `DB_PORT` / `DB_NAME` | `5432` / `hazard_assessment` | Database port and name |
+| `DB_PORT` / `DB_NAME` | `5432` / `hazard_assessment` | Database port and name. Pinned by Compose to the service; editable only when running directly |
 | `DB_CONNECT_TIMEOUT` | `10` | Connection timeout in seconds |
 | `DB_PASSWORD` | required in Compose | Fallback password for fixed runtime roles |
 | `DB_DEFAULT_ROLE_PASSWORD` | `DB_PASSWORD` | Explicit name for that fallback; set either one |

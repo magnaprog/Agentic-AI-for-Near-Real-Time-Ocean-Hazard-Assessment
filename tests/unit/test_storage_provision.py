@@ -330,7 +330,7 @@ def test_server_notices_log_at_their_own_severity(
 
 
 def test_server_notice_without_severity_defaults_to_warning() -> None:
-    """An unrecognised or absent severity must not be silently downgraded."""
+    """An unrecognized or absent severity must not be silently downgraded."""
     handler_input = _FakeDiagnostic(None, "unclassified server message")
     logger = logging.getLogger(provision.__name__)
     records: list[logging.LogRecord] = []
