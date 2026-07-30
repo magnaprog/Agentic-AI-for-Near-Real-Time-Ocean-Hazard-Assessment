@@ -1281,7 +1281,8 @@ def investigate_active_event() -> dict[str, Any]:
     What it cannot do, by construction rather than by instruction:
     - Findings are written to evidence_issue_results, which migration 009
       grants to investigator_writer alone. pipeline_worker, which drives the
-      FSM, has no INSERT there, so a finding cannot re-enter the decision path.
+      FSM, holds neither INSERT nor SELECT on it, so a finding can be neither
+      written nor read by the code that escalates.
     - It runs only once the worker has persisted a checkpoint, and binds its
       findings to that row while reading the event's audit trail for
       evidence. Either way it sits off the detection path and cannot delay or

@@ -7,6 +7,7 @@ API routes that aggregate data from the main hazard assessment system.
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -16,6 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from backend.config import settings
+from backend.errors import UpstreamKeyNotConfiguredError
 from backend.routers import audit, events, review, state, ws
 from backend.security import (
     require_mission_control_api_key,
@@ -24,6 +26,8 @@ from backend.security import (
 )
 from backend.services.hazard_client import hazard_client
 from backend.services.ws_manager import ws_manager
+
+logger = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
@@ -37,10 +41,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         required_hazard_api_key()
         await hazard_client.startup()
-    except RuntimeError:
-        import logging
-
-        logging.getLogger(__name__).warning(
+    except UpstreamKeyNotConfiguredError:
+        logger.warning(
             "MISSION_CONTROL_HAZARD_API_KEY not set; running in demo mode (Tohoku 2011)"
         )
     task = asyncio.create_task(ws_manager.poll_loop())

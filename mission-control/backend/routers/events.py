@@ -7,7 +7,7 @@ from typing import Any
 import httpx
 from fastapi import APIRouter
 
-from backend.errors import raise_upstream_error
+from backend.errors import UpstreamKeyNotConfiguredError, raise_upstream_error
 from backend.services.demo_snapshot import TOHOKU_SNAPSHOT
 from backend.services.hazard_client import hazard_client
 
@@ -19,7 +19,7 @@ async def get_events() -> list[dict[str, Any]]:
     """Return the current active event, or an empty list."""
     try:
         return await hazard_client.get_events()
-    except RuntimeError:
+    except UpstreamKeyNotConfiguredError:
         # No core API key configured: genuine demo mode.
         ctx = TOHOKU_SNAPSHOT["fsm"]["event_context"]
         return [

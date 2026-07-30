@@ -316,6 +316,15 @@ _INDETERMINATE_FLAGS = (
 )
 
 
+N_RUNNABLE_CHECKS = 5
+"""Checks this module can actually evaluate, and the ceiling on
+``count_evaluated_checks``. Must equal the length of the list in
+``_evaluated_flags``. The remaining QARTODFlags fields are not runnable
+checks: latency mirrors timing, and neighbor_consistency and
+mode_transition have no producer, so none of them is a check that came
+back unevaluated for a record."""
+
+
 def _evaluated_flags(flags: QARTODFlags) -> list[QARTODFlag]:
     # latency is excluded: it mirrors timing (set in run_all_checks)
     # and including both would double-count the timing check.

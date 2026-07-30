@@ -4,6 +4,11 @@ import type { ReactNode, ErrorInfo } from "react";
 interface Props {
   children: ReactNode;
   fallbackLabel?: string;
+  /** Applied to the fallback element. The console is a CSS grid keyed on
+   *  region classes, and html/body/#root are overflow: hidden, so a fallback
+   *  that stands in for a grid-placed child without its class is auto-placed
+   *  into an implicit row nobody can scroll to. */
+  fallbackClassName?: string;
 }
 
 interface State {
@@ -19,7 +24,12 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error(`[ErrorBoundary] ${this.props.fallbackLabel ?? "Panel"} crashed:`, error, info.componentStack);
+    // Development only. The operator-facing message below is the production
+    // channel; a deployed console has no reason to stream React component
+    // stacks into a browser console it does not own.
+    if (import.meta.env.DEV) {
+      console.error(`[ErrorBoundary] ${this.props.fallbackLabel ?? "Panel"} crashed:`, error, info.componentStack);
+    }
   }
 
   private handleRetry = () => {
@@ -31,6 +41,7 @@ export default class ErrorBoundary extends Component<Props, State> {
       return (
         <div
           role="alert"
+          className={this.props.fallbackClassName}
           style={{
             display: "flex",
             flexDirection: "column",

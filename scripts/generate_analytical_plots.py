@@ -115,7 +115,8 @@ def plot1_latency_vs_distance() -> None:
     ax.plot(d_range, t_pwave, ":", color="gray", linewidth=1,
             label="P-wave (~8 km/s)")
 
-    # Threshold lines
+    # Zero baseline (no FSM threshold lines on this panel: the y axis is
+    # minutes to first T1 detection, not score)
     ax.axhline(y=0, color="black", linewidth=0.3)
 
     ax.set_xlabel("Distance from epicenter (km)", fontsize=10)

@@ -24,6 +24,8 @@ function rowStatus(
   return "unobserved";
 }
 
+const TRIGGER_MAX_CHARS = 20;
+
 /** Extract a short trigger description from trigger_reason. */
 function shortTrigger(reason: string): string {
   if (reason.includes("Anomaly score")) {
@@ -31,15 +33,23 @@ function shortTrigger(reason: string): string {
     return match ? `score=${match[1]}` : "anomaly";
   }
   if (reason.includes("Seismic trigger")) {
+    // The core writes "Seismic trigger: M9.1 at <region>", so this is the
+    // observed magnitude. It was rendered as "M>=9.1", which reads as the
+    // threshold that was met rather than the value that met it.
     const match = reason.match(/M([\d.]+)/);
-    return match ? `M>=${match[1]}` : "seismic";
+    return match ? `M${match[1]}` : "seismic";
   }
   if (reason.includes("timeout")) return "timeout";
   if (reason.includes("Seismic-only")) return "seismic-only";
   if (reason.includes("No DART")) return "seismic-only";
   if (reason.includes("DART")) return "DART event-mode";
-  if (reason.includes("resolved")) return "Human";
-  return reason.slice(0, 20);
+  // Anything unmatched is shown as written, cut on a word boundary and marked
+  // as cut. A bare slice ended rows mid-word with nothing to say it had been
+  // shortened, so a truncated reason read as the whole reason.
+  if (reason.length <= TRIGGER_MAX_CHARS) return reason;
+  const cut = reason.slice(0, TRIGGER_MAX_CHARS);
+  const lastSpace = cut.lastIndexOf(" ");
+  return `${(lastSpace > 8 ? cut.slice(0, lastSpace) : cut).trimEnd()}...`;
 }
 
 /** Compute dwell time between consecutive transitions. */
@@ -105,26 +115,34 @@ function FSMPanel({ currentState, transitions }: Props) {
         .map((t, idx, arr) => {
           const dwell = dwellTime([...arr].reverse(), arr.length - 1 - idx);
           return (
+            // The right column used to hold the dwell time when there was one
+            // and the trigger reason otherwise, unlabeled, so the newest row
+            // read "M9.1" and the rows below it read "5s" with nothing saying
+            // the column had changed meaning. The trigger now always sits in
+            // the same place, and the dwell is on its own labeled line.
             <div
               key={t.transition_id}
               className="mono"
               style={{
-                display: "flex",
-                justifyContent: "space-between",
                 fontSize: 11,
                 color: "var(--ink-2)",
                 padding: "4px 0",
                 borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
               }}
             >
-              <span>
-                {t.from_state}
-                {"->"}
-                {t.to_state}
-              </span>
-              <span style={{ color: "var(--accent)" }}>
-                {dwell ?? shortTrigger(t.trigger_reason ?? "")}
-              </span>
+              <div className="row--between">
+                <span>
+                  {t.from_state}
+                  {"->"}
+                  {t.to_state}
+                </span>
+                <span style={{ color: "var(--accent)" }}>
+                  {shortTrigger(t.trigger_reason ?? "")}
+                </span>
+              </div>
+              {dwell != null && (
+                <div className="tiny dim-2">held {dwell}</div>
+              )}
             </div>
           );
         })}

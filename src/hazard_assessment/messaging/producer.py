@@ -139,9 +139,16 @@ class KafkaProducer:
         return int(remaining)
 
     def close(self) -> None:
-        """Flush and close the producer."""
+        """Flush, close the underlying producer, and drop the handle.
+
+        Dropping the handle is what makes ``is_connected`` false and
+        ``produce()`` return False afterwards; without it a closed
+        producer still reported itself connected and kept queueing.
+        """
         if self._producer is not None:
             self.flush()
+            self._producer.close()
+            self._producer = None
             logger.info("Kafka producer closed")
 
     @staticmethod

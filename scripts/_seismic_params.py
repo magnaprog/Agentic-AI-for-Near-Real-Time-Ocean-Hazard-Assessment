@@ -1,7 +1,13 @@
-"""Load earthquake parameters from USGS seismic_event.json files.
+"""Shared replay helpers for the offline evaluation scripts.
 
-Provides a single function that loads canonical USGS parameters for each
-evaluation event, replacing hardcoded constants across validation scripts.
+Two unrelated things live here because every validation script needs both:
+
+  * ``load_seismic_params`` loads canonical USGS parameters for each
+    evaluation event from ``data/{event}/seismic_event.json``, replacing
+    hardcoded constants across the validation scripts.
+  * ``deduplicate_timeseries``, ``DedupStats`` and ``DEDUP_POLICIES``
+    implement the frozen equal-timestamp record policy that archived DART
+    replay data needs (IP 7.4).
 """
 
 from __future__ import annotations
@@ -22,74 +28,62 @@ class SeismicParams:
     longitude: float
     depth_km: float
     event_id: str
+    # Not read anywhere. Kept so the dataclass mirrors the USGS record.
     title: str
+
+
+# The five evaluation events. Each has a git-tracked
+# data/{event}/seismic_event.json, so the loader below has no fallback.
+KNOWN_EVENTS: tuple[str, ...] = (
+    "tohoku", "chile", "illapel", "iquique", "samoa",
+)
 
 
 def load_seismic_params(event_name: str) -> SeismicParams:
     """Load earthquake parameters from data/{event_name}/seismic_event.json.
 
-    Falls back to hardcoded values if the JSON file does not exist,
-    ensuring scripts work even without running download_seismic_data.py.
+    Raises rather than substituting values when the file is missing.  An
+    earlier version of this module carried a hardcoded fallback table, which
+    was unreachable (all five JSON files are tracked in git) and had drifted
+    from the files it shadowed: different event_id scheme (``usp000hvnu``
+    against the file's ``20110311054624120_30``), whole-second origins
+    against the file's millisecond values, and coarser coordinates and depth
+    for illapel and iquique.  Substituting those silently would have emitted
+    results/*_detection.json that no longer match the published artifacts
+    with nothing in the run to indicate it, so a missing data/ directory is
+    now a hard error.
     """
+    if event_name not in KNOWN_EVENTS:
+        raise ValueError(
+            f"Unknown event: {event_name}; expected one of {KNOWN_EVENTS}"
+        )
+
     data_dir = Path(__file__).resolve().parent.parent / "data" / event_name
     json_path = data_dir / "seismic_event.json"
 
-    if json_path.exists():
-        with open(json_path) as f:
-            event = json.load(f)
-        props = event["properties"]
-        coords = event["geometry"]["coordinates"]
-        origin = datetime.fromtimestamp(
-            props["time"] / 1000, tz=UTC
-        )
-        return SeismicParams(
-            origin_utc=origin,
-            magnitude=props["mag"],
-            latitude=coords[1],
-            longitude=coords[0],
-            depth_km=coords[2],
-            event_id=props.get("code", props.get("ids", "unknown")),
-            title=props.get("title", event_name),
+    if not json_path.exists():
+        raise FileNotFoundError(
+            f"Missing seismic parameters for {event_name}: {json_path} does "
+            "not exist. This file is tracked in git; restore it (or re-run "
+            "scripts/download_seismic_data.py) rather than running with "
+            "substituted values, which would silently change every artifact "
+            "derived from this event."
         )
 
-    # Fallback: hardcoded canonical values (USGS NEIC)
-    _FALLBACK: dict[str, dict] = {
-        "tohoku": dict(
-            origin_utc=datetime(2011, 3, 11, 5, 46, 24, tzinfo=UTC),
-            magnitude=9.1, latitude=38.297, longitude=142.373,
-            depth_km=29.0, event_id="usp000hvnu",
-            title="M 9.1 - 2011 Great Tohoku Earthquake, Japan",
-        ),
-        "chile": dict(
-            origin_utc=datetime(2010, 2, 27, 6, 34, 11, tzinfo=UTC),
-            magnitude=8.8, latitude=-36.122, longitude=-72.898,
-            depth_km=22.9, event_id="usp000h7rf",
-            title="M 8.8 - 2010 Maule, Chile Earthquake",
-        ),
-        "illapel": dict(
-            origin_utc=datetime(2015, 9, 16, 22, 54, 32, tzinfo=UTC),
-            magnitude=8.3, latitude=-31.573, longitude=-71.674,
-            depth_km=22.4, event_id="us20003k7a",
-            title="M 8.3 - 48 km W of Illapel, Chile",
-        ),
-        "iquique": dict(
-            origin_utc=datetime(2014, 4, 1, 23, 46, 47, tzinfo=UTC),
-            magnitude=8.2, latitude=-19.610, longitude=-70.769,
-            depth_km=25.0, event_id="usc000nzvd",
-            title="M 8.2 - 93 km NW of Iquique, Chile",
-        ),
-        "samoa": dict(
-            origin_utc=datetime(2009, 9, 29, 17, 48, 10, tzinfo=UTC),
-            magnitude=8.1, latitude=-15.489, longitude=-172.095,
-            depth_km=18.0, event_id="usp000h1ys",
-            title="M 8.1 - 2009 Samoa Earthquake",
-        ),
-    }
-
-    if event_name not in _FALLBACK:
-        raise ValueError(f"Unknown event: {event_name}")
-
-    return SeismicParams(**_FALLBACK[event_name])
+    with open(json_path) as f:
+        event = json.load(f)
+    props = event["properties"]
+    coords = event["geometry"]["coordinates"]
+    origin = datetime.fromtimestamp(props["time"] / 1000, tz=UTC)
+    return SeismicParams(
+        origin_utc=origin,
+        magnitude=props["mag"],
+        latitude=coords[1],
+        longitude=coords[0],
+        depth_km=coords[2],
+        event_id=props.get("code", props.get("ids", "unknown")),
+        title=props.get("title", event_name),
+    )
 
 
 # Equal-timestamp record policies for archived replay data.

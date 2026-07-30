@@ -54,9 +54,11 @@ class QARTODFlags(BaseModel):
 
     Standard QARTOD water-level tests (Timing/Gap, Gross Range,
     Spike, Rate of Change, Flat Line) are defined in the QARTOD
-    Water Level Manual.  Additional system-specific tests
-    (neighbor_consistency, mode_transition, latency) are local
-    extensions used for tsunami-domain quality assessment.
+    Water Level Manual, and ``run_all_checks`` evaluates those five.
+    The remaining fields (neighbor_consistency, mode_transition,
+    latency) are local extensions: latency currently just copies the
+    timing result, and the other two are reserved slots that no check
+    computes.
     """
 
     # --- Standard QARTOD water-level tests ---
@@ -72,11 +74,17 @@ class QARTODFlags(BaseModel):
     # --- System-specific extensions (not QARTOD core tests) ---
     neighbor_consistency: QARTODFlag = Field(
         default=QARTODFlag.NOT_APPLICABLE,
-        description="[Extension] Cross-station travel-time consistency (DART only)",
+        description=(
+            "[Reserved] Cross-station travel-time consistency (DART only). "
+            "No check computes this; it stays NOT_APPLICABLE."
+        ),
     )
     mode_transition: QARTODFlag = Field(
         default=QARTODFlag.NOT_APPLICABLE,
-        description="[Extension] DART event mode transition flag",
+        description=(
+            "[Reserved] DART event mode transition flag. No check computes "
+            "this; it stays NOT_APPLICABLE."
+        ),
     )
     latency: QARTODFlag = Field(
         default=QARTODFlag.NOT_APPLICABLE,
@@ -115,7 +123,11 @@ class QCReport(BaseEnvelope):
     qartod_flags: QARTODFlags = Field(description="Per-test QARTOD flag results")
     detided_ssh_m: float | None = Field(
         default=None,
-        description="Detided sea-surface height residual in meters",
+        description=(
+            "[Reserved] Detided sea-surface height residual in meters. The "
+            "QC agent does not detide, so no code path sets this; detiding "
+            "happens later, in the anomaly scorer."
+        ),
     )
     station_confidence: float = Field(
         ge=0.0,

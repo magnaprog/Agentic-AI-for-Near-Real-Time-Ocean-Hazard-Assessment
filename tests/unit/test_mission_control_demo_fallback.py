@@ -2,9 +2,17 @@
 
 The safety contract (finding B1): the BFF serves the static Tohoku demo snapshot
 only in genuine demo mode - when no ``MISSION_CONTROL_HAZARD_API_KEY`` is set,
-which raises ``RuntimeError`` before any request is made. A configured but
-unreachable core is a live-mode incident: the BFF must surface the failure
-(5xx) rather than fabricate demo evidence a duty scientist could act on.
+which raises ``UpstreamKeyNotConfiguredError`` before any request is made. A
+configured but unreachable core is a live-mode incident: the BFF must surface
+the failure (5xx) rather than fabricate demo evidence a duty scientist could
+act on.
+
+The demo signal used to be a bare ``RuntimeError``, which was not specific
+enough to carry that contract. httpx raises ``RuntimeError`` for a client that
+has been closed, and ``HazardClient._get_client`` raises one when startup did
+not run, so either transport fault reached the same handler and answered with
+the demo snapshot at HTTP 200 in a deployment that did have a key configured.
+The last test here pins the narrower type.
 """
 
 from __future__ import annotations
@@ -145,6 +153,35 @@ def test_live_mode_unreachable_core_fails_loud_not_demo() -> None:
         packet = client.get("/api/mc/review/escalation", headers=headers)
 
     assert packet.status_code == 503
+
+
+def test_live_mode_runtime_error_is_not_treated_as_demo_mode(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A transport RuntimeError in a key-configured deployment must not
+    produce demo evidence.
+
+    This is the shape of the real fault: httpx raises
+    ``RuntimeError("Cannot send a request, as the client has been closed.")``
+    once its client is closed. Catching the base class made that answer with
+    the Tohoku demo packet at 200, with no demo marker on the response, which
+    is precisely the substitution the module contract forbids.
+    """
+    mc_main = _load_mission_control_app(hazard_api_key="hazard-key")
+    from backend.services.hazard_client import hazard_client
+
+    async def closed_client(*_args: Any, **_kwargs: Any) -> Any:
+        raise RuntimeError("Cannot send a request, as the client has been closed.")
+
+    monkeypatch.setattr(hazard_client, "get_escalation_packet", closed_client)
+    headers = {"X-Mission-Control-Api-Key": "mc-key"}
+
+    with TestClient(mc_main.app) as client, pytest.raises(RuntimeError):
+        client.get("/api/mc/review/escalation", headers=headers)
+
+    # The point is what must NOT happen: the demo packet must never be the
+    # answer to a transport fault. An unhandled error surfaces the fault; a
+    # 200 carrying DEMO_ESCALATION_PACKET would hide it.
 
 
 @pytest.mark.asyncio

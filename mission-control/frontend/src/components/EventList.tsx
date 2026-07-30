@@ -87,7 +87,7 @@ function EventList({ fsm, ensembleAblation }: Props) {
 
       {ensembleAblation && ensembleAblation.length > 0 && (
         <div>
-          <div className="subhead subhead--monitor">Ensemble ablation</div>
+          <div className="subhead">Ensemble ablation</div>
           <table className="metrics-table">
             <thead>
               <tr><th>Configuration</th><th>T3 hit</th><th>Score</th></tr>

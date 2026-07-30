@@ -8,6 +8,11 @@ const RECONNECT_MAX_MS = 30000;
 export function useWebSocket(baseUrl: string, apiKey: string) {
   const [snapshot, setSnapshot] = useState<SystemSnapshot | null>(null);
   const [connected, setConnected] = useState(false);
+  // True once a socket has opened for the current key. `connected` starts
+  // false, so on its own it cannot tell "the first handshake is still in
+  // flight" from "an established link dropped". Callers were painting a red
+  // CONNECTION LOST alert on every page load and every unlock because of it.
+  const [everConnected, setEverConnected] = useState(false);
   const [upstreamError, setUpstreamError] = useState(false);
   // Local receipt time of the last message proving the BFF reached the core
   // API. Measured on this clock, not the BFF's, so browser/server skew cannot
@@ -20,10 +25,14 @@ export function useWebSocket(baseUrl: string, apiKey: string) {
       // Locked: no socket. Reset so a stale view is not shown after re-lock.
       setSnapshot(null);
       setConnected(false);
+      setEverConnected(false);
       setUpstreamError(false);
       setLastContactMs(null);
       return;
     }
+
+    // A new key or endpoint is a fresh link: nothing has been established yet.
+    setEverConnected(false);
 
     let cancelled = false;
     let ws: WebSocket | null = null;
@@ -50,6 +59,7 @@ export function useWebSocket(baseUrl: string, apiKey: string) {
         if (cancelled) return;
         opened = true;
         setConnected(true);
+        setEverConnected(true);
         backoffRef.current = RECONNECT_BASE_MS;
       };
 
@@ -140,5 +150,5 @@ export function useWebSocket(baseUrl: string, apiKey: string) {
     };
   }, [baseUrl, apiKey]);
 
-  return { snapshot, connected, upstreamError, lastContactMs };
+  return { snapshot, connected, everConnected, upstreamError, lastContactMs };
 }

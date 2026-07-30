@@ -47,6 +47,13 @@ export default function AuthGate({ expired = false }: Props) {
     }
   };
 
+  // aria-invalid is derived from `error`, and nothing cleared it once the
+  // operator started typing: the field stayed announced as invalid while they
+  // were fixing it, and the alert kept naming a problem they had just solved.
+  const clearError = () => {
+    if (error !== "") setError("");
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const trimmedKey = key.trim();
@@ -105,7 +112,10 @@ export default function AuthGate({ expired = false }: Props) {
             aria-invalid={error !== "" && key.trim() === ""}
             aria-describedby="gate-error"
             value={key}
-            onChange={(e) => setKey(e.target.value)}
+            onChange={(e) => {
+              setKey(e.target.value);
+              clearError();
+            }}
           />
         </div>
 
@@ -123,7 +133,10 @@ export default function AuthGate({ expired = false }: Props) {
             aria-describedby="gate-error"
             placeholder="name or badge"
             value={reviewer}
-            onChange={(e) => setReviewer(e.target.value)}
+            onChange={(e) => {
+              setReviewer(e.target.value);
+              clearError();
+            }}
           />
         </div>
 

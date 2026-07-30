@@ -33,8 +33,13 @@ from hazard_assessment.orchestrator.states import (
     FSMOrchestrator,
     ThresholdConfig,
 )
-from hazard_assessment.policy.guardrails import NON_AUTHORITATIVE_DISCLAIMER, scan_text
+from hazard_assessment.policy.guardrails import (
+    NON_AUTHORITATIVE_DISCLAIMER,
+    PROHIBITED_TERMS,
+    scan_text,
+)
 from hazard_assessment.schemas.envelope import BaseEnvelope, DecisionStep, StepResult
+from hazard_assessment.schemas.scenario import INUNDATION_DISCLAIMER
 from hazard_assessment.schemas.verification import (
     CheckResult,
     PrerequisiteStatus,
@@ -175,13 +180,67 @@ class TestFailVerdictSafety:
         assert route_after_verify(state) == PipelineNode.ABSTAIN
 
 
+#: Every reserved term, written out rather than read from
+#: ``PROHIBITED_TERMS``. Iterating the constant would make this suite agree
+#: with whatever the constant happens to say, so deleting a term from it would
+#: silently delete the safety coverage for that term as well. Spelling them
+#: out means the list itself is what the safety job pins.
+ALL_PROHIBITED_TERMS = [
+    "Warning",
+    "Advisory",
+    "Watch",
+    "Information Statement",
+    "Threat Message",
+    "Cancellation",
+    "All Clear",
+    "Bulletin",
+]
+
+
+class TestMandatedDisclaimerWording:
+    """The two disclaimers are pinned as literal text, not as constants.
+
+    Every other test compares against the constant it is meant to be checking,
+    so the wording itself was held by nothing: setting INUNDATION_DISCLAIMER to
+    the empty string, or to text that does imply inundation depths, left the
+    whole suite green because the model default, the validator and the
+    assertions all moved together. The same held for the second sentence of
+    the non-authoritative disclaimer, which names NOAA.
+
+    These two strings are what tells a duty scientist that the numbers are not
+    inundation depths and that the product is not an official message, so a
+    change to either should be a deliberate edit here rather than a silent
+    consequence of editing one constant.
+    """
+
+    def test_inundation_disclaimer_text(self) -> None:
+        assert INUNDATION_DISCLAIMER == (
+            "These are open-ocean amplitude proxies, not inundation depths "
+            "or run-up estimates."
+        )
+
+    def test_non_authoritative_disclaimer_text(self) -> None:
+        assert NON_AUTHORITATIVE_DISCLAIMER == (
+            "Non-authoritative situational awareness. "
+            "Not an official NOAA tsunami message."
+        )
+
+
 class TestAlertLanguageSafety:
     """Verify that alert-language guardrails block all prohibited terms."""
 
-    @pytest.mark.parametrize(
-        "prohibited_term",
-        ["Warning", "Advisory", "Watch", "Information Statement"],
-    )
+    def test_covers_every_prohibited_term(self) -> None:
+        """The written-out list must not drift from the enforced one.
+
+        Half of the reserved terms had no safety-suite coverage: a change
+        removing Threat Message, Cancellation, All Clear or Bulletin from
+        ``PROHIBITED_TERMS`` left the whole safety job green. This fails if a
+        term is added to the enforced list without coverage here, or removed
+        from it while still listed here.
+        """
+        assert sorted(ALL_PROHIBITED_TERMS) == sorted(PROHIBITED_TERMS)
+
+    @pytest.mark.parametrize("prohibited_term", ALL_PROHIBITED_TERMS)
     def test_blocks_prohibited_terms(self, prohibited_term: str) -> None:
         text = f"Tsunami {prohibited_term} issued."
         result = scan_text(text)

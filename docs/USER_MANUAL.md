@@ -625,7 +625,7 @@ Three issues are investigated, each a question the pipeline records evidence for
 | `evidence_gaps` | `sensor_degraded` is one boolean. Which stations produced no scored window, and does quality control explain it? |
 | `timeline_consistency` | Are the transitions coherent against the seismic origin, for instance did escalation precede any ocean evidence? |
 
-The findings are advisory and cannot reach the assessment. That is enforced by the database, not by prompt wording: findings are written to `evidence_issue_results`, which migration 009 grants to `investigator_writer` alone, and `pipeline_worker` (which drives the FSM) has no INSERT there. The investigator also runs only once the worker has persisted a checkpoint, and binds its findings to that row while reading the event's audit trail for evidence, so it is not on the detection path and cannot delay ingest, scoring, or a transition.
+The findings are advisory and cannot reach the assessment. That is enforced by the database, not by prompt wording: findings are written to `evidence_issue_results`, which migration 009 grants to `investigator_writer` alone, and `pipeline_worker` (which drives the FSM) holds neither INSERT nor SELECT on it, so a finding can be neither written nor read by the code that escalates. The investigator also runs only once the worker has persisted a checkpoint, and binds its findings to that row while reading the event's audit trail for evidence, so it is not on the detection path and cannot delay ingest, scoring, or a transition.
 
 Each finding is guardrail-scanned before persistence. One that uses reserved alert terminology is dropped whole rather than partially rewritten, and the response says so.
 

@@ -3,8 +3,9 @@
 Generated when the FSM transitions to ESCALATE state. The packet is
 assembled from whatever pipeline data is available at generation time.
 
-Full escalation packet with scenario summary, verification results,
-anomaly timeline, recommended action, and provenance references.
+Carries the event context snapshot, anomaly timeline, recommended
+action, and provenance references. The scenario and verification fields
+are reserved and unpopulated on the packets this system generates.
 """
 
 from __future__ import annotations
@@ -46,17 +47,22 @@ class ScenarioSummary(BaseModel):
 class EscalationPacket(BaseEnvelope):
     """Evidence bundle sent to the reviewer when the FSM enters ESCALATE.
 
-    Contains the full context for human decision-making: scenario summary,
-    verification results, anomaly timeline, and recommended action with
-    provenance references.
+    Carries the event context, anomaly timeline, and recommended action
+    with provenance references.
 
-    The FSM enters ESCALATE via two triggers (both from ASSESS state):
-    1. Anomaly score >= T3 threshold
-    2. Seismic magnitude >= escalation threshold with DART confirmation
+    The FSM enters ESCALATE by three paths (orchestrator/states.py):
+    1. From ASSESS, anomaly score >= T3 threshold
+    2. From ASSESS, seismic magnitude >= escalation threshold with DART
+       event-mode activation
+    3. From MONITOR, an earthquake at or above the escalation magnitude
+       whose depth is known and shallower than the seismic escalation
+       depth. That path runs on seismic data alone and requires no DART
+       event-mode activation.
 
-    The packet may be generated before or after the verification pipeline
-    completes. When generated early, verification_status and
-    scenario_summary are None.
+    ``scenario_summary``, ``verification_status``, and
+    ``verification_summary`` are reserved. No code path in this system
+    assembles Scenario inversion or Verification for a live event, so
+    every packet it generates leaves all three None.
     """
 
     type: str = Field(default="EscalationPacket", frozen=True)
@@ -78,9 +84,10 @@ class EscalationPacket(BaseEnvelope):
     scenario_summary: ScenarioSummary | None = Field(
         default=None,
         description=(
-            "Typed scenario summary (top scenario Mw, constraint stage, "
-            "ensemble spread, coastal proxy highlights). None if escalation "
-            "occurred before scenario inversion."
+            "Reserved. Typed scenario summary (top scenario Mw, constraint "
+            "stage, ensemble spread, coastal proxy highlights). Nothing in "
+            "this system runs Scenario inversion for a live event, so this "
+            "is always None on generated packets."
         ),
     )
 
@@ -88,15 +95,17 @@ class EscalationPacket(BaseEnvelope):
     verification_status: VerificationOutcome | None = Field(
         default=None,
         description=(
-            "Verification status at time of escalation, "
-            "or None if escalation occurred before verification"
+            "Reserved. Verification status at the time of escalation. "
+            "Nothing in this system runs Verification for a live event, "
+            "so this is always None on generated packets."
         ),
     )
     verification_summary: list[dict[str, str]] | None = Field(
         default=None,
         description=(
-            "Summary of individual verification check results "
-            "(name, result, evidence). None if verification not yet run."
+            "Reserved. Summary of individual verification check results "
+            "(name, result, evidence). Always None on generated packets, "
+            "for the same reason as verification_status."
         ),
     )
 

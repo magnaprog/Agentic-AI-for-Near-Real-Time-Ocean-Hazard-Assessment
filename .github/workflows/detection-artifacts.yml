@@ -29,6 +29,11 @@ on:
       - "results/*_detection.json"
       - "results/duplicate_sensitivity.json"
       - "tests/artifacts/**"
+      # The detector's numerics come from the scipy, numpy and PyWavelets pins
+      # declared here, so bumping one can move results/*_detection.json with
+      # nothing under src/ or scripts/ changing. Without this the job that
+      # exists to catch a stale artifact would not run for exactly that case.
+      - "pyproject.toml"
       - ".github/workflows/detection-artifacts.yml"
   pull_request:
     paths:
@@ -47,6 +52,11 @@ on:
       - "results/*_detection.json"
       - "results/duplicate_sensitivity.json"
       - "tests/artifacts/**"
+      # The detector's numerics come from the scipy, numpy and PyWavelets pins
+      # declared here, so bumping one can move results/*_detection.json with
+      # nothing under src/ or scripts/ changing. Without this the job that
+      # exists to catch a stale artifact would not run for exactly that case.
+      - "pyproject.toml"
       - ".github/workflows/detection-artifacts.yml"
 
 concurrency:

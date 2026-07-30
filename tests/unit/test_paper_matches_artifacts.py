@@ -66,7 +66,8 @@ def test_appendix_station_tables_match_their_artifacts() -> None:
     search for a station ID compares the wrong rows and invents disagreements.
     """
     tex = PAPER.read_text()
-    checked = 0
+    scores_checked = 0
+    flags_checked = 0
     mismatches: list[str] = []
 
     tables = _results_tables(tex)
@@ -103,7 +104,7 @@ def test_appendix_station_tables_match_their_artifacts() -> None:
                         f"{event} station {row.group(1)} filter_degraded: "
                         f"paper {printed_degraded} vs artifact {stored_degraded}"
                     )
-                checked += 1
+                flags_checked += 1
             printed = re.findall(r"& ([01]\.\d{2,3})", line)
             for text, column in zip(printed[: len(SCORE_COLUMNS)], SCORE_COLUMNS):
                 expected = station.get(column)
@@ -119,7 +120,7 @@ def test_appendix_station_tables_match_their_artifacts() -> None:
                         f"{event} station {row.group(1)} {column}: "
                         f"paper {value} vs artifact {expected}"
                     )
-                checked += 1
+                scores_checked += 1
         per_event_rows[event] = matched_rows
 
     # Per event, not just in total. A global floor is satisfied by the surplus
@@ -133,8 +134,28 @@ def test_appendix_station_tables_match_their_artifacts() -> None:
         "the row regex did not match every station row for: "
         f"{unmatched}; has a table's formatting changed?"
     )
-    assert checked >= 4 * len(EVENTS), (
-        f"only {checked} score values were checked; has the table format changed?"
+    # Exact, and counted separately from the flag column. A single counter
+    # covering both was incremented once per station row by the
+    # filter_degraded branch alone, which cleared the old floor of 20 on its
+    # own. Printing scores as "&0.995" with no space defeats the score regex,
+    # and the test still passed having compared no score at all. The expected
+    # count comes from the artifacts, so it tracks the corpus instead of being
+    # a hand-set number that drifts.
+    expected_scores = sum(
+        1
+        for event in EVENTS
+        for station in _artifact(event)["per_station"]
+        for column in SCORE_COLUMNS
+        if station.get(column) is not None
+    )
+    expected_flags = sum(len(_artifact(event)["per_station"]) for event in EVENTS)
+    assert scores_checked == expected_scores, (
+        f"compared {scores_checked} score values, expected {expected_scores}; "
+        "has the table format changed?"
+    )
+    assert flags_checked == expected_flags, (
+        f"compared {flags_checked} filter_degraded flags, expected "
+        f"{expected_flags}; has the table format changed?"
     )
     assert not mismatches, "paper values disagree with results/:\n  " + "\n  ".join(mismatches)
 

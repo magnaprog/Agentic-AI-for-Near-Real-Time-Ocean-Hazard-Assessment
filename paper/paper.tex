@@ -211,14 +211,18 @@ that ingests NOAA DART bottom-pressure records, CO-OPS
 water-level observations, and USGS seismic event feeds through a
 deterministic finite-state machine orchestrating quality control,
 ensemble anomaly detection, NNLS-based scenario
-inversion~\citep{lawson1974solving, titov2005realtime}, and a
+inversion~\citep{lawson1974solving, percival2011extraction}, and a
 nine-check verification stage.
 Scenarios that fail verification trigger an ABSTAIN mechanism
 suppressing probabilistic guidance and routing output to a
 mandatory human review gate.
-An optional LLM advisory layer synthesizes operator-readable
-narratives under bounded autonomy: it cannot modify detection
-state or bypass verification.
+An optional LLM layer works under bounded autonomy, unable to
+modify detection state or bypass verification.  It synthesizes
+operator-readable narratives.  While an event is open, an
+investigator chooses its own read-only queries over the recorded
+evidence to answer questions the deterministic pipeline leaves open.
+A database privilege boundary, not an instruction in a prompt, keeps
+what it finds advisory.
 Retrospective evaluation on five Pacific tsunamigenic earthquakes
 ($M_w$\,8.1--9.1, including T\={o}hoku 2011, Chile 2010,
 Illapel 2015, Iquique 2014, and Samoa 2009) using archived DART
@@ -313,8 +317,9 @@ with LLM output stored as separate advisory commentary that is
 dropped on any failure or guardrail violation.
 
 \textbf{Contributions.} This work makes two primary contributions
-(items 1--2) and four domain applications of established patterns
-(items 3--6), showing how proven safety-engineering and AI techniques
+(items 1--2), four domain applications of established patterns
+(items 3--6), and a public release (item 7), showing how proven
+safety-engineering and AI techniques
 can be integrated into a bounded agentic architecture for tsunami
 assessment:
 
@@ -328,8 +333,9 @@ assessment:
     questions the deterministic pipeline records evidence for but does
     not answer. Its advisory role is held by a privilege boundary rather
     than by prompt wording: findings are written under a dedicated
-    database role, and the role that drives the state machine cannot
-    write them, so a finding cannot re-enter the decision path.
+    database role, and the role that drives the state machine can
+    neither write them nor read them, so a finding cannot re-enter
+    the decision path.
   \item Automated Rayleigh wave false-trigger
     detection using haversine distance and seismic surface wave
     group velocity timing correlation ($3.6$\,km/s $\pm 20\%$).
@@ -355,7 +361,7 @@ assessment:
     explicit ABSTAIN output that suppresses probabilistic guidance
     when evidence is insufficient.
   \item A publicly available implementation, free for noncommercial use
-    under PolyForm Noncommercial 1.0.0, with extensive automated tests
+    under PolyForm Noncommercial 1.0.0, with automated tests
     across the deterministic pipeline, LLM advisory layer, and
     tsunami-relevant safety properties (no autonomous public
     communication, mandatory human review, deterministic detection).
@@ -506,9 +512,10 @@ not by prompt instructions alone.
 including avoiding negative side effects, safe exploration, and
 robustness to distributional shift. \citet{tiggeloven2025role}
 systematically review AI for early warning systems and find that only
-6\% of 324~papers address warning dissemination and communication (a
-gap our system partially addresses) while calling for concrete guardrails beyond
-guiding principles. Our bounded autonomy model declares each agent's
+6\% of 324~papers address warning dissemination and communication,
+while calling for concrete guardrails beyond guiding principles.  Our
+system does not address that gap: it has no dissemination capability
+and sits upstream of it, at the assessment step. Our bounded autonomy model declares each agent's
 capability envelope in a machine-readable permission matrix. That
 matrix is a declaration rather than an interceptor; the safety
 properties themselves are held by restricted database write access,
@@ -1104,7 +1111,7 @@ into rapid reporting mode by the first group of Rayleigh
 waves~\citep{mofjeld1997tsunami}. This is an amplitude/timing
 mechanism, not spectral: Rayleigh waves from typical crustal earthquakes
 have dominant periods of 10--50\,s~\citep{lay1995modern}; for great
-earthquakes ($M_w > 8.5$~\citep{hanks1979moment}), significant energy extends to 100--300\,s,
+earthquakes ($M_w > 8.5$), significant energy extends to 100--300\,s,
 overlapping the lower edge of the 5--120\,min tsunami passband
 (see the far-field seismic contamination in
 Section~\ref{sec:eval-tohoku}).
@@ -1129,7 +1136,9 @@ earthquakes.
 
 The FSM advances through five states according to the scheme in
 Figure~\ref{fig:fsm}. A seismic event with $M \geq M_\text{min}$
-(default 6.0) triggers the transition IDLE $\to$ MONITOR. All
+(default 6.0) whose region lies in a tsunamigenic zone triggers the
+transition IDLE $\to$ MONITOR; an event outside those zones does not
+leave IDLE regardless of magnitude. All
 subsequent transitions are driven by the ensemble anomaly score $s$
 relative to three configurable thresholds: $T_1 = 0.35$,
 $T_2 = 0.60$, $T_3 = 0.85$ (Table~\ref{tab:fsm}).
@@ -1147,7 +1156,7 @@ Limitation~6 in Section~\ref{sec:discussion} for calibration status).
 \toprule
 From & To & Trigger & De-escalation \\
 \midrule
-IDLE        & MONITOR     & Seismic $M \geq M_\text{min}$ & N/A \\
+IDLE        & MONITOR     & Seismic $M \geq M_\text{min}$ in a tsunamigenic zone & N/A \\
 MONITOR     & IDLE        & Timeout (12\,h) AND $s < T_1$ & --- \\
 MONITOR     & ESCALATE    & Seismic-only$^\ddagger$        & --- \\
 MONITOR     & INVESTIGATE & $s \geq T_1 = 0.35$ OR override$^*$ & $s < T_1$ $\to$ MONITOR \\
@@ -1287,7 +1296,7 @@ Algorithm~\ref{alg:fsm} formalizes the transition logic.
 \REQUIRE Current state $q$, ensemble score $s$, seismic event $e$
   (magnitude $M$, depth $d$, DART event-mode flag), elapsed time $\Delta t$
 \ENSURE Next state $q'$
-\IF{$q = \textsc{idle}$ \AND $e$ with $M \geq M_\text{min}$}
+\IF{$q = \textsc{idle}$ \AND $e$ with $M \geq M_\text{min}$ \AND region $\in$ tsunamigenic zones}
   \STATE $q' \leftarrow \textsc{monitor}$ \COMMENT{seismic trigger}
   \IF{$M \geq 7.5$ \AND $d < 100$\,km}
     \STATE $q' \leftarrow \textsc{escalate}$ \COMMENT{seismic-only chain}
@@ -1324,9 +1333,13 @@ Algorithm~\ref{alg:fsm} formalizes the transition logic.
 When the FSM reaches ASSESS or ESCALATE, the Scenario Agent performs
 NNLS inversion~\citep{lawson1974solving, percival2011extraction} against
 a unit-source database following the SIFT
-methodology~\citep{gica2008development} (the current implementation
-uses the NOAA NCTR Forecast Propagation Database interface; see
-Limitations for access constraints).
+methodology~\citep{gica2008development}.  The unit-source database is a
+declared interface, and the implementation shipped with the release
+holds caller-supplied synthetic waveforms for development and testing
+rather than physics-based propagation solutions.  Operational use
+requires a real propagation database such as the NOAA NCTR Forecast
+Propagation Database.  No amplitude reported in this paper comes from
+the inversion; see Limitations.
 
 \paragraph{Inversion.}
 Let $\mathbf{d} \in \mathbb{R}^N$ be the stacked observation vector
@@ -1509,7 +1522,8 @@ in for.  A second matching pass collapses characters that share a glyph
 shape rather than an identity, capital~I, digit~one and the vertical bar
 against lowercase~l, and digit~zero against~o, so ``CanceIlation'' is
 detected.  Sweeping all 4{,}321 single-character confusable spellings of
-the eight terms leaves no spelling undetected.  Deliberately out of scope
+the eight terms leaves no spelling undetected; the test suite runs
+that sweep rather than a sample of it.  Deliberately out of scope
 are multi-character confusable sequences such as ``rn'' for ``m,'' which
 cannot be folded without shifting the offsets reported with a violation,
 and ASCII leetspeak substitution.  Multi-word terms match across any run of whitespace or
@@ -1520,15 +1534,18 @@ en, or em, separates clauses rather than building a compound, so
 A violation in the deterministic summary raises a
 \texttt{GuardrailScanError} and blocks emission. A violation in the
 optional LLM commentary drops the commentary and leaves the
-deterministic report intact.  The test suite exercises 67~guardrail test functions with
-118~assertions covering prohibited-term detection, disclaimer
+deterministic report intact.  The test suite exercises 68~guardrail test functions with
+120~assertions covering prohibited-term detection, disclaimer
 enforcement, homoglyph and small-capital bypass attempts, characters
 normalization would otherwise destroy, shape-collapsed spellings,
 whitespace and hyphen splitting of multi-word terms, and zero-width
-character injection.  An additional 20~synthetic scenarios
-(\texttt{scripts/evaluate\_llm\_synthesis.py}) validate the full
-LLM synthesis pipeline including guardrail scanning under varying
-event magnitudes and verification outcomes.
+character injection.  A further 20~synthetic scenarios
+(\texttt{scripts/evaluate\_llm\_synthesis.py}) exercise the synthesis
+graph end to end, including guardrail scanning, across event
+magnitudes and verification outcomes.  That script calls a live model
+and prints its results rather than writing an artifact, so unlike the
+detection results it is not part of the offline reproduction pipeline
+and we report no numbers from it here.
 
 \paragraph{Active-event evidence investigator.}
 The synthesis layer above writes prose after an assessment exists, and the
@@ -1551,11 +1568,11 @@ shape of a seismic-only escalation rather than a fault.
 
 What keeps this advisory is a privilege boundary rather than an instruction in
 a prompt.  Findings are written to a table that migration 009 grants to a
-dedicated \texttt{investigator\_writer} role alone; the \texttt{pipeline\_worker}
-role that drives the FSM has no insert privilege on it, and neither does the
-API's own role, so a finding cannot be read back as evidence by the code that
-escalates.  Each is verified against a provisioned database rather than
-assumed.  The investigator also runs only once the worker has persisted a
+dedicated \texttt{investigator\_writer} role alone.  The
+\texttt{pipeline\_worker} role that drives the FSM holds neither insert nor
+select on that table, and neither does the API's own role, so a finding can be
+neither written nor read by the code that escalates.  Both denials were
+checked against a provisioned database rather than assumed.  The investigator also runs only once the worker has persisted a
 checkpoint, binding its findings to that row while reading the event's audit
 trail for evidence, so it sits off the detection path and cannot add latency
 to ingest, scoring, or a transition, and every finding passes the same guardrail
@@ -1658,8 +1675,9 @@ The evaluation focuses on the anomaly detection and FSM escalation
 components, which can be tested against archived DART data and
 synthetic scenarios.  The NNLS scenario inversion
 (Section~\ref{sec:scenario}) and LLM advisory synthesis
-(Section~\ref{sec:report}) are not evaluated here because the
-propagation database requires restricted access and LLM narrative
+(Section~\ref{sec:report}) are not evaluated here because the shipped
+unit-source database holds synthetic development waveforms rather
+than physics-based propagation solutions, and LLM narrative
 quality assessment requires a user study with domain experts; both
 are left to future work.
 
@@ -1949,8 +1967,8 @@ PROVISIONAL.
 The assessment remains PROVISIONAL. A human operator records
 APPROVE, REJECT, or DEFER against it; under caller-asserted identity
 none of these changes the status, which would otherwise become
-APPROVED\_INTERNAL.  A complete trace example in Appendix~F
-format is available in the supplementary material.
+APPROVED\_INTERNAL.  Appendix~\ref{sec:appendix-trace} gives a
+complete trace example in this format.
 
 \begin{figure}[!htbp]
 \centering
@@ -1997,8 +2015,11 @@ format is available in the supplementary material.
   the 8-constituent harmonic tidal prediction fitted on 30-day
   calibration data.  The isolated tsunami signal shows amplitude
   attenuation with distance.  Processing: level-shift correction,
-  Hampel spike filter, linear detrend, and Butterworth bandpass
-  (Algorithm~\ref{alg:residual}).}
+  pre-event linear detrend, a 120\,min centered rolling median for
+  stations beyond 3{,}000\,km to remove residual tidal curvature, and
+  a Hampel spike filter.  This figure shows the detided residual
+  before the bandpass; the filtered signal the detectors see appears
+  in Figure~\ref{fig:score-overlay}.}
 \label{fig:tohoku-residuals}
 \end{figure}
 
@@ -2017,11 +2038,13 @@ format is available in the supplementary material.
   (blue dashed line).
   Scores simulate real-time processing: each window is a growing slice
   from the event start.
-  At 46411 the large spike at ${\sim}$33\,min is the seismic Rayleigh
-  wave (${\sim}$3.6\,km/s); the inset reveals the earlier P-wave
-  arrival (${\sim}$18\,min, ${\sim}$8\,km/s), a ${\sim}$1\,mm
-  perturbation that exceeds the deep-ocean noise floor and triggers
-  the score jump before the larger surface wave arrives.}
+  At 46411 the ensemble score first becomes nonzero at
+  ${+}32.6$\,min, coincident with the seismic Rayleigh wave, whose
+  predicted arrival at 3.6\,km/s over 7{,}480\,km is 34.6\,min.  The
+  detector responds to that surface-wave excursion, not to the
+  tsunami, which is why the far-field score rises long before any
+  water-level signal could have propagated this far.  The inset spans
+  the onset $\pm$5\,min and shows the same excursion at mm scale.}
 \label{fig:score-overlay}
 \end{figure}
 
@@ -2180,9 +2203,10 @@ only 0.263 via BOCPD).
 Statistical-only detection also does not reach $T_3$ at 46403 or
 46411, indicating reduced discrimination at far-field distances,
 while every configuration that includes the threshold detector
-reaches $T_3$ at 7/8 stations; this confirms that the threshold
-detector is the primary detection channel, with the statistical
-detector providing complementary confirmation.
+reaches $T_3$ at 7/8 stations.  On this event the threshold
+detector is what carries detection; the statistical detector changes
+no station's outcome.  One event of eight stations is too small to
+generalize that split.
 
 Sliding-window analysis shows identical earliest detection
 times across configurations (3.6~min post-earthquake at station~21418),
@@ -2445,7 +2469,7 @@ is also the floor the verification layer's DART coverage check enforces,
 below which it returns FAIL.
 
 Figure~\ref{fig:physics-summary} presents the four-scenario summary.
-Together, these scenarios validate correct detection across distance
+Together, these scenarios verify correct detection across distance
 ranges, false positive rejection (sub-threshold amplitude, with the
 seismic quiet penalty adding margin), and
 continued operation under partial network failure.
@@ -2656,13 +2680,13 @@ A system that suppresses uncertain outputs rather than communicating
 its uncertainty can create a false impression of reliability. By
 treating ABSTAIN as an explicit, structured output routed through
 the same Human Review Gate as positive assessments, the framework
-is designed so that duty scientists are informed of the system's
-limitations rather than misled by silence.
+tells a duty scientist why it withheld guidance instead of returning
+nothing.
 
 \paragraph{LLM synthesis layer.}
 The implemented 4-node synthesis graph shows that
-LLM-generated operator narratives can be integrated into a
-safety-critical pipeline without compromising determinism. Three
+LLM-generated operator narratives can be attached to a deterministic
+pipeline without changing what that pipeline decides. Three
 design choices maintain determinism under LLM integration: (1)~system confidence
 is computed deterministically \emph{before} any LLM call, so the
 LLM never self-reports confidence; (2)~the template-rendered
@@ -2676,7 +2700,7 @@ only the fields the downstream pipeline expects. This constrains
 the output structure; it does not verify the factual accuracy of
 numbers the model may quote within narrative fields.
 The test suite confirms that the guardrail cascade (LLM output
-$\to$ scan $\to$ commentary dropped, template stands) activates
+scanned, commentary dropped, template stands) activates
 correctly when the
 LLM produces prohibited NOAA alert terminology, though systematic
 evaluation across diverse event scenarios remains future work.
@@ -2843,8 +2867,14 @@ database, the system falls back to in-memory storage where a server
 restart clears all state. Second, the system
 requires a seismic trigger to leave IDLE; non-seismic tsunamis
 (landslide, volcanic) cannot currently activate the pipeline.
-Third, the inversion depends on the NOAA NCTR Forecast Propagation
-Database; access constraints limit geographic coverage.
+Third, the inversion is written against a unit-source database
+interface, but the implementation shipped with the release is an
+in-memory development store holding caller-supplied synthetic
+waveforms, not physics-based propagation solutions.  Running the
+inversion at operational quality requires a real propagation database
+such as NOAA NCTR, which we did not have access to.  Amplitudes
+obtained from the development store are therefore not operationally
+meaningful, and none are reported here.
 Fourth, during the early stages of a developing event the constraint
 stage marks most inversion-dependent checks NOT\_APPLICABLE, and those
 are excluded from the aggregate entirely.  At later stages they become
@@ -3072,8 +3102,9 @@ evaluation of the core synthesis graph.
 
 This work augments tsunami situational awareness for
 duty scientists. Faster and more transparent data integration
-has direct human safety implications, since delayed
-or incomplete assessments can affect evacuation decisions.
+supports the duty scientists whose judgments feed the official
+warning process.  The system itself issues nothing and reaches no
+member of the public.
 
 The system explicitly does \emph{not} replace or
 interfere with NOAA's official warning systems. All emitted assessment
@@ -3395,8 +3426,9 @@ ensemble spread tells us.
 
 Background: Each scenario is a weighted combination of pre-computed unit
 sources (subfault segments from a unit-source propagation database). The NNLS
-weights represent relative slip on each subfault; the equivalent Mw is
-derived from the cumulative seismic moment of the weighted sources.
+weights represent relative slip on each subfault; the equivalent moment
+magnitude~\citep{hanks1979moment} is derived from the cumulative seismic
+moment of the weighted sources.
 
 Rules:
 - Explain why the top scenario ranks first (e.g., best waveform fit).
@@ -3576,7 +3608,7 @@ events, demonstrating the availability of complementary
 water-level data streams referenced in Section~\ref{sec:architecture}.
 The CO-OPS anomaly detection pipeline is implemented and wired; real-event
 retrospective validation with these data streams remains future work
-(see Limitation~10 in Section~\ref{sec:discussion}).
+(see Limitation~11 in Section~\ref{sec:discussion}).
 
 \begin{figure}[ht!]
 \centering
@@ -3616,7 +3648,7 @@ retrospective validation with these data streams remains future work
   stations during Chile 2010, including Crescent City, CA (top).
   Left: observed (black) with IRLS tidal fit (red dashed).
   Right: de-tided residual; green dashed line marks estimated tsunami arrival.
-  Note: Hilo observations unavailable (gauge outage Feb.\ 24 -- Mar.\ 1, 2010).}
+  Note: Hilo observations unavailable (gauge outage Feb.\ 24 to Mar.\ 1, 2010).}
 \label{fig:coops-chile}
 \end{figure}
 

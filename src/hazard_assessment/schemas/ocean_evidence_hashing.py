@@ -2,9 +2,18 @@
 
 Implements deterministic checkpoint IDs, the input-manifest, scientific-content,
 and transport-provenance hash projections, and the canonical encoding
-they share. Hashes are computed from these explicit projections, never
-from generic model dumps, so adding an operational field cannot silently
-change a scientific hash.
+they share.
+
+The three projections are not built the same way, and the difference
+matters. ``input_manifest_projection`` and ``transport_provenance_hash``
+list the fields they cover, so a new field joins them only when someone
+adds it. ``scientific_content_projection`` starts from a full model dump
+and removes a deny-list, so a new assessment field is inside the
+scientific hash by default. That is the safe default for a scientific
+field and the wrong one for an operational field: adding an operational
+field without also adding it to the deny-list silently changes the
+scientific content hash, and a replay of the same evidence then lands as
+a persist conflict rather than a benign duplicate.
 
 Canonical encoding rules, built on
 ``hazard_assessment.ingest.hashing.canonicalize_json``:

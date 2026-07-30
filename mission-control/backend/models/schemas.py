@@ -126,6 +126,15 @@ class SystemSnapshotOut(BaseModel):
     #: saturated by per-window anomaly entries within a fraction of a second.
     recent_reviews: list[AuditEntryOut] = Field(default_factory=list)
     scenario_metrics: ScenarioMetricsOut | None = None
+    #: Names of the snapshot sections whose upstream query failed on this poll.
+    #: The three non-critical sections degrade to an empty list rather than
+    #: failing the whole snapshot, and an empty list is indistinguishable from
+    #: a genuinely empty one. That ambiguity is not harmless: an unavailable
+    #: review history reads as "this escalation has not been reviewed" and
+    #: re-arms the decision controls for a packet somebody already decided.
+    #: Listing the failed sections lets the console say "unavailable" where it
+    #: would otherwise say "none".
+    degraded_sections: list[str] = Field(default_factory=list)
 
 
 class ReviewDecisionIn(BaseModel):

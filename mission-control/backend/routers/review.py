@@ -11,7 +11,7 @@ from typing import Any
 import httpx
 from fastapi import APIRouter, Depends, HTTPException
 
-from backend.errors import raise_upstream_error
+from backend.errors import UpstreamKeyNotConfiguredError, raise_upstream_error
 from backend.models.schemas import ReviewDecisionIn
 from backend.security import require_reviewer_id_header
 from backend.services.demo_snapshot import DEMO_ESCALATION_PACKET, TOHOKU_SNAPSHOT
@@ -25,7 +25,7 @@ async def get_pending_reviews() -> list[dict[str, Any]]:
     """Return assessments awaiting human review."""
     try:
         return await hazard_client.get_pending_reviews()
-    except RuntimeError:
+    except UpstreamKeyNotConfiguredError:
         # No core API key configured: genuine demo mode.
         ctx = TOHOKU_SNAPSHOT["fsm"]["event_context"]
         return [{**ctx, "fsm_state": TOHOKU_SNAPSHOT["fsm"]["fsm_state"]}]
@@ -42,7 +42,7 @@ async def get_escalation_packet() -> dict[str, Any]:
     """
     try:
         return await hazard_client.get_escalation_packet()
-    except RuntimeError:
+    except UpstreamKeyNotConfiguredError:
         # No core API key configured: genuine demo mode.
         return DEMO_ESCALATION_PACKET
     except httpx.HTTPError as exc:
@@ -64,7 +64,7 @@ async def submit_decision(
             decision,
             reviewer_id=reviewer_id,
         )
-    except RuntimeError:
+    except UpstreamKeyNotConfiguredError:
         # No core API key configured: decisions cannot be recorded in demo mode.
         raise HTTPException(
             status_code=503,

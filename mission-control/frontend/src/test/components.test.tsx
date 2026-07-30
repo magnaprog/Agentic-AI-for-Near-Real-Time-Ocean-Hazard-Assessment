@@ -186,7 +186,9 @@ describe("Header", () => {
         sensorDegraded={true} />
     );
     expect(screen.getByText("Usable DART stations")).toBeInTheDocument();
-    expect(screen.getByText("under 2")).toBeInTheDocument();
+    // The BFF sends only the boolean, so 0 or 1 is the most this can say. It
+    // is also a number, which "under 2" was not, in a row of numeric KPIs.
+    expect(screen.getByText("0 or 1")).toBeInTheDocument();
   });
 
   it("says demo instead of claiming core API contact in demo mode", () => {
@@ -195,8 +197,56 @@ describe("Header", () => {
         lastContactMs={Date.now()} demoMode={true} />
     );
     expect(screen.getByText("demo")).toBeInTheDocument();
-    expect(screen.getByText("No core API")).toBeInTheDocument();
+    // "demo" is the reading and "Data source" names what is being reported.
+    // The pair used to be inverted: a KPI labeled "No core API" valued "demo".
+    expect(screen.getByText("Data source")).toBeInTheDocument();
     expect(screen.queryByText(/ago$/)).not.toBeInTheDocument();
+  });
+
+  it("names the threshold band in text, not only in the score color", () => {
+    // Which band a score sits in was carried by hue alone, so it did not
+    // survive a color vision deficiency or a monochrome capture.
+    const { rerender } = render(
+      <Header connected={true} fsmState="ESCALATE" hasActiveEvent={true} anomalyScore={0.997}
+        thresholds={{ basin: "pacific", t1: 0.35, t2: 0.6, t3: 0.85 }} />
+    );
+    expect(screen.getByText("0.997 T3+")).toBeInTheDocument();
+
+    rerender(
+      <Header connected={true} fsmState="MONITOR" hasActiveEvent={true} anomalyScore={0.12}
+        thresholds={{ basin: "pacific", t1: 0.35, t2: 0.6, t3: 0.85 }} />
+    );
+    expect(screen.getByText("0.120 <T1")).toBeInTheDocument();
+  });
+
+  it("reads the basin off the wire instead of hardcoding pacific", () => {
+    const { rerender } = render(
+      <Header connected={true} fsmState="IDLE" hasActiveEvent={false} anomalyScore={0}
+        thresholds={{ basin: "atlantic", t1: 0.35, t2: 0.6, t3: 0.85 }} />
+    );
+    expect(screen.getByText(/atlantic basin/)).toBeInTheDocument();
+
+    // No thresholds yet: say so rather than name a basin nothing reported.
+    rerender(
+      <Header connected={true} fsmState="IDLE" hasActiveEvent={false} anomalyScore={0} thresholds={null} />
+    );
+    expect(screen.getByText(/basin not reported/)).toBeInTheDocument();
+  });
+
+  it("does not call a first connection a lost one", () => {
+    // connected starts false, so before everConnected this said "link down"
+    // on every page load and every unlock.
+    const { rerender } = render(
+      <Header connected={false} fsmState="IDLE" hasActiveEvent={false} anomalyScore={0} thresholds={null} />
+    );
+    expect(screen.getByText(/connecting/)).toBeInTheDocument();
+    expect(screen.queryByText(/link down/)).not.toBeInTheDocument();
+
+    rerender(
+      <Header connected={false} everConnected={true} fsmState="IDLE" hasActiveEvent={false}
+        anomalyScore={0} thresholds={null} />
+    );
+    expect(screen.getByText(/link down/)).toBeInTheDocument();
   });
 });
 
@@ -223,6 +273,64 @@ describe("FSMPanel", () => {
       expect(screen.getByText(s)).toBeInTheDocument();
     }
     expect(screen.getByText(/IDLE->MONITOR/)).toBeInTheDocument();
+  });
+
+  it("labels the dwell time and always shows the trigger", () => {
+    // The right column held the dwell when there was one and the trigger
+    // otherwise, unlabeled, so consecutive rows silently changed meaning.
+    render(
+      <FSMPanel
+        currentState="ESCALATE"
+        transitions={[
+          {
+            transition_id: "t-1",
+            event_id: "event",
+            timestamp_utc: "2011-03-11T05:46:24+00:00",
+            from_state: "IDLE",
+            to_state: "MONITOR",
+            trigger_reason: "Seismic trigger: M9.1 at Honshu",
+            anomaly_score: null,
+            seismic_magnitude: 9.1,
+          },
+          {
+            transition_id: "t-2",
+            event_id: "event",
+            timestamp_utc: "2011-03-11T05:46:29+00:00",
+            from_state: "MONITOR",
+            to_state: "ESCALATE",
+            trigger_reason: "Anomaly score 0.997 >= T3 (0.85)",
+            anomaly_score: 0.997,
+            seismic_magnitude: 9.1,
+          },
+        ]}
+      />
+    );
+    // The observed magnitude, not "M>=9.1", which read as the threshold.
+    expect(screen.getByText("M9.1")).toBeInTheDocument();
+    expect(screen.getByText("score=0.997")).toBeInTheDocument();
+    expect(screen.getByText("held 5s")).toBeInTheDocument();
+  });
+
+  it("marks a truncated trigger reason as truncated", () => {
+    render(
+      <FSMPanel
+        currentState="IDLE"
+        transitions={[
+          {
+            transition_id: "t-1",
+            event_id: null,
+            timestamp_utc: "2011-03-11T05:46:24+00:00",
+            from_state: "ESCALATE",
+            to_state: "IDLE",
+            trigger_reason: "Event closed by explicit disposition",
+            anomaly_score: null,
+            seismic_magnitude: null,
+          },
+        ]}
+      />
+    );
+    // A bare 20-character slice ended mid-word with nothing saying so.
+    expect(screen.getByText("Event closed by...")).toBeInTheDocument();
   });
 
   it("does not mark skipped states as observed", () => {
@@ -266,6 +374,31 @@ describe("AgentStatus", () => {
   it("hides the detection latency table without data", () => {
     render(<AgentStatus agents={agents} />);
     expect(screen.queryByText(/Detection Latency/i)).not.toBeInTheDocument();
+  });
+
+  it("separates an empty registry from a failed registry query", () => {
+    // Both arrive as an empty list. Saying "awaiting" for the second reports
+    // an upstream outage as patience.
+    const { rerender } = render(<AgentStatus agents={[]} />);
+    expect(screen.getByText(/Awaiting component registry/i)).toBeInTheDocument();
+
+    rerender(<AgentStatus agents={[]} registryUnavailable={true} />);
+    expect(screen.getByText(/registry unavailable/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Awaiting component registry/i)).not.toBeInTheDocument();
+  });
+
+  it("gives the latency bands a cue that is not color", () => {
+    render(
+      <AgentStatus
+        agents={agents}
+        detectionLatency={[
+          { station_id: "21418", distance_km: 561, t1_minutes: 2.5, t3_minutes: 19.5 },
+        ]}
+      />
+    );
+    expect(screen.getByText("2.5m")).toBeInTheDocument();
+    expect(screen.getByText("19.5m!")).toBeInTheDocument();
+    expect(screen.getByText(/! marks a crossing later than 12 minutes/i)).toBeInTheDocument();
   });
 
   it("renders the detection latency table with data, using n/a for no detection", () => {
@@ -527,6 +660,15 @@ describe("AuditLog activity strip", () => {
     expect(screen.queryByText("x2")).not.toBeInTheDocument();
   });
 
+  it("separates a quiet system from a failed audit query", () => {
+    const { rerender } = render(<AuditLog entries={[]} />);
+    expect(screen.getByText(/Awaiting system activity/i)).toBeInTheDocument();
+
+    rerender(<AuditLog entries={[]} auditUnavailable={true} />);
+    expect(screen.getByText(/Activity unavailable/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Awaiting system activity/i)).not.toBeInTheDocument();
+  });
+
   it("labels a recorded review with the event type the core writes", () => {
     render(
       <AuditLog
@@ -627,6 +769,71 @@ describe("ReviewGate recorded decision", () => {
       <ReviewGate fsm={escalateFsm()} reviewHistory={[reviewAuditEntry()]} onReviewedChange={onReviewedChange} />
     );
     await waitFor(() => expect(onReviewedChange).toHaveBeenCalledWith(true));
+  });
+
+  it("says the review record is unknown when the history query failed", async () => {
+    // The BFF degrades a failed review query to an empty list, which is
+    // exactly what a never-reviewed packet looks like. Reading that as NOT
+    // RECORDED told a duty scientist that an escalation somebody had already
+    // decided was still open.
+    vi.mocked(fetchEscalationPacket).mockResolvedValue(packet());
+    render(<ReviewGate fsm={escalateFsm()} reviewHistory={[]} reviewHistoryUnavailable={true} />);
+
+    expect(await screen.findByText("UNKNOWN, HISTORY UNAVAILABLE")).toBeInTheDocument();
+    expect(screen.queryByText("NOT RECORDED")).not.toBeInTheDocument();
+    expect(screen.getByText(/cannot tell whether this packet already carries a decision/i))
+      .toBeInTheDocument();
+  });
+
+  it("still lets a duty scientist decide while the history is unavailable", async () => {
+    // A partial upstream outage must not block the decision. The operator is
+    // told the record is unknown; the controls stay live.
+    vi.mocked(submitReview).mockClear();
+    vi.mocked(fetchEscalationPacket).mockResolvedValue(packet());
+    vi.mocked(submitReview).mockResolvedValue({});
+    render(<ReviewGate fsm={escalateFsm()} reviewHistory={[]} reviewHistoryUnavailable={true} />);
+
+    fireEvent.click(await screen.findByText(/ACKNOWLEDGE PACKET REVIEWED/i));
+    fireEvent.change(screen.getByLabelText(/Review rationale/i), {
+      target: { value: "Checked the audit trail separately." },
+    });
+    const approve = screen.getByRole("button", { name: /APPROVE/ });
+    await waitFor(() => expect(approve).toBeEnabled());
+    fireEvent.click(approve);
+    await waitFor(() => expect(submitReview).toHaveBeenCalledTimes(1));
+  });
+
+  it("moves focus to the replacement when a step unmounts the focused button", async () => {
+    // Acknowledging and deciding each unmount the control the operator just
+    // used. Without this, focus falls to <body> mid-decision.
+    vi.mocked(submitReview).mockClear();
+    vi.mocked(fetchEscalationPacket).mockResolvedValue(packet());
+    vi.mocked(submitReview).mockResolvedValue({});
+    render(<ReviewGate fsm={escalateFsm()} />);
+
+    const ack = await screen.findByRole("button", { name: /ACKNOWLEDGE PACKET REVIEWED/i });
+    ack.focus();
+    fireEvent.click(ack);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByText("PACKET ACKNOWLEDGED"))
+    );
+
+    fireEvent.change(screen.getByLabelText(/Review rationale/i), {
+      target: { value: "Consistent with the packet of record." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /APPROVE/ }));
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByText("Decision recorded").closest(".review-recorded")
+      )
+    );
+  });
+
+  it("acknowledges with neutral styling, not the REJECT treatment", async () => {
+    vi.mocked(fetchEscalationPacket).mockResolvedValue(packet());
+    render(<ReviewGate fsm={escalateFsm()} />);
+    const ack = await screen.findByRole("button", { name: /ACKNOWLEDGE PACKET REVIEWED/i });
+    expect(ack.className).not.toMatch(/btn--reject/);
   });
 
   it("names the mismatch instead of silently ignoring a decision on a stale packet", async () => {

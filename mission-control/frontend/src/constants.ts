@@ -89,14 +89,14 @@ export function stateColor(state: SystemState): StateColor {
     case "IDLE":
       return {
         solid: "var(--state-idle)",
-          tagText: "#6bbe9f",
+        tagText: "#6bbe9f",
         tintBg: "rgba(58, 168, 127, 0.08)",
         tintBorder: "rgba(58, 168, 127, 0.3)",
       };
     case "MONITOR":
       return {
         solid: "var(--state-monitor)",
-          tagText: "#e5b274",
+        tagText: "#e5b274",
         tintBg: "rgba(224, 164, 92, 0.08)",
         tintBorder: "rgba(224, 164, 92, 0.3)",
       };
@@ -104,16 +104,30 @@ export function stateColor(state: SystemState): StateColor {
     case "ASSESS":
       return {
         solid: "var(--state-warning)",
-          tagText: "#e89b7d",
+        tagText: "#e89b7d",
         tintBg: "rgba(224, 122, 82, 0.08)",
         tintBorder: "rgba(224, 122, 82, 0.3)",
       };
     case "ESCALATE":
       return {
         solid: "var(--state-emergency)",
-          tagText: "#e88585",
+        tagText: "#e88585",
         tintBg: "rgba(224, 92, 92, 0.08)",
         tintBorder: "rgba(224, 92, 92, 0.3)",
+      };
+    // Not unreachable, whatever the SystemState union suggests. The BFF types
+    // fsm_state as a bare string and forwards whatever the core sends, so an
+    // unrecognized state used to fall off the end and return undefined. The
+    // header reads .solid on every render and sits outside every error
+    // boundary, so that blanked the entire console instead of one panel.
+    // Neutral ink, deliberately not a severity hue: an unknown state must not
+    // be painted as calm or as urgent.
+    default:
+      return {
+        solid: "var(--ink-dim)",
+        tagText: "#aebccb",
+        tintBg: "rgba(110, 129, 147, 0.08)",
+        tintBorder: "rgba(110, 129, 147, 0.3)",
       };
   }
 }

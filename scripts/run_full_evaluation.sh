@@ -5,7 +5,7 @@
 # validation/evaluation script, profiles latency, and generates the
 # publication figures.
 #
-# Network-dependent steps (1, 6) may fail without internet access;
+# Step 1 is network-dependent and may fail without internet access;
 # the remaining steps will still execute, and the script exits nonzero
 # if any step failed.
 #
@@ -14,7 +14,7 @@
 #
 # Prerequisites:
 #     pip install -e ".[dev,paper]"   # paper extra: matplotlib, cartopy, pandas
-#     Internet access (for NDBC DART data download, steps 1 and 6)
+#     Internet access (for the NDBC DART data download in step 1)
 #
 # Output:
 #     results/*.json          - evaluation result files
@@ -66,8 +66,10 @@ echo "Full Evaluation Pipeline"
 echo "=========================================="
 echo ""
 
-# Steps 1 and 6 require network access; the validation steps run on the
+# Step 1 requires network access; the validation steps run on the
 # checked-in event data in data/ (step 1 refreshes the Tohoku copy).
+# --calibration-days 30 is the script default, stated here so the window
+# the paper reports is visible at the call site.
 run_step "1/17" "Downloading Tohoku 2011 DART data" \
     python3 scripts/download_tohoku_dart.py --calibration-days 30
 
@@ -83,8 +85,14 @@ run_step "4/17" "Running Chile 2010 retrospective validation" \
 run_step "5/17" "Running Illapel 2015 retrospective validation" \
     python3 scripts/validate_illapel.py --sliding-window
 
+# No --download here. download_quiet_data() writes to exactly the eight
+# git-tracked filenames under data/quiet/, so passing it would re-fetch from
+# NDBC and overwrite the checked-in inputs before evaluating them, which
+# breaks the byte-identical reproduction note in this header. To deliberately
+# refresh those inputs, run the step by hand and commit the CSV changes:
+#     python3 scripts/run_false_positive_evaluation.py --download
 run_step "6/17" "Running false positive evaluation (June 2011)" \
-    python3 scripts/run_false_positive_evaluation.py --download
+    python3 scripts/run_false_positive_evaluation.py
 
 run_step "7/17" "Running Iquique 2014 retrospective validation" \
     python3 scripts/validate_iquique.py --sliding-window

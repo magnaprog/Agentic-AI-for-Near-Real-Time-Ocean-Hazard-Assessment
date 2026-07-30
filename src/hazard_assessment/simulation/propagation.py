@@ -77,7 +77,10 @@ def compute_geometric_spreading_factor(
 
         factor = sqrt(reference_distance / actual_distance)
 
-    Clamped to [0.1, 1.5] for physical plausibility.
+    Clamped to [0.1, 1.5] for physical plausibility, but at the default
+    reference distance only the upper clamp can fire. Distance is floored
+    at 10 km and cannot exceed a half circumference (20015 km), so the
+    returned factor spans [0.2235, 1.5].
 
     Args:
         epicenter_lat: Earthquake epicenter latitude.
@@ -246,7 +249,6 @@ def compute_propagation_effects(
     delay_min = delay_sec / 60.0
 
     # Residual propagation phase shift
-    omega = 2.0 * math.pi * f_hz
     phase_rad = omega * d_m * (1.0 / wave_speed_m_s - 1.0 / c_phase)
 
     return delay_min, phase_rad

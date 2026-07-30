@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 from fastapi import APIRouter, Query
 
-from backend.errors import raise_upstream_error
+from backend.errors import UpstreamKeyNotConfiguredError, raise_upstream_error
 from backend.models.schemas import AuditEntryOut
 from backend.services.demo_snapshot import TOHOKU_SNAPSHOT
 from backend.services.hazard_client import hazard_client
@@ -24,7 +24,7 @@ async def get_audit(
         return await hazard_client.get_audit_entries(
             event_id=event_id, event_type=event_type, limit=limit
         )
-    except RuntimeError:
+    except UpstreamKeyNotConfiguredError:
         # No core API key configured: genuine demo mode.
         entries = [AuditEntryOut(**e) for e in TOHOKU_SNAPSHOT["recent_audit"]]
         return entries[:limit]

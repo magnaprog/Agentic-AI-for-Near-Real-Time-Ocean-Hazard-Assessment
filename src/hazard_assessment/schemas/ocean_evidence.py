@@ -676,7 +676,16 @@ class RetainedWindowQC(BaseModel):
     flag_counts: QCFlagCounts
     n_usable: int = Field(ge=0)
     n_unusable: int = Field(ge=0)
-    n_unevaluated_checks: int = Field(ge=0)
+    n_unevaluated_checks: int = Field(
+        ge=0,
+        description=(
+            "Summed over the aggregated records, the number of QARTOD "
+            "checks the system runs that returned no definitive result "
+            "for a record. Reserved flag fields with no producer are not "
+            "counted, so a record whose every runnable check decided "
+            "contributes zero."
+        ),
+    )
     confidence_min: float | None = Field(default=None, ge=0.0, le=1.0)
     confidence_mean: float | None = Field(default=None, ge=0.0, le=1.0)
     confidence_max: float | None = Field(default=None, ge=0.0, le=1.0)

@@ -22,7 +22,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - run: pip install -e ".[dev]"
-      - run: ruff check src/ tests/
+      - run: ruff check src/ tests/ scripts/
       - run: mypy src/
       # Mission Control BFF (mission-control/backend) had no lint/type gate,
       # so lint/type drift accumulated there unnoticed. Gate it with the same

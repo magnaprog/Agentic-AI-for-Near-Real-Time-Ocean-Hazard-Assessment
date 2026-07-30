@@ -14,13 +14,28 @@ import httpx
 from fastapi import HTTPException
 
 
+class UpstreamKeyNotConfiguredError(RuntimeError):
+    """MISSION_CONTROL_HAZARD_API_KEY is unset, so there is no upstream to poll.
+
+    This is the only condition that may be answered with the built-in demo
+    snapshot. It is a distinct type rather than a bare ``RuntimeError``
+    because ``RuntimeError`` is also what httpx raises for a client that has
+    been closed ("Cannot send a request, as the client has been closed.") and
+    what ``HazardClient._get_client`` raises when startup did not run.
+    Catching the base class meant either of those transport faults served
+    fabricated demo evidence with HTTP 200 in a deployment that does have a
+    key configured, which is the substitution this module exists to prevent.
+    """
+
+
 def raise_upstream_error(exc: httpx.HTTPError) -> NoReturn:
     """Translate an httpx error from the core API into an HTTPException.
 
     A transient transport failure (connection refused, timeout, DNS) means the
     core API is unreachable right now, so surface 503. This is deliberately
-    distinct from the missing-key case (a ``RuntimeError`` raised before any
-    request is made), which the routers handle as genuine demo mode: a duty
+    distinct from the missing-key case (``UpstreamKeyNotConfiguredError``, raised
+    before any request is made), which the routers handle as genuine demo
+    mode: a duty
     scientist must not be shown fabricated demo evidence for a live event just
     because a request transiently failed. An upstream 4xx is passed through
     with its detail; any other upstream status is reported as 502. Never

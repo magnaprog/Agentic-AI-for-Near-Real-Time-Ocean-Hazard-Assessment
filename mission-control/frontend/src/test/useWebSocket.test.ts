@@ -123,6 +123,56 @@ describe("useWebSocket re-lock policy", () => {
   });
 });
 
+describe("useWebSocket first connection", () => {
+  beforeEach(() => {
+    FakeWebSocket.instances = [];
+    vi.stubGlobal("WebSocket", FakeWebSocket as unknown as typeof WebSocket);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ status: 200 } as Response));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("reports an opening handshake separately from a dropped link", async () => {
+    // connected starts false, so callers keying a CONNECTION LOST alert on it
+    // alone painted that alert before a connection had ever been attempted.
+    const { result, unmount } = renderHook(() => useWebSocket("/ws", "some-key"));
+    expect(result.current.connected).toBe(false);
+    expect(result.current.everConnected).toBe(false);
+
+    act(() => {
+      lastSocket().onopen?.();
+    });
+    expect(result.current.everConnected).toBe(true);
+
+    // A drop of an established socket leaves the mark set, which is what makes
+    // the alert honest the second time.
+    await act(async () => {
+      lastSocket().onclose?.({ code: 1006 });
+      await Promise.resolve();
+    });
+    expect(result.current.connected).toBe(false);
+    expect(result.current.everConnected).toBe(true);
+    unmount();
+  });
+
+  it("clears the mark when the console re-locks", () => {
+    const { result, rerender, unmount } = renderHook(
+      ({ key }: { key: string }) => useWebSocket("/ws", key),
+      { initialProps: { key: "some-key" } },
+    );
+    act(() => {
+      lastSocket().onopen?.();
+    });
+    expect(result.current.everConnected).toBe(true);
+
+    rerender({ key: "" });
+    expect(result.current.everConnected).toBe(false);
+    unmount();
+  });
+});
+
 describe("probeAuthRejected classification", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

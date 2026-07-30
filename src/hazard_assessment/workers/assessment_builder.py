@@ -34,6 +34,7 @@ from hazard_assessment.agents.anomaly_detection import (
     W_THRESHOLD,
     W_THRESHOLD_NO_ML,
 )
+from hazard_assessment.agents.qc_checks import N_RUNNABLE_CHECKS
 from hazard_assessment.schemas.envelope import DataSource, InputRef
 from hazard_assessment.schemas.ocean_evidence import (
     AnalysisCapability,
@@ -279,7 +280,12 @@ def _build_retained_window_qc(
         if qc.usable:
             n_usable += 1
         confidences.append(qc.confidence)
-        n_unevaluated_checks += len(qc.flags) - qc.n_checks_evaluated
+        # Count only the checks the system runs. qc.flags carries every
+        # QARTODFlags field, including latency (excluded from the count
+        # because it mirrors timing) and the two reserved fields no
+        # producer sets, so len(qc.flags) would add three phantom
+        # unevaluated checks to every record.
+        n_unevaluated_checks += N_RUNNABLE_CHECKS - qc.n_checks_evaluated
         decisive = _decisive_flag_int(qc.flags)
         if decisive is not None:
             counts[decisive] += 1

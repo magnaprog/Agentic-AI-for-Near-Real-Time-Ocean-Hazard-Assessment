@@ -5,11 +5,22 @@ Reads CSV files produced by download_chile_dart.py (event + calibration windows)
 runs the full anomaly detection pipeline (detide, bandpass, wavelet, BOCPD, ensemble),
 and reports whether the system would have triggered at each station.
 
-Earthquake parameters (USGS NEIC solution):
-  Origin:    2010-02-27 06:34:11 UTC
-  Epicenter: 35.846 S, 72.719 W
-  Magnitude: Mw 8.8
-  Depth:     35 km
+Earthquake parameters, mixed provenance.  These four values do not come
+from one USGS solution, and results/chile_detection.json publishes them
+together:
+  Origin:    2010-02-27 06:34:11.530 UTC  (loaded from
+             data/chile/seismic_event.json, current USGS NEIC solution)
+  Magnitude: Mw 8.8                       (same file)
+  Epicenter: 35.846 S, 72.719 W           (hardcoded early USGS
+             determination; the current solution is 36.122 S, 72.898 W)
+  Depth:     35 km                        (hardcoded early USGS
+             determination; the current solution is 22.9 km)
+The epicenter and depth are kept at the early determination so the station
+distances quoted throughout the evaluation stay consistent.  Neither one
+changes a score: the depth is only written to the artifact, and although
+the epicenter is passed into the SeismicEvent handed to the anomaly agent,
+is_seismically_quiet ignores location and the Rayleigh-wave check needs
+station coordinates that this script never passes.
 
 Usage:
     python scripts/validate_chile.py [--data-dir data/chile]
@@ -37,14 +48,20 @@ from hazard_assessment.agents.anomaly_detection import SeismicEvent
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
-# Chile earthquake parameters - uses early USGS determination (depth 35 km,
-# epicenter 35.846 S, 72.719 W) for consistency with DART station distances
-# computed in the original evaluation.  The current preferred origin in
+# Chile earthquake parameters, split across two sources on purpose.
+# Origin time and magnitude are loaded from data/chile/seismic_event.json.
+# Epicenter and depth are hardcoded below at the early USGS determination
+# and disagree with that same file: the JSON gives 36.122 S, 72.898 W and
+# depth 22.9 km, this script uses 35.846 S, 72.719 W and depth 35 km.  The
+# early values are retained because the DART station distances quoted
+# throughout the evaluation were computed from them, so
+# results/chile_detection.json publishes a mix of both determinations.
+# See the provenance table in the module docstring.
 
 _EQ = load_seismic_params("chile")
 CHILE_ORIGIN_UTC = _EQ.origin_utc
 CHILE_MAGNITUDE = _EQ.magnitude
-# Keep early-determination coords for station-distance consistency
+# Early-determination coords and depth (NOT from seismic_event.json)
 CHILE_LAT = -35.846
 CHILE_LON = -72.719
 CHILE_DEPTH_KM = 35
@@ -196,10 +213,14 @@ def sliding_window_analysis(
     step_minutes: int = 5,
     max_minutes: int = 360,
 ) -> list[dict[str, object]]:
-    """Run sliding-window detection latency analysis.
+    """Score growing windows of the event record for a latency timeline.
 
-    Processes growing windows of event data to determine when the
-    ensemble score first crosses T1, T2, T3.
+    Each step adds *step_minutes* worth of samples and rescores the whole
+    prefix from the first admitted sample, so this measures how the ensemble
+    score evolves as data accumulates.  It records the raw component scores
+    only.  No comparison against T1, T2 or T3 happens here; threshold
+    crossings are derived from the returned timeline downstream, by
+    scripts/run_ablation.py and scripts/generate_analytical_plots.py.
     """
     event_times, event_values, event_dt, _, event_t0 = load_station_csv(event_path)
 

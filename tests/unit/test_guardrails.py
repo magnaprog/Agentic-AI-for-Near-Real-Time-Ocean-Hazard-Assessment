@@ -11,7 +11,9 @@ from datetime import UTC, datetime
 import pytest
 
 from hazard_assessment.policy.guardrails import (
+    CONFUSABLE_TO_ASCII,
     NON_AUTHORITATIVE_DISCLAIMER,
+    PROHIBITED_TERMS,
     ScanResult,
     scan_text,
 )
@@ -548,6 +550,42 @@ class TestUnicodeConfusableCoverage:
         """Two passes over the same text must not double-count a match."""
         result = scan_text(f"Advisory in effect. {NON_AUTHORITATIVE_DISCLAIMER}")
         assert len(result.violations) == 1
+
+    def test_full_single_character_confusable_sweep(self) -> None:
+        """Every single-character confusable spelling of every reserved term.
+
+        The cases above are one representative per script family, which is
+        enough to show the families are covered but not enough to support the
+        claim that no spelling gets through. This runs the whole sweep: for
+        each reserved term, each position holding an ASCII letter, and each
+        confusable character that folds to that letter. The count is asserted
+        as well as the outcome, so shrinking the confusable table shows up
+        here rather than silently reducing what the sweep proves.
+        """
+        by_letter: dict[str, list[str]] = {}
+        for char, ascii_char in CONFUSABLE_TO_ASCII.items():
+            by_letter.setdefault(ascii_char.lower(), []).append(char)
+
+        spellings = [
+            (term[:i] + confusable + term[i + 1:], term)
+            for term in PROHIBITED_TERMS
+            for i, char in enumerate(term)
+            for confusable in by_letter.get(char.lower(), ())
+        ]
+        assert len(spellings) == 4321
+
+        undetected = [
+            spelling
+            for spelling, term in spellings
+            if term
+            not in {
+                v.term
+                for v in scan_text(
+                    f"{spelling} in effect. {NON_AUTHORITATIVE_DISCLAIMER}"
+                ).violations
+            }
+        ]
+        assert undetected == []
 
 
 class TestInflectedAndStylisedReservedTerms:

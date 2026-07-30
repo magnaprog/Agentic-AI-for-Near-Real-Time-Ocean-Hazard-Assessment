@@ -145,10 +145,14 @@ class HumanDecision(BaseEnvelope):
     )
     decision_hash: str = Field(
         default="",
+        pattern=r"^$|^[0-9a-f]{64}$",
         description=(
             "SHA-256 hash of (reviewer_id, identity_assurance, decision, "
             "decision_reason, decided_at_utc, escalation_packet_id) for "
-            "tamper detection."
+            "tamper detection. Empty means compute it here; anything else "
+            "must already be a SHA-256 hex digest, since the validator "
+            "below only fills a falsy value and would otherwise accept "
+            "arbitrary caller text into a tamper-detection field."
         ),
     )
 

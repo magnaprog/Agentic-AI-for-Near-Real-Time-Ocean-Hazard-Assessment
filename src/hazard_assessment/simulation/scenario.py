@@ -177,7 +177,7 @@ def _generate_infragravity_noise(
     if n < 2:
         return np.zeros(n)
 
-    dt_hours = float(times_hours[1] - times_hours[0]) if n > 1 else 1.0
+    dt_hours = float(times_hours[1] - times_hours[0])
     dt_sec = dt_hours * 3600.0
 
     rng = np.random.default_rng(seed)

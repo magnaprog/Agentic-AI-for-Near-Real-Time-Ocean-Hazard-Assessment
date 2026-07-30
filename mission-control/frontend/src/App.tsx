@@ -44,15 +44,17 @@ function Console() {
   // reopen straight into the console, where every decision fails on submit
   // with no way to supply the missing value.
   const locked = apiKey === "" || reviewerId === "";
-  const { snapshot, connected, upstreamError, lastContactMs } = useWebSocket(
-    wsBaseUrl,
-    locked ? "" : apiKey,
-  );
+  const { snapshot, connected, everConnected, upstreamError, lastContactMs } =
+    useWebSocket(wsBaseUrl, locked ? "" : apiKey);
 
   const demoMode = snapshot?.demo_mode === true;
   const fsm = snapshot?.fsm ?? null;
   const agents = snapshot?.agents ?? [];
   const audit = snapshot?.recent_audit ?? [];
+  // Sections whose upstream query failed on the last poll. Each arrives as an
+  // empty list either way, so without this the panels below would report a
+  // failed query as "nothing to show".
+  const degraded = snapshot?.degraded_sections ?? [];
   const ctx = fsm?.event_context;
   // Retrospective enrichment; null in live operation (panels self-hide).
   const scenarioMetrics = snapshot?.scenario_metrics ?? null;
@@ -61,10 +63,21 @@ function Console() {
   // While the console is locked the socket is intentionally not open, so a
   // connectivity alert here would blame the link for a missing key and would
   // fire alongside the gate's own contradictory message.
+  //
+  // An opening handshake is not a fault. Keying the red alert on !connected
+  // alone painted CONNECTION LOST on every page load and every unlock, before
+  // a connection had ever been attempted, which is the fastest way to teach an
+  // operator to ignore the alert that matters.
   const banner = !locked && !connected ? (
-    <div className="banner banner--alert" role="alert">
-      CONNECTION LOST - RECONNECTING
-    </div>
+    everConnected ? (
+      <div className="banner banner--alert" role="alert">
+        CONNECTION LOST - RECONNECTING
+      </div>
+    ) : (
+      <div className="banner banner--connecting" role="status">
+        CONNECTING - NO LIVE DATA YET
+      </div>
+    )
   ) : demoMode ? (
     <div className="banner banner--demo" role="status">
       DEMO MODE - Static Tohoku 2011 snapshot (core API not configured)
@@ -88,21 +101,28 @@ function Console() {
           should reach the decision controls in one hop. */}
       <a className="skip-link" href="#review-gate">Skip to review gate</a>
 
-      <Header
-        connected={connected}
-        fsmState={fsm?.fsm_state ?? "IDLE"}
-        hasActiveEvent={hasActiveEvent}
-        anomalyScore={ctx?.latest_anomaly_score ?? 0}
-        thresholds={fsm?.thresholds ?? null}
-        eventModeStationCount={getEventModeStationIds(ctx).size}
-        eventMagnitude={ctx?.seismic_magnitude ?? null}
-        triggerTimeUtc={ctx?.trigger_time_utc ?? null}
-        firstT1Minutes={scenarioMetrics?.first_t1_minutes ?? null}
-        lastContactMs={lastContactMs}
-        upstreamError={upstreamError}
-        demoMode={demoMode}
-        sensorDegraded={fsm?.sensor_degraded}
-      />
+      {/* The header is the only region outside a boundary, and it renders on
+          every state the core sends. A throw here took the whole console down
+          rather than one panel; the fallback carries the grid class so the
+          message lands in the topbar strip instead of off the layout. */}
+      <ErrorBoundary fallbackLabel="Status Bar" fallbackClassName="region-topbar">
+        <Header
+          connected={connected}
+          everConnected={everConnected}
+          fsmState={fsm?.fsm_state ?? "IDLE"}
+          hasActiveEvent={hasActiveEvent}
+          anomalyScore={ctx?.latest_anomaly_score ?? 0}
+          thresholds={fsm?.thresholds ?? null}
+          eventModeStationCount={getEventModeStationIds(ctx).size}
+          eventMagnitude={ctx?.seismic_magnitude ?? null}
+          triggerTimeUtc={ctx?.trigger_time_utc ?? null}
+          firstT1Minutes={scenarioMetrics?.first_t1_minutes ?? null}
+          lastContactMs={lastContactMs}
+          upstreamError={upstreamError}
+          demoMode={demoMode}
+          sensorDegraded={fsm?.sensor_degraded}
+        />
+      </ErrorBoundary>
 
       <aside className="region-rail" aria-label="System status">
         <div className="rail-section sect">
@@ -117,7 +137,11 @@ function Console() {
           <h2 className="sect__head">Component Registry</h2>
           <div className="sect__body">
             <ErrorBoundary fallbackLabel="Component Registry">
-              <AgentStatus agents={agents} detectionLatency={scenarioMetrics?.detection_latency} />
+              <AgentStatus
+                agents={agents}
+                detectionLatency={scenarioMetrics?.detection_latency}
+                registryUnavailable={degraded.includes("agents")}
+              />
             </ErrorBoundary>
           </div>
         </div>
@@ -166,6 +190,7 @@ function Console() {
               <ReviewGate
                 fsm={fsm}
                 reviewHistory={snapshot?.recent_reviews ?? snapshot?.recent_audit}
+                reviewHistoryUnavailable={degraded.includes("recent_reviews")}
                 onReviewedChange={setPacketReviewed}
               />
             </ErrorBoundary>
@@ -186,7 +211,7 @@ function Console() {
           unnamed and so not exposed as a landmark at all. */}
       <section className="region-audit" aria-label="Activity">
         <ErrorBoundary fallbackLabel="Audit Log">
-          <AuditLog entries={audit} />
+          <AuditLog entries={audit} auditUnavailable={degraded.includes("recent_audit")} />
         </ErrorBoundary>
       </section>
 

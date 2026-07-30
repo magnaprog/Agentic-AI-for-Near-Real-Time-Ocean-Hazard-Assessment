@@ -16,10 +16,12 @@ instruction:
 * Its tools are the same read-only, event-scoped queries the after-action
   analysis uses. The event identifier is bound by the caller and the model
   cannot widen it.
-* Findings land in ``evidence_issue_results``, and migration 009 grants INSERT
-  there to ``investigator_writer`` only. ``pipeline_worker``, which drives the
-  FSM, is denied it. So a finding cannot be read back as evidence by the code
-  that escalates.
+* Findings land in ``evidence_issue_results``, which migration 009 grants to
+  ``investigator_writer`` alone. ``pipeline_worker``, which drives the FSM,
+  holds neither insert nor select on it, and neither does the API's own role,
+  so a finding can be neither written nor read by the code that escalates.
+  Insert denial alone would not establish that; the read denial is what makes
+  a finding unusable as input to an escalation.
 * Everything the model authors is guardrail-scanned before persistence, which
   means the finding text and the tool-call log, since the model chooses tool
   names and arguments and both are recorded. Whichever reaches for reserved

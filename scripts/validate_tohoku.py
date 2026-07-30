@@ -5,11 +5,19 @@ Reads CSV files produced by download_tohoku_dart.py (event + calibration windows
 runs the full anomaly detection pipeline (detide, bandpass, wavelet, BOCPD, ensemble),
 and reports whether the system would have triggered at each station.
 
-This script:
-  - Fits tidal harmonics from the 30-day calibration window when available,
-    falling back to the first 30 minutes of event data otherwise
-  - Runs sliding-window detection latency analysis under --sliding-window
-  - Reports per-station score decomposition and time to FSM threshold crossing
+What this script does:
+  - Fits the tidal harmonics on the 30-day calibration CSV when one exists.
+    When it does not, the fallback path calibrates only the wavelet baseline
+    energy from the first 30 minutes of event data; the tidal fit then has no
+    separate fit window and self-fits on the whole event record, which is
+    retrospective and much weaker than a 30-day fit.
+  - Rescores growing prefixes of the event record (--sliding-window) and
+    writes the resulting score timeline per station.
+  - Reports the per-station component score decomposition and, from the
+    full-record score, whether each station would cross T1, T2 and T3.
+    It does not compute a time to threshold crossing, and no field in
+    results/tohoku_detection.json holds one; the timeline under
+    "sliding_window" is the raw material a caller would need for that.
 
 Usage:
     python scripts/validate_tohoku.py [--data-dir data/tohoku]
@@ -196,10 +204,14 @@ def sliding_window_analysis(
     step_minutes: int = 5,
     max_minutes: int = 360,
 ) -> list[dict[str, object]]:
-    """Run sliding-window detection latency analysis.
+    """Score growing windows of the event record for a latency timeline.
 
-    Processes growing windows of event data to determine when the
-    ensemble score first crosses T1, T2, T3.
+    Each step adds *step_minutes* worth of samples and rescores the whole
+    prefix from the first admitted sample, so this measures how the ensemble
+    score evolves as data accumulates.  It records the raw component scores
+    only.  No comparison against T1, T2 or T3 happens here; threshold
+    crossings are derived from the returned timeline downstream, by
+    scripts/run_ablation.py and scripts/generate_analytical_plots.py.
     """
     event_times, event_values, event_dt, _, event_t0 = load_station_csv(event_path)
 

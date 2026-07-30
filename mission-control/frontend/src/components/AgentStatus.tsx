@@ -4,7 +4,14 @@ import type { Agent, DetectionLatencyRow } from "../types";
 interface Props {
   agents: Agent[];
   detectionLatency?: DetectionLatencyRow[];
+  /** True when the BFF reported that the component-registry query failed
+   *  upstream on this poll, so an empty list means the query failed rather
+   *  than that the core registered nothing. */
+  registryUnavailable?: boolean;
 }
+
+/** Threshold for the latency bands, in minutes. */
+const LATENCY_WARN_MINUTES = 12;
 
 function shortLabel(name: string): string {
   const lower = name.toLowerCase();
@@ -24,8 +31,17 @@ function fmtMinutes(m: number | null): string {
 /** Color class by detection speed (null = never detected). */
 function latencyClass(m: number | null): string {
   if (m == null) return "val-bad";
-  if (m <= 12) return "val-good";
+  if (m <= LATENCY_WARN_MINUTES) return "val-good";
   return "val-warn";
+}
+
+/** Non-color cue for the same three bands the colors encode. Anyone who cannot
+ *  separate the hues, or is reading a monochrome capture of the console, had
+ *  no way to tell a fast detection from a slow one: both are just a number.
+ *  "n/a" already stands on its own for a threshold that was never crossed. */
+function latencyMark(m: number | null): string {
+  if (m == null) return "";
+  return m <= LATENCY_WARN_MINUTES ? "" : "!";
 }
 
 function DetectionLatency({ rows }: { rows: DetectionLatencyRow[] }) {
@@ -41,22 +57,35 @@ function DetectionLatency({ rows }: { rows: DetectionLatencyRow[] }) {
             <tr key={r.station_id}>
               <td>{r.station_id}</td>
               <td className="val-muted">{Math.round(r.distance_km)}km</td>
-              <td className={latencyClass(r.t1_minutes)}>{fmtMinutes(r.t1_minutes)}</td>
-              <td className={latencyClass(r.t3_minutes)}>{fmtMinutes(r.t3_minutes)}</td>
+              <td className={latencyClass(r.t1_minutes)}>
+                {fmtMinutes(r.t1_minutes)}{latencyMark(r.t1_minutes)}
+              </td>
+              <td className={latencyClass(r.t3_minutes)}>
+                {fmtMinutes(r.t3_minutes)}{latencyMark(r.t3_minutes)}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div className="tiny dim mt-4">
+        ! marks a crossing later than {LATENCY_WARN_MINUTES} minutes. n/a means
+        the threshold was never crossed.
+      </div>
     </div>
   );
 }
 
-function AgentStatus({ agents, detectionLatency }: Props) {
+function AgentStatus({ agents, detectionLatency, registryUnavailable }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       {agents.length === 0 ? (
         <div className="standby">
-          <div className="standby__text">Awaiting component registry.</div>
+          {/* "Awaiting" for a failed query would report an outage as patience. */}
+          <div className="standby__text">
+            {registryUnavailable
+              ? "Component registry unavailable: the last query to the core API failed."
+              : "Awaiting component registry."}
+          </div>
         </div>
       ) : (
         agents.map((a) => (

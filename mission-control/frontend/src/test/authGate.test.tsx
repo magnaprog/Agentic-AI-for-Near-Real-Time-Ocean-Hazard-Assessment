@@ -69,6 +69,19 @@ describe("AuthGate", () => {
     expect(screen.getByRole("dialog")).toBeTruthy();
   });
 
+  it("stops announcing a field as invalid once the operator types", () => {
+    // aria-invalid was derived from the error message and nothing cleared it,
+    // so a screen reader kept calling the field invalid while it was fixed.
+    renderGate();
+    const accessKey = screen.getByLabelText(/access key/i);
+    fireEvent.click(screen.getByRole("button", { name: /unlock console/i }));
+    expect(accessKey.getAttribute("aria-invalid")).toBe("true");
+
+    fireEvent.change(accessKey, { target: { value: "k" } });
+    expect(accessKey.getAttribute("aria-invalid")).toBe("false");
+    expect(screen.getByRole("alert")).toHaveTextContent("");
+  });
+
   it("wraps Tab from the last control back to the first", () => {
     renderGate();
     const submit = screen.getByRole("button", { name: /unlock console/i });

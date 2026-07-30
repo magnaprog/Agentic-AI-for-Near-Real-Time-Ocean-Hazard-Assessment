@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback, useId, memo } from "react";
+import { useEffect, useState, useCallback, useId, memo } from "react";
 import {
   AreaChart,
   Area,
@@ -46,10 +46,9 @@ const FONT_MONO = "'IBM Plex Mono', monospace";
 function AnomalyChart({ currentScore, thresholds, hasActiveEvent }: Props) {
   const gradientId = useId();
   const [data, setData] = useState<DataPoint[]>([]);
-  const scoreRef = useRef(currentScore);
-  const lastAppendMsRef = useRef(0);
 
-  const appendPoint = useCallback((score: number, nowMs: number = Date.now()) => {
+  const appendPoint = useCallback((score: number) => {
+    const nowMs = Date.now();
     const now = new Date(nowMs).toISOString().slice(11, 19);
     setData((prev) => {
       const last = prev[prev.length - 1];
@@ -59,34 +58,25 @@ function AnomalyChart({ currentScore, thresholds, hasActiveEvent }: Props) {
       const next = [...prev, { t: nowMs, time: now, score }];
       return next.length > MAX_POINTS ? next.slice(-MAX_POINTS) : next;
     });
-    lastAppendMsRef.current = nowMs;
   }, []);
-
-  useEffect(() => {
-    scoreRef.current = currentScore;
-  }, [currentScore]);
 
   // Reset the trace when an event begins or ends so a stale event's line does
   // not bleed into the next event's view.
   useEffect(() => {
     setData([]);
-    lastAppendMsRef.current = 0;
   }, [hasActiveEvent]);
 
+  // One point per score the console actually received, and nothing else.
+  //
+  // A 30-second keepalive used to re-append the last known score at the
+  // current time whenever no update had arrived. Under a core API outage that
+  // drew a panel titled "Live anomaly score" extending a flat line with fresh
+  // timestamps for a score nothing was producing. The trace now stops where
+  // the data stopped; whether the link is healthy is the header's job, and it
+  // reports it directly.
   useEffect(() => {
     if (hasActiveEvent) appendPoint(currentScore);
   }, [currentScore, hasActiveEvent]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!hasActiveEvent) return;
-    const id = setInterval(() => {
-      const nowMs = Date.now();
-      if (nowMs - lastAppendMsRef.current >= 30_000) {
-        appendPoint(scoreRef.current, nowMs);
-      }
-    }, 30_000);
-    return () => clearInterval(id);
-  }, [hasActiveEvent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const t1 = thresholds?.t1 ?? DEFAULT_THRESHOLDS.t1;
   const t2 = thresholds?.t2 ?? DEFAULT_THRESHOLDS.t2;

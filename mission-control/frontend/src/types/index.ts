@@ -119,6 +119,12 @@ export interface SystemSnapshot {
    *  SystemSnapshotOut, which has no such field, so absence means live. */
   demo_mode?: boolean;
   scenario_metrics?: ScenarioMetrics | null;
+  /** Names of the snapshot sections whose upstream query failed on this poll:
+   *  "agents", "recent_audit", "recent_reviews". Those three degrade to an
+   *  empty list instead of failing the whole snapshot, and an empty list on
+   *  its own cannot be told apart from a genuinely empty one. Absent from the
+   *  built-in demo snapshot, which never queries the core. */
+  degraded_sections?: string[];
 }
 
 export type WSMessage =

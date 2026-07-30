@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from typing import Any
 
 import httpx
@@ -15,6 +16,8 @@ from backend.models.schemas import (
     SystemSnapshotOut,
 )
 from backend.security import REVIEWER_ID_HEADER_NAME, required_hazard_api_key
+
+logger = logging.getLogger(__name__)
 
 
 class HazardClient:
@@ -181,36 +184,55 @@ class HazardClient:
             raise fsm_result
         fsm_result.raise_for_status()
 
-        # Non-critical components degrade gracefully
+        # Non-critical components degrade gracefully, but a degraded section
+        # is recorded by name. Silently returning an empty list made a failed
+        # query indistinguishable from a genuinely empty one, and the console
+        # renders those two very differently: an unavailable review history
+        # reads as "NOT RECORDED" and re-arms the decision controls.
+        degraded: list[str] = []
+
         agents_data: list[dict[str, Any]] = []
-        if not isinstance(agents_result, BaseException):
+        if isinstance(agents_result, BaseException):
+            logger.warning("agents query failed: %s", agents_result)
+            degraded.append("agents")
+        else:
             try:
                 agents_result.raise_for_status()
                 agents_data = agents_result.json()
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("agents query failed: %s", exc)
+                degraded.append("agents")
 
         audit_data: list[AuditEntryOut] = []
-        if not isinstance(audit_result, BaseException):
+        if isinstance(audit_result, BaseException):
+            logger.warning("audit query failed: %s", audit_result)
+            degraded.append("recent_audit")
+        else:
             try:
                 audit_result.raise_for_status()
                 audit_data = [AuditEntryOut(**entry) for entry in audit_result.json()]
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("audit query failed: %s", exc)
+                degraded.append("recent_audit")
 
         reviews_data: list[AuditEntryOut] = []
-        if not isinstance(reviews_result, BaseException):
+        if isinstance(reviews_result, BaseException):
+            logger.warning("reviews query failed: %s", reviews_result)
+            degraded.append("recent_reviews")
+        else:
             try:
                 reviews_result.raise_for_status()
                 reviews_data = [AuditEntryOut(**entry) for entry in reviews_result.json()]
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.warning("reviews query failed: %s", exc)
+                degraded.append("recent_reviews")
 
         snapshot = SystemSnapshotOut(
             fsm=FSMStateOut(**fsm_result.json()),
             agents=agents_data,
             recent_audit=audit_data,
             recent_reviews=reviews_data,
+            degraded_sections=degraded,
         )
         return snapshot.model_dump(mode="json")
 

@@ -2,14 +2,24 @@
 """Component ablation study using existing Tohoku detection results.
 
 Recomputes ensemble scores from per-station and sliding-window component
-scores under four weight configurations to quantify each detector's
-contribution.
+scores under four named weight configurations.  What it actually measures
+is the trade-off between the threshold detector and the statistical
+detector.  The ML weight is untested: every station in
+results/tohoku_detection.json has ml_score null, so no configuration ever
+exercises alpha_ml.
 
 Configurations:
   1. Threshold-only   (1.0, 0.0, 0.0)
   2. Statistical-only  (0.0, 1.0, 0.0) - max(wavelet, BOCPD)
-  3. Threshold+Statistical (no ML renormalized)
+  3. Threshold+Statistical (0.588, 0.412, 0.0)
   4. Full ensemble     (0.50, 0.35, 0.15) - production default
+
+Only three of these are distinct on this corpus.  With ml_score None,
+compute_ensemble_score renormalizes over the two remaining detectors, so
+configuration 4 collapses onto configuration 3 at (0.5/0.85, 0.35/0.85) =
+(0.5882, 0.4118).  The published difference between the two columns is
+entirely the 3-decimal rounding of configuration 3's hardcoded weights,
+2e-06 to 5.8e-05 per station, not a contribution from the ML detector.
 
 Usage:
     python scripts/run_ablation.py [--results results/tohoku_detection.json]

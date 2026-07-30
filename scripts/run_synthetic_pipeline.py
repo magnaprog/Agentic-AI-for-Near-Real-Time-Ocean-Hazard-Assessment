@@ -682,8 +682,14 @@ def main() -> None:
     s2_ens, s2_thr, s2_wav, s2_boc, s2_sq, s2_fd = _extract_final_scores(scenario_2_stations)
 
     if s1_ens < T3:
-        logger.warning(
-            "M8.5 ensemble score %.4f < T3 (%.2f); trace will not reach ESCALATE",
+        # The trace still reaches ESCALATE: the M8.5 / 25 km event clears the
+        # seismic-only override (M >= 7.5, depth < 100 km), which chains
+        # MONITOR -> ESCALATE without any DART score.  The note below is
+        # about the anomaly path only.
+        logger.info(
+            "M8.5 ensemble score %.4f < T3 (%.2f); the anomaly path alone "
+            "would stop below ESCALATE, so ESCALATE in this trace comes from "
+            "the seismic-only override",
             s1_ens, T3,
         )
 

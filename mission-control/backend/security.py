@@ -9,6 +9,7 @@ from hmac import compare_digest
 from fastapi import Header, HTTPException, WebSocket
 
 from backend.config import settings
+from backend.errors import UpstreamKeyNotConfiguredError
 
 MISSION_CONTROL_API_KEY_HEADER_NAME = "X-Mission-Control-Api-Key"
 # Subprotocol carrying the access key on a browser WebSocket handshake. The
@@ -37,10 +38,14 @@ def _api_key_matches(provided: str, expected: str) -> bool:
     return compare_digest(provided.encode("utf-8"), expected.encode("utf-8"))
 
 
-def _required_value(raw_value: str, setting_name: str) -> str:
+def _required_value(
+    raw_value: str,
+    setting_name: str,
+    exc_type: type[RuntimeError] = RuntimeError,
+) -> str:
     value = raw_value.strip()
     if value == "":
-        raise RuntimeError(f"{setting_name} is required for Mission Control")
+        raise exc_type(f"{setting_name} is required for Mission Control")
     return value
 
 
@@ -50,8 +55,17 @@ def required_mission_control_api_key() -> str:
 
 
 def required_hazard_api_key() -> str:
-    """Return the configured upstream hazard API key or fail fast."""
-    return _required_value(settings.hazard_api_key, "MISSION_CONTROL_HAZARD_API_KEY")
+    """Return the configured upstream hazard API key or fail fast.
+
+    Raises ``UpstreamKeyNotConfiguredError`` rather than a bare ``RuntimeError`` so
+    a router can tell "no upstream is configured, serve the demo snapshot"
+    apart from a transport fault that also surfaces as ``RuntimeError``.
+    """
+    return _required_value(
+        settings.hazard_api_key,
+        "MISSION_CONTROL_HAZARD_API_KEY",
+        UpstreamKeyNotConfiguredError,
+    )
 
 
 def require_reviewer_id_header(

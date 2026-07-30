@@ -7,8 +7,13 @@ station:
 
   1. **Calibration window** (30 days pre-event, standard-mode 15-min data)
      for harmonic tidal fitting.
-  2. **Event window** (1 h before to 6 h after earthquake, event-mode
-     15-sec or 1-min data) for anomaly detection.
+  2. **Event window** (1 h before to 6 h after earthquake) for anomaly
+     detection.  No measurement-type filter is applied here, so the window
+     holds whatever NDBC recorded: event-mode 15-sec (T=3) and 1-min (T=2)
+     rows plus the standard-mode 15-min (T=1) rows that keep reporting
+     through the event.  That overlap is what produces the duplicate
+     timestamps the equal-time dedup policy in scripts/_seismic_params.py
+     resolves ("first" row in native archive order wins).
 
 Key stations (from NCTR model-data comparison page):
   32401 - ~295 km SSW, off Arica, Chile (nearest, first arrival)

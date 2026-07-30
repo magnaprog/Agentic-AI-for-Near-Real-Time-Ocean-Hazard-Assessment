@@ -11,6 +11,12 @@ interface Props {
    *  held only in component state, so a decision survives a refresh and is
    *  visible to whoever takes over the shift. */
   reviewHistory?: AuditEntry[];
+  /** True when the BFF reported that the review-history query failed upstream
+   *  on this poll. The history then arrives empty, which is exactly what a
+   *  never-reviewed packet looks like, so the gate has to say the record is
+   *  unknown rather than absent. It does not disable the decision controls: a
+   *  partial upstream outage must not stop a duty scientist from deciding. */
+  reviewHistoryUnavailable?: boolean;
   /** Reports whether the packet on screen already has a decision, so the
    *  dashboard can stop showing escalation urgency for work already done. */
   onReviewedChange?: (reviewed: boolean) => void;
@@ -30,7 +36,12 @@ function utcStamp(iso: string): string {
   return `${d.toISOString().slice(0, 19).replace("T", " ")}Z`;
 }
 
-function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
+function ReviewGate({
+  fsm,
+  reviewHistory,
+  reviewHistoryUnavailable = false,
+  onReviewedChange,
+}: Props) {
   const { getApiKey, getReviewerId } = useCredentials();
   const [rationale, setRationale] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -47,6 +58,12 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
   // decision. Key repeat on a focused button is the realistic way to hit it.
   const submittingRef = useRef(false);
   const [packetViewed, setPacketViewed] = useState(false);
+  // Each of these three steps unmounts the control the operator just used and
+  // replaces it with something else. Without moving focus, it lands on <body>
+  // and a keyboard or screen reader user loses their place mid-decision.
+  const acknowledgedRef = useRef<HTMLDivElement>(null);
+  const recordedRef = useRef<HTMLDivElement>(null);
+  const rationaleRef = useRef<HTMLTextAreaElement>(null);
 
   const ctx = fsm?.event_context;
   const needsReview = fsm?.fsm_state === "ESCALATE" && fsm?.has_active_event && ctx != null;
@@ -96,6 +113,25 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
   useEffect(() => {
     onReviewedChange?.(reviewed);
   }, [reviewed, onReviewedChange]);
+
+  // Acknowledging replaces the button with a static confirmation line.
+  useEffect(() => {
+    if (packetViewed) acknowledgedRef.current?.focus();
+  }, [packetViewed]);
+
+  // Recording a decision replaces the button row with the decision record.
+  // Keyed on this session's submit, not on `reviewed`: a decision arriving in
+  // a snapshot from another operator must not yank focus out from under
+  // whoever is typing here.
+  useEffect(() => {
+    if (reviewRecorded) recordedRef.current?.focus();
+  }, [reviewRecorded]);
+
+  // Superseding removes the record and restores the buttons, which start
+  // disabled, so focus goes to the rationale: the field that unblocks them.
+  useEffect(() => {
+    if (superseding) rationaleRef.current?.focus();
+  }, [superseding]);
 
   const handleDecision = async (decision: "APPROVE" | "REJECT" | "DEFER") => {
     if (submittingRef.current) return;
@@ -172,7 +208,19 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
           ["Latest score", ctx.latest_anomaly_score.toFixed(3), "var(--state-emergency)"],
           ["DART event-mode stations", `${eventModeCount}`],
           ["DART event mode", ctx.dart_confirmation ? "OBSERVED SINCE ORIGIN" : "NOT OBSERVED"],
-          ["Review record", recordedReview ? "RECORDED IN AUDIT" : reviewRecorded ? "RECORDED THIS SESSION" : "NOT RECORDED"],
+          // "NOT RECORDED" is a claim about the audit trail, so it is only
+          // honest when the trail was actually read. A failed history query
+          // gets its own value that reads as neither decided nor undecided.
+          [
+            "Review record",
+            recordedReview
+              ? "RECORDED IN AUDIT"
+              : reviewRecorded
+                ? "RECORDED THIS SESSION"
+                : reviewHistoryUnavailable
+                  ? "UNKNOWN, HISTORY UNAVAILABLE"
+                  : "NOT RECORDED",
+          ],
         ] as [string, string, string?][]).map(([label, value, color]) => (
           <div key={label} className="kv">
             <span className="kv__key">{label}</span>
@@ -214,16 +262,21 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
             This review is caller-asserted. It does not authorize distribution or close the event.
           </div>
 
+          {/* Neutral styling. This button used to carry btn--reject, the red
+              REJECT treatment, for what is only an acknowledgement that the
+              evidence has been read. */}
           {!packetViewed && (
             <button
               onClick={() => setPacketViewed(true)}
-              className="btn btn--reject btn--full mt-10"
+              className="btn btn--full mt-10"
             >
               ACKNOWLEDGE PACKET REVIEWED
             </button>
           )}
           {packetViewed && (
-            <div className="result-line result-line--ok">PACKET ACKNOWLEDGED</div>
+            <div className="result-line result-line--ok" ref={acknowledgedRef} tabIndex={-1}>
+              PACKET ACKNOWLEDGED
+            </div>
           )}
         </div>
       )}
@@ -248,6 +301,7 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
       )}
 
       <textarea
+        ref={rationaleRef}
         className="review-rationale"
         aria-label="Review rationale"
         placeholder={packetViewed ? "Enter rationale..." : "View escalation evidence first..."}
@@ -259,8 +313,16 @@ function ReviewGate({ fsm, reviewHistory, onReviewedChange }: Props) {
         style={{ width: "100%", resize: "none", opacity: packetViewed ? 1 : 0.5 }}
       />
 
+      {reviewHistoryUnavailable && (
+        <div className="review-unknown" role="status">
+          Review history unavailable on the last poll. The console cannot tell
+          whether this packet already carries a decision. Check the audit trail
+          before you decide.
+        </div>
+      )}
+
       {reviewed && !superseding ? (
-        <div className="review-recorded" role="status">
+        <div className="review-recorded" role="status" ref={recordedRef} tabIndex={-1}>
           <div className="review-recorded__head">Decision recorded</div>
           <div className="review-recorded__grid">
             <span>Decision</span>

@@ -4,6 +4,10 @@ import type { AuditEntry } from "../types";
 
 interface Props {
   entries: AuditEntry[];
+  /** True when the BFF reported that the audit query failed upstream on this
+   *  poll, so an empty strip means the query failed rather than that nothing
+   *  has happened. */
+  auditUnavailable?: boolean;
 }
 
 function eventColor(eventType: string): string {
@@ -52,13 +56,13 @@ function shortEventDescription(e: AuditEntry): string {
   return e.event_type;
 }
 
-/** Human-readable producer names for provenance. */
+/** Human-readable producer names for provenance. Only the two producers whose
+ *  generic form reads badly are special-cased; everything else falls through
+ *  to the suffix trim. */
 function producerLabel(producer: string): string {
   switch (producer) {
     case "anomaly_agent": return "anomaly";
     case "orchestrator": return "fsm";
-    case "policy_engine": return "policy";
-    case "verification_agent": return "verify";
     default: return producer.replace(/_agent$/, "").replace(/_/g, " ");
   }
 }
@@ -70,7 +74,7 @@ function utcTime(iso: string): string {
   return d.toISOString().slice(11, 19);
 }
 
-function AuditLog({ entries }: Props) {
+function AuditLog({ entries, auditUnavailable }: Props) {
   // Dedup by entry_id: the rolling audit window can re-deliver an entry across
   // WebSocket snapshots, and the id is the durable identity of the record.
   const seen = new Set<string>();
@@ -84,8 +88,12 @@ function AuditLog({ entries }: Props) {
     return (
       <div className="audit-strip">
         <h2 className="audit-strip__title">Activity</h2>
+        {/* A silent system and a failed query both arrive as an empty list.
+            Saying "awaiting" for the second one hides the outage. */}
         <div style={{ color: "var(--ink-2)", fontSize: 10, fontStyle: "italic" }}>
-          Awaiting system activity...
+          {auditUnavailable
+            ? "Activity unavailable: the last query to the core API failed."
+            : "Awaiting system activity..."}
         </div>
       </div>
     );

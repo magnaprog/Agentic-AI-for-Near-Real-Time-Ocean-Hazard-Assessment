@@ -1,17 +1,39 @@
 #!/usr/bin/env python3
 """Evaluate false positive rate on quiet-period DART data.
 
-Downloads 30 days of DART BPR data from a seismically quiet period
-(June 2011 - no tsunamis) for the same 8 stations used in the Tohoku
-validation, then runs the full anomaly detection pipeline with NO seismic
-context to measure false trigger rates.
+Uses 30 days of DART BPR data from a seismically quiet period (June 2011,
+no tsunamis) for the 8 stations of the Tohoku validation, then runs the
+full anomaly detection pipeline with NO seismic context to measure false
+trigger rates.  The 30 days are split: the first 15 days calibrate the
+station (the Rayleigh criterion needs >= 14.8 days to separate M2 from S2)
+and the remaining 15 days are scored in 6-hour windows.
+
+Of the 8 stations, 7 reach the published summary.  46402 has too few
+post-calibration samples and is recorded as "insufficient evaluation data",
+so summary.n_stations is 7.
 
 The key metric is: how many times does the ensemble score exceed T1 (0.35)
-per station during 30 days of quiet data?  This gives false investigations
-per station-month.
+per station over the 15-day evaluation half?  Counts are normalized by the
+evaluated span, so the reported rate is false investigations per
+station-month.
+
+Known limitation, degraded bandpass.  _parse_quiet_rows keeps only
+standard-mode (T=1) rows, so every station is evaluated at 900 s sampling.
+compute_full_anomaly_score sets filter_degraded whenever the sampling
+interval is >= 150 s (1 / (2 * BANDPASS_HIGH_HZ)), so the whole published
+false-positive evaluation runs with the bandpass clamped to Nyquist and the
+threshold and wavelet components are computed on that clamped output.  This
+script does not record the flag in its result artifact; its sibling
+run_synthetic_evaluation.py excludes 900 s sampling for exactly this reason
+and does record it.  Read the trigger counts below as an estimate obtained
+under a degraded filter, not under the event-mode sampling the detection
+results use.
 
 Usage:
     python scripts/run_false_positive_evaluation.py [--data-dir data/quiet] [--download]
+
+--download re-fetches from NDBC and overwrites the checked-in CSVs under
+data/quiet/, so the reproducibility pipeline does not pass it.
 
 Prerequisites:
     pip install -e .

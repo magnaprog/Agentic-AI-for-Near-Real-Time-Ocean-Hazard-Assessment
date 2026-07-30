@@ -190,17 +190,28 @@ def _load_tidal_prediction(
 
     Stage 1 - Tidal constituents (from 30-day calibration):
         Clean calibration data (spike removal, level-shift correction,
-        linear detrend), then fit 8 tidal harmonics via IRLS.  The drift
-        is removed during cleaning so it does not corrupt the harmonic
-        amplitudes/phases.  Uses only pre-event data (causal).
+        linear detrend), then fit 8 tidal harmonics via IRLS.  Drift is
+        handled twice: the cleaning step removes the linear trend, and
+        include_drift=True additionally puts linear and quadratic drift
+        columns in the harmonic design matrix, so the drift is absorbed
+        by the model rather than left to corrupt the amplitudes/phases.
+        Uses only pre-event data (causal).
 
-    Stage 2 - Iterative robust baseline (retrospective for visualization):
-        Predict pure tides for the event window, compute residual
-        (observed - predicted), then iteratively fit a degree-2
-        polynomial with sigma-clipping to reject tsunami/seismic
-        anomalies.  This captures the smooth instrument drift over
-        the full event window without being pulled by transient
-        anomalies.  Standard practice for retrospective paper figures.
+    Stage 2 - Baseline alignment (retrospective, event window):
+        Predict pure tides for the event window and compute the residual
+        (observed - predicted), then fit a baseline to that residual and
+        add it to the prediction.  Which baseline depends on how many
+        event samples there are:
+          n >= 200 (event-mode records): a degree-3 polynomial with
+            sigma-clipping over the full record, blended at t=0 with a
+            rolling median of the pre-event portion.
+          15 <= n < 200 (standard-mode records): a wide rolling median
+            only, because a polynomial cannot fix the phase error of a
+            harmonic prediction sampled every 15 min.
+          6 <= n < 15: a degree-2 polynomial with sigma-clipping.
+          2 <= n < 6: a constant median offset.
+        Every branch reads the event window, so Stage 2 is retrospective.
+        Standard practice for retrospective paper figures.
 
     Returns None if calibration data is insufficient.
     """
@@ -353,7 +364,10 @@ def fig_tohoku_waveforms() -> None:
 
         _plot_with_gaps(ax, mins, heights_dm)
 
-        # Overlay tidal+drift prediction (causal: uses only pre-event calibration)
+        # Overlay tidal+drift prediction.  Not causal: the harmonics come
+        # from the pre-event calibration window, but _load_tidal_prediction
+        # then adds a Stage-2 baseline fitted to the event-window residual
+        # itself, which its own docstring marks as retrospective.
         cal_path = DATA_DIR / f"dart_{sid}_tohoku_2011_calibration.csv"
         event_path = DATA_DIR / f"dart_{sid}_tohoku_2011_event.csv"
         tide_data = _load_tidal_prediction(cal_path, event_path)
@@ -1104,7 +1118,11 @@ def _station_map_plain(
 
 
 def _fig_station_map_plain() -> None:
-    """Fallback Tohoku station map without coastlines."""
+    """Tohoku station map, the only path fig_station_map takes.
+
+    Not a fallback and not coastline-free: _station_map_plain adds
+    cfeature.COASTLINE over the bathymetry shading.
+    """
     _station_map_plain(
         station_meta=STATION_META,
         epicenter_lat=TOHOKU_LAT,
@@ -1776,10 +1794,15 @@ def fig_chile_residuals() -> None:
         ev_residual = ev_h - predicted
 
         # Pre-event linear detrend + centered rolling-median baseline.
-        # Centered (non-causal) median has no lag on monotonic drift,
-        # unlike the causal version used for Tohoku.  Safe here because
-        # Chile far-field tsunami travel times are 12-22 h - no tsunami
-        # signal exists in the 6-h event window.
+        # The centered (non-causal) median has no lag on monotonic drift.
+        # The Tohoku residual figure uses a centered median too, so the
+        # difference is the window and its scope, not causality: 60 min
+        # for every station here, 120 min and only beyond 3,000 km there.
+        # This is not a signal-free window.  32412 sits ~2,400 km from the
+        # epicenter, so the first arrival lands near t+3.4 h, well inside
+        # the -1.0 h to +6.0 h record, and results/chile_detection.json
+        # scores it 0.9957.  The 60-min median here therefore removes real
+        # tsunami energy at the longer arrival periods, not just drift.
         pre_ev_mask = mins < 0
         if np.sum(pre_ev_mask) >= 2:
             bp = np.polyfit(mins[pre_ev_mask], ev_residual[pre_ev_mask], deg=1)
@@ -2181,7 +2204,7 @@ def fig_coops_samoa() -> None:
 
 
 def fig_multi_source_network_map() -> None:
-    """Global map showing both epicenters, all operational DART and CO-OPS stations."""
+    """Global map: all five evaluated epicenters plus operational DART and CO-OPS stations."""
     try:
         import cartopy.crs as ccrs
         import cartopy.feature as cfeature
@@ -3536,8 +3559,17 @@ def fig_illapel_residuals() -> None:
         ev_residual = ev_h - predicted
 
         # Pre-event linear detrend + centered rolling-median baseline.
-        # The 30-min centered median removes slow tidal residual drift
-        # while preserving >99% of tsunami peak amplitude.
+        # Subtracting a 30-min centered median is a high-pass with a
+        # ~30-min corner, not a drift-only correction.  Pushing a sinusoid
+        # through this exact step gives a gain of 1.0 or more at periods of
+        # 30 min and below, ~0.69 at 40 min and ~0.33 at 60 min, so it
+        # removes real tsunami energy from the longer-period arrivals.
+        # Re-running this pipeline on the archived records cuts the
+        # post-origin peak by about half at Illapel 32401 and Iquique 32401
+        # and to about a fifth at Samoa 51425.  This step does NOT preserve
+        # tsunami peak amplitude.  The published captions do disclose the
+        # median step, so the figures are not misdescribed, but do not read
+        # these traces as calibrated amplitudes.
         pre_ev_mask = mins < 0
         if np.sum(pre_ev_mask) >= 2:
             bp = np.polyfit(mins[pre_ev_mask], ev_residual[pre_ev_mask], deg=1)
@@ -3823,8 +3855,17 @@ def fig_iquique_residuals() -> None:
         ev_residual = ev_h - predicted
 
         # Pre-event linear detrend + centered rolling-median baseline.
-        # The 30-min centered median removes slow tidal residual drift
-        # while preserving >99% of tsunami peak amplitude.
+        # Subtracting a 30-min centered median is a high-pass with a
+        # ~30-min corner, not a drift-only correction.  Pushing a sinusoid
+        # through this exact step gives a gain of 1.0 or more at periods of
+        # 30 min and below, ~0.69 at 40 min and ~0.33 at 60 min, so it
+        # removes real tsunami energy from the longer-period arrivals.
+        # Re-running this pipeline on the archived records cuts the
+        # post-origin peak by about half at Illapel 32401 and Iquique 32401
+        # and to about a fifth at Samoa 51425.  This step does NOT preserve
+        # tsunami peak amplitude.  The published captions do disclose the
+        # median step, so the figures are not misdescribed, but do not read
+        # these traces as calibrated amplitudes.
         pre_ev_mask = mins < 0
         if np.sum(pre_ev_mask) >= 2:
             bp = np.polyfit(mins[pre_ev_mask], ev_residual[pre_ev_mask], deg=1)
@@ -4109,9 +4150,19 @@ def fig_samoa_residuals() -> None:
         ev_residual = ev_h - predicted
 
         # Pre-event linear detrend + centered rolling-median baseline.
-        # The 30-min centered median removes slow tidal residual drift
-        # (verified: residual at t+350 min < 0.005 m for all stations)
-        # while preserving >99% of tsunami peak amplitude.
+        # Subtracting a 30-min centered median is a high-pass with a
+        # ~30-min corner, not a drift-only correction.  Pushing a sinusoid
+        # through this exact step gives a gain of 1.0 or more at periods of
+        # 30 min and below, ~0.69 at 40 min and ~0.33 at 60 min, so it
+        # removes real tsunami energy from the longer-period arrivals.
+        # Re-running this pipeline on the archived records cuts the
+        # post-origin peak by about half at Illapel 32401 and Iquique 32401
+        # and to about a fifth at Samoa 51425.  This step does NOT preserve
+        # tsunami peak amplitude.  The published captions do disclose the
+        # median step, so the figures are not misdescribed, but do not read
+        # these traces as calibrated amplitudes.
+        # Tail check on this event: the residual at t+350 min is under
+        # 0.008 m at all three stations.
         pre_ev_mask = mins < 0
         if np.sum(pre_ev_mask) >= 2:
             bp = np.polyfit(mins[pre_ev_mask], ev_residual[pre_ev_mask], deg=1)

@@ -581,6 +581,10 @@
 }
 .banner--alert { background: var(--state-emergency-fill); color: #fff; }
 .banner--demo { background: #8a5a1e; color: #ffe6c4; }
+/* The first handshake is not a fault, so it does not get the alert treatment.
+   Recessed and neutral: present enough to explain an empty console, quiet
+   enough that it cannot be confused with a link that dropped mid-event. */
+.banner--connecting { background: var(--bg-raised); color: var(--ink-2); }
 
 /* --- Standby / empty states -------------------------------------------------------------------------- */
 
@@ -775,6 +779,19 @@
   color: var(--ink-2);
   line-height: 1.45;
   margin-top: -2px;
+}
+
+/* The review-history query failed upstream, so an empty history is not
+   evidence that nobody has decided this packet. Said next to the controls, in
+   the attention hue rather than the emergency one: the state is unknown, not
+   wrong, and the controls stay live because a partial upstream outage must not
+   stop a duty scientist from deciding. */
+.review-unknown {
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--amber);
+  border-left: 2px solid var(--amber);
+  padding-left: 8px;
 }
 
 /* Run length for collapsed activity entries. Reads as a count, not as another

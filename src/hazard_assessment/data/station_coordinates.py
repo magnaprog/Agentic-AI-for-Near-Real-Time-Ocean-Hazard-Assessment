@@ -8,6 +8,16 @@ Values are NDBC DART positions, kept in sync with the Mission Control station
 map (``mission-control/frontend/src/data/stations.json``). Stations not listed
 here get no coordinates, in which case the Rayleigh check is skipped for
 them rather than evaluated against a fabricated position.
+
+One known gap: station 32402 appears in the archived Illapel and Iquique
+corpora and in the paper's per-station tables, but has no entry here, so the
+live worker skips its Rayleigh check. The offline validators are unaffected,
+because they pass no station position at all, so that check is gated off for
+every station on the offline path rather than for this one. Closing the
+gap needs an NDBC position for 32402 added here and to the Mission Control
+map together. The positions hardcoded in ``scripts/generate_paper_figures.py``
+are not a usable source: they disagree with each other, and for stations that
+do appear here they disagree with these values by up to a few kilometres.
 """
 
 from __future__ import annotations

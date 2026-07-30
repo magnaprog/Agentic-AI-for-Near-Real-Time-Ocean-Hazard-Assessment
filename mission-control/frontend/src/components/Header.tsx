@@ -4,6 +4,10 @@ import { DEFAULT_THRESHOLDS, stateColor } from "../constants";
 
 interface Props {
   connected: boolean;
+  /** True once a socket has opened on this session. Without it an opening
+   *  handshake and a dropped link look identical, and the strip reported
+   *  "link down" on every page load. */
+  everConnected?: boolean;
   fsmState: SystemState;
   hasActiveEvent: boolean;
   anomalyScore: number;
@@ -37,6 +41,20 @@ function scoreColor(score: number, thresholds: Thresholds | null): string {
   if (score >= t2) return "var(--state-warning)";
   if (score >= t1) return "var(--state-monitor)";
   return "var(--state-idle)";
+}
+
+/** The same four bands scoreColor encodes, in text. Which band a score sits in
+ *  was carried by hue alone, so it did not survive a color vision deficiency
+ *  or a monochrome screenshot. T1/T2/T3 are the console's own labels: they are
+ *  on the chart's reference lines directly below this strip. */
+function scoreBand(score: number, thresholds: Thresholds | null): string {
+  const t3 = thresholds?.t3 ?? DEFAULT_THRESHOLDS.t3;
+  const t2 = thresholds?.t2 ?? DEFAULT_THRESHOLDS.t2;
+  const t1 = thresholds?.t1 ?? DEFAULT_THRESHOLDS.t1;
+  if (score >= t3) return "T3+";
+  if (score >= t2) return "T2+";
+  if (score >= t1) return "T1+";
+  return "<T1";
 }
 
 /** Format elapsed time as T+Xh Ym Zs. */
@@ -84,7 +102,11 @@ function LinkFreshness({
   }, []);
 
   if (demoMode) {
-    return <Kpi value="demo" label="No core API" color="var(--state-warning)" />;
+    // The label names what is being reported and the value gives the reading.
+    // This pair was the other way round, which read as a KPI called "No core
+    // API" whose value was "demo". The demo banner already says the core API
+    // is not configured, so this slot does not repeat it.
+    return <Kpi value="demo" label="Data source" color="var(--state-warning)" />;
   }
   if (lastContactMs == null) {
     // Distinguish "the BFF told us its upstream is down" from "we connected a
@@ -154,6 +176,7 @@ function Kpi({
 
 function Header({
   connected,
+  everConnected,
   fsmState,
   hasActiveEvent,
   anomalyScore,
@@ -174,8 +197,12 @@ function Header({
             h2, so without this heading navigation cannot reach the name of
             the thing being operated. The class carries all the styling. */}
         <h1 className="topbar__title">Ocean Hazard Mission Control</h1>
+        {/* The basin comes off the wire. It was hardcoded to "pacific" while
+            fsm.thresholds.basin arrived on every snapshot, so a console
+            configured for another basin would have said pacific anyway. */}
         <div className="topbar__sub">
-          pacific basin{!connected ? "  -  link down" : ""}
+          {thresholds?.basin ? `${thresholds.basin} basin` : "basin not reported"}
+          {connected ? "" : everConnected ? "  -  link down" : "  -  connecting"}
         </div>
       </div>
 
@@ -204,11 +231,19 @@ function Header({
         {firstT1Minutes != null && (
           <Kpi value={`${firstT1Minutes} min`} label="First T1 (retrospective)" color="var(--accent)" />
         )}
+        {/* The flag means fewer than two stations carry QC-usable data, so the
+            count is 0 or 1. The BFF sends only the boolean, and "0 or 1" is
+            the most this readout can honestly say. It replaces "under 2",
+            which was a sentence fragment in a row of numbers. */}
         {sensorDegraded === true && (
-          <Kpi value="under 2" label="Usable DART stations" color="var(--state-warning)" />
+          <Kpi value="0 or 1" label="Usable DART stations" color="var(--state-warning)" />
         )}
         <Kpi
-          value={hasActiveEvent ? anomalyScore.toFixed(3) : "n/a"}
+          value={
+            hasActiveEvent
+              ? `${anomalyScore.toFixed(3)} ${scoreBand(anomalyScore, thresholds)}`
+              : "n/a"
+          }
           label="Latest score"
           color={hasActiveEvent ? scoreColor(anomalyScore, thresholds) : "var(--ink-dim)"}
         />
