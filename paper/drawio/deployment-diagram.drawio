@@ -49,11 +49,11 @@
                 <mxCell id="36" value="TimescaleDB 2.17.2-pg16" style="shape=cylinder3;size=10;fillColor=#F5F5F5;strokeColor=#424242;strokeWidth=1.5;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#212121;html=1;whiteSpace=wrap;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="640" y="290" width="180" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="&lt;b&gt;Tables:&lt;/b&gt;&lt;br&gt;raw_observations&lt;br&gt;processed_features&lt;br&gt;audit_events" style="rounded=1;arcSize=8;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeWidth=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;align=left;spacingLeft=6;html=1;whiteSpace=wrap;" parent="1" vertex="1">
-                    <mxGeometry x="640" y="370" width="180" height="70" as="geometry"/>
+                <mxCell id="37" value="&lt;b&gt;Tables:&lt;/b&gt;&lt;br&gt;raw_observations&lt;br&gt;processed_features&lt;br&gt;audit_events&lt;br&gt;fsm_current_state&lt;br&gt;quarantined_records&lt;br&gt;escalation_packets&lt;br&gt;assessment_checkpoint_attempt&lt;br&gt;evidence_issue_results" style="rounded=1;arcSize=8;fillColor=#F5F5F5;strokeColor=#9E9E9E;strokeWidth=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;align=left;spacingLeft=6;html=1;whiteSpace=wrap;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="370" width="180" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" value="Role-based access:&lt;br&gt;ingest_writer, agent_writer,&lt;br&gt;agent_reader, audit_reader,&lt;br&gt;orchestrator_writer.&lt;br&gt;&lt;b&gt;No UPDATE/DELETE on&lt;br&gt;audit or raw.&lt;/b&gt;" style="shape=note;size=14;fillColor=#FFFDE7;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;align=left;spacingLeft=6;html=1;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="640" y="450" width="180" height="90" as="geometry"/>
+                <mxCell id="6" value="Role-based access:&lt;br&gt;ingest_writer, agent_writer,&lt;br&gt;agent_reader, audit_reader,&lt;br&gt;orchestrator_writer,&lt;br&gt;pipeline_worker,&lt;br&gt;investigator_writer.&lt;br&gt;&lt;b&gt;No UPDATE/DELETE on&lt;br&gt;audit or raw.&lt;/b&gt;" style="shape=note;size=14;fillColor=#FFFDE7;strokeColor=#424242;strokeWidth=1;fontFamily=Helvetica;fontSize=10;fontColor=#212121;align=left;spacingLeft=6;html=1;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="510" width="180" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="Output Plane" style="rounded=1;arcSize=8;fillColor=none;strokeColor=#424242;strokeWidth=1.5;dashed=1;dashPattern=8 4;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#212121;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;html=1;whiteSpace=wrap;" parent="1" vertex="1">
                     <mxGeometry x="60" y="600" width="500" height="110" as="geometry"/>
