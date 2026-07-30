@@ -107,7 +107,7 @@ TOHOKU_SNAPSHOT: dict[str, Any] = {
             "timestamp_utc": "2011-03-11T05:46:24+00:00",
             "event_id": "tohoku-2011-03-11T05:46:24Z",
             "event_type": "state_transition",
-            "producer": "fsm-orchestrator",
+            "producer": "orchestrator",
             "data": {
                 "from_state": "IDLE",
                 "to_state": "MONITOR",
@@ -119,7 +119,7 @@ TOHOKU_SNAPSHOT: dict[str, Any] = {
             "timestamp_utc": "2011-03-11T05:46:25+00:00",
             "event_id": "tohoku-2011-03-11T05:46:24Z",
             "event_type": "state_transition",
-            "producer": "fsm-orchestrator",
+            "producer": "orchestrator",
             "data": {
                 "from_state": "MONITOR",
                 "to_state": "ESCALATE",
@@ -143,7 +143,7 @@ TOHOKU_SNAPSHOT: dict[str, Any] = {
             "timestamp_utc": "2011-03-11T05:49:30+00:00",
             "event_id": "tohoku-2011-03-11T05:46:24Z",
             "event_type": "escalation_packet_generated",
-            "producer": "report-agent",
+            "producer": "report_node",
             "data": {
                 "handoff_id": "esc-tohoku-001",
                 "station_count": 8,
@@ -180,6 +180,14 @@ TOHOKU_SNAPSHOT: dict[str, Any] = {
         ],
     },
 }
+
+# The core serves audit entries newest-first (ORDER BY recorded_at DESC), and
+# the console's audit strip takes the first ten on that assumption. The block
+# above is written oldest-first because that is the order the event happened
+# in and it is far easier to read that way, so reverse it once here rather
+# than maintaining it backwards. Without this the demo strip ran backwards
+# relative to live and, past ten entries, would have shown the oldest.
+TOHOKU_SNAPSHOT["recent_audit"].reverse()
 
 
 # Demo wrapper mirrors GET /api/escalation/packet-of-record. It contains only
@@ -226,6 +234,15 @@ DEMO_ESCALATION_PACKET: dict[str, Any] = {
             "This is a research decision-support assessment, not an official "
             "NOAA/NWS tsunami product."
         ),
+        # render_reviewer_packet always emits this key, so the demo carries
+        # it too; omitting it let the console be exercised against a packet
+        # shape the real renderer never produces.
+        "seismic_context": {
+            "magnitude": 9.1,
+            "region": "Honshu, Japan",
+            "depth_km": 29.0,
+            "origin_utc": "2011-03-11T05:46:24+00:00",
+        },
         "assessment": {
             "handoff_id": "11111111-1111-4111-8111-111111111111",
             "event_id": _DEMO_EVENT_ID,

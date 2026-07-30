@@ -560,13 +560,46 @@ class TestAbstainOutputContent:
         fa = result["final_assessment"]
         assert fa["outcome"] == "abstain"
 
-        # Check the summary text for coastal guidance patterns
-        summary = fa.get("summary", "")
-        for pattern in self._COASTAL_PATTERNS:
-            match = pattern.search(summary)
-            assert match is None, (
-                f"ABSTAIN summary contains coastal guidance pattern: {match.group()!r}"
-            )
+        # Every text-bearing field, not just the summary.
+        #
+        # Scanning fa.get("summary", "") alone left abstain_reason, the
+        # key_uncertainties list and each decision_trace entry's evidence
+        # unchecked, so appending a coastal proxy and an ETA to the decision
+        # trace put that guidance in the ABSTAIN document a duty scientist
+        # reads while this test still passed. The .get default also meant a
+        # renamed or missing summary scanned the empty string and passed
+        # vacuously, so the field is now required by subscript.
+        assert isinstance(fa["summary"], str) and fa["summary"].strip()
+
+        def _strings(value: object, path: str = "") -> list[tuple[str, str]]:
+            if isinstance(value, str):
+                return [(path, value)]
+            if isinstance(value, dict):
+                return [
+                    item
+                    for key, sub in value.items()
+                    for item in _strings(sub, f"{path}.{key}" if path else str(key))
+                ]
+            if isinstance(value, list):
+                return [
+                    item
+                    for index, sub in enumerate(value)
+                    for item in _strings(sub, f"{path}[{index}]")
+                ]
+            return []
+
+        scanned = _strings(fa)
+        assert len(scanned) >= 5, (
+            f"only {len(scanned)} text fields found in the ABSTAIN document; "
+            "has its shape changed?"
+        )
+        for field_path, text in scanned:
+            for pattern in self._COASTAL_PATTERNS:
+                match = pattern.search(text)
+                assert match is None, (
+                    f"ABSTAIN document field {field_path!r} contains coastal "
+                    f"guidance pattern: {match.group()!r} in {text!r}"
+                )
 
 
 # ---------------------------------------------------------------------------

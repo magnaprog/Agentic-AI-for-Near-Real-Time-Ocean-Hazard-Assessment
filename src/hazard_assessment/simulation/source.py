@@ -62,9 +62,16 @@ def compute_characteristic_amplitude_m(magnitude: float) -> float:
         log10(A_cm) ~ 0.75 * Mw - 5.3
 
     The 0.75 slope is a lower bound (see module docstring); the
-    empirical Abe (1979) slope is ~1.0.  This conservative choice
-    means simulated amplitudes are smaller than real observations,
-    providing a harder test for the detection pipeline.
+    empirical Abe (1979) slope is ~1.0, so this choice makes the
+    characteristic amplitude smaller than observations would suggest.
+
+    That conservatism applies to the characteristic amplitude alone.
+    It does not carry over to the waveform the simulator injects:
+    ``generate_tsunami_spectrum`` gives every sub-corner component
+    the full characteristic amplitude, so the synthesized peak is a
+    few times larger (about 2.8x at the default 10 components).  The
+    injected signal is therefore not simply a harder test than a real
+    record, and no claim here should rest on that.
 
     The result is the characteristic amplitude at the 1000 km
     reference distance, before geometric spreading.

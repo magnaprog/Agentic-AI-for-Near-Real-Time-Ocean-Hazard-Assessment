@@ -651,7 +651,7 @@ describe("AuditLog activity strip", () => {
       timestamp_utc: "2011-03-11T05:46:24+00:00",
       event_id: "tohoku-2011-03-11T05:46:24Z",
       event_type: "state_transition",
-      producer: "fsm-orchestrator",
+      producer: "orchestrator",
       data: { from_state: "IDLE", to_state: to },
     });
     render(<AuditLog entries={[transition("t1", "MONITOR"), transition("t2", "ESCALATE")]} />);

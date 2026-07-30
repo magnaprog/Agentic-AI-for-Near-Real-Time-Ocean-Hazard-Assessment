@@ -93,7 +93,16 @@ def generate_tsunami_spectrum(
             # Above corner frequency: f^(-2) rolloff
             amp = a0 * (f_corner / f) ** 2
         else:
-            # Below corner frequency: flat spectrum (omega-squared model)
+            # Below corner frequency: flat spectrum (omega-squared model).
+            #
+            # Every sub-corner component takes the full characteristic
+            # amplitude, so the synthesized time series sums them and its peak
+            # grows with ``n_components``, which is a discretization choice
+            # rather than a physical parameter. At Mw 9.1 the peak runs about
+            # 2.8x the characteristic amplitude at the default 10 components
+            # and roughly 6.8x at 40. Compare waveforms only at equal
+            # ``n_components``, and do not read the characteristic amplitude
+            # as the peak of the result.
             amp = a0
 
         if leading_depression and (i == center_idx or f <= f_corner):

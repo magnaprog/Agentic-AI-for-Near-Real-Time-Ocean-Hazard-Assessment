@@ -2430,8 +2430,13 @@ All nine stations exceed $T_1$ and $T_2$; the three CO-OPS stations
 also exceed $T_3$ (ensemble scores 0.91--0.94), while DART stations reach
 ensemble scores of 0.69--0.73 (Figure~\ref{fig:physics-scenario1}).
 The higher CO-OPS scores reflect Green's Law coastal amplification:
-tsunami amplitudes of 0.23--0.28\,m at the shallow-water stations
-(10--20\,m depth) versus 0.025--0.032\,m at the deep-ocean DART BPRs.
+characteristic tsunami amplitudes of 0.23--0.28\,m at the shallow-water
+stations (10--20\,m depth) versus 0.025--0.032\,m at the deep-ocean DART
+BPRs.  Throughout this section an amplitude quoted for a synthetic station
+is the source model's characteristic amplitude carried to that station by
+geometric spreading, directivity and any coastal factor.  It is not the peak
+of the simulated record: the synthesized waveform sums many spectral
+components, so its excursion runs a few times larger.
 The Aleutian epicenter is roughly equidistant from the NW~Pacific and
 NE~Pacific station clusters, producing arrival times (3.4--5.6\,hr)
 distinct from the Tohoku validation event, showing that
@@ -2534,9 +2539,11 @@ amplitude variation and arrival-time progression visible across stations.
 \includegraphics[width=\linewidth,height=0.88\textheight,keepaspectratio]{figures/fig_synthetic_waveforms.pdf}
 \caption{Raw synthetic records for the M8.5 Aleutian scenario
   (Scenario~1) at six Pacific DART stations and three CO-OPS tide
-  gauges.  DART stations show ${\sim}$0.03\,m tsunami amplitudes on a
-  tidal baseline with instrument drift; CO-OPS stations show
-  ${\sim}$0.25\,m amplitudes after Green's Law shoaling amplification.
+  gauges.  DART stations carry ${\sim}$0.03\,m characteristic tsunami
+  amplitudes on a tidal baseline with instrument drift; CO-OPS stations
+  carry ${\sim}$0.25\,m after Green's Law shoaling amplification.  The
+  value in each panel label is that characteristic amplitude, not the peak
+  of the plotted record, which also contains the tide, drift and noise.
   Vertical dashed lines mark predicted tsunami arrival times.}
 \label{fig:synthetic-waveforms}
 \end{figure}
@@ -2552,7 +2559,11 @@ amplitude variation and arrival-time progression visible across stations.
   (station type dominates: the CO-OPS gauges are Green's-Law
   amplified, and azimuthal directivity modulates the DART
   amplitudes); the bottom overlay panel compares all stations on
-  one axis.}
+  one axis.  Each panel label reports the characteristic amplitude
+  carried to that station, which is the input to the simulation rather
+  than a measurement of the trace beside it; the plotted residual peaks
+  roughly two to three times higher, because the synthesized waveform
+  sums many spectral components.}
 \label{fig:synthetic-residuals}
 \end{figure}
 

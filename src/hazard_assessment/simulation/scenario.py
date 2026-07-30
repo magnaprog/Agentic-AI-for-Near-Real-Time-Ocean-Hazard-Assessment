@@ -73,7 +73,13 @@ class SimulatedStation:
     clean_signal: NDArray[np.float64]  # tidal + noise (no tsunami)
     event_signal: NDArray[np.float64]  # tidal + noise + tsunami
     arrival_hour: float  # tsunami arrival time (hours from signal start)
-    tsunami_amplitude_m: float  # peak amplitude at this station
+    # Characteristic amplitude at this station: the source model's
+    # characteristic amplitude after geometric spreading, directivity and any
+    # coastal factor. NOT the peak of ``event_signal`` or of the detided
+    # residual, which run a few times larger because the synthesized waveform
+    # sums many spectral components (see simulation/waveform.py). Anything
+    # reporting this number to a reader has to say which quantity it is.
+    tsunami_amplitude_m: float
     geometric_spreading: float  # spreading factor applied
     distance_km: float  # distance from epicenter
 

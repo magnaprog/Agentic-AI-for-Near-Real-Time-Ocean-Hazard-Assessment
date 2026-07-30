@@ -6,6 +6,8 @@ and verification outcome, with defense-in-depth for the ABSTAIN path.
 
 from __future__ import annotations
 
+import textwrap
+
 from hazard_assessment.orchestrator.pipeline import (
     PipelineNode,
     PipelineState,
@@ -170,6 +172,32 @@ class TestBuildPipelineGraph:
         assert (PipelineNode.HUMAN_REVIEW, PipelineNode.FINAL) in graph["edges"]
 
 
+def _runner_body_without_docstring() -> str:
+    """Source of run_pipeline_sync with its docstring removed.
+
+    The scans below look for a call by name. ``inspect.getsource`` returns the
+    docstring too, and that docstring names ``human_review_node``, so the
+    assertion for the P6 human review gate was satisfied by prose whether or
+    not the runner still called it. Stripping the docstring makes these scans
+    able to fail. They are still only name scans: the behavioural cover for
+    the gate is test_pipeline_nodes.py::test_pipeline_with_human_approve,
+    which runs the pipeline and checks the status actually reaches
+    APPROVED_INTERNAL.
+    """
+    import ast
+    import inspect
+
+    from hazard_assessment.orchestrator.nodes import run_pipeline_sync
+
+    source = inspect.getsource(run_pipeline_sync)
+    tree = ast.parse(textwrap.dedent(source))
+    func = tree.body[0]
+    assert isinstance(func, ast.FunctionDef)
+    if ast.get_docstring(func) is not None:
+        func.body = func.body[1:]
+    return ast.unparse(func)
+
+
 class TestGraphSpecMatchesRunner:
     """Validate that the declared graph spec matches run_pipeline_sync() behavior.
 
@@ -181,11 +209,7 @@ class TestGraphSpecMatchesRunner:
     def test_all_graph_nodes_reachable_in_runner(self) -> None:
         """Every node in the graph spec should be visited by at least one
         run_pipeline_sync() execution path."""
-        import inspect
-
-        from hazard_assessment.orchestrator.nodes import run_pipeline_sync
-
-        source = inspect.getsource(run_pipeline_sync)
+        source = _runner_body_without_docstring()
         graph = build_pipeline_graph()
 
         # All node functions called in the runner (by name convention: node_name + "_node").
@@ -207,11 +231,7 @@ class TestGraphSpecMatchesRunner:
 
     def test_conditional_edges_have_matching_routers(self) -> None:
         """Each conditional edge router should be called in run_pipeline_sync()."""
-        import inspect
-
-        from hazard_assessment.orchestrator.nodes import run_pipeline_sync
-
-        source = inspect.getsource(run_pipeline_sync)
+        source = _runner_body_without_docstring()
         graph = build_pipeline_graph()
 
         for _node, edge_spec in graph["conditional_edges"].items():

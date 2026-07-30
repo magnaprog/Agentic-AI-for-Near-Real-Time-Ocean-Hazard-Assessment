@@ -109,7 +109,26 @@ class TestPacketContent:
         assert packet["input_manifest_hash"] == "a" * 64
         assert packet["scientific_content_hash"] == "b" * 64
         # The full payload rides along unmodified as evidence of record.
-        assert packet["assessment"] == payload
+        #
+        # Asserting equality alone proves nothing here: the builder stores the
+        # caller's dict by reference, so this compares an object with itself
+        # and holds even if the payload handed in were gutted upstream. Name
+        # the fields a reviewer needs, so a narrowed payload fails here rather
+        # than only in whichever unrelated test happens to index one of them.
+        assert packet["assessment"] is payload
+        for required in (
+            "event_id",
+            "checkpoint_id",
+            "stations",
+            "scientific_content_hash",
+            "input_manifest_hash",
+            "seismic_context",
+        ):
+            assert required in packet["assessment"], (
+                f"the packet of record dropped {required!r}; a duty scientist "
+                "reviews this document and cannot see what is missing from it"
+            )
+        assert packet["assessment"]["stations"], "no station evidence in the packet"
         assert packet["disclaimer"] == NON_AUTHORITATIVE_DISCLAIMER
         assert packet["recommended_action"] == "Human review required"
 

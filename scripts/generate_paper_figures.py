@@ -3003,7 +3003,11 @@ def fig_synthetic_waveforms(data: dict) -> None:
 
         dist = wd["distance_km"]
         amp = wd["tsunami_amplitude_m"]
-        label = f"{stn['station_id']} ({dist:.0f} km, {amp:.4f} m)"
+        # Name the quantity. This is the characteristic amplitude carried to
+        # the station, not the peak of the trace in the panel, which runs a
+        # few times larger. The bare number read as a peak and disagreed with
+        # the plotted excursion by a factor of about three.
+        label = f"{stn['station_id']} ({dist:.0f} km, characteristic {amp:.4f} m)"
         ax.set_ylabel("BPR (m)", fontsize=7)
         ax.text(0.01, 0.95, label, transform=ax.transAxes,
                 fontsize=7, va="top", fontweight="bold")
@@ -3065,7 +3069,11 @@ def fig_synthetic_residuals(data: dict) -> None:
 
         dist = wd["distance_km"]
         amp = wd["tsunami_amplitude_m"]
-        label = f"{stn['station_id']} ({dist:.0f} km, {amp:.4f} m)"
+        # Name the quantity. This is the characteristic amplitude carried to
+        # the station, not the peak of the trace in the panel, which runs a
+        # few times larger. The bare number read as a peak and disagreed with
+        # the plotted excursion by a factor of about three.
+        label = f"{stn['station_id']} ({dist:.0f} km, characteristic {amp:.4f} m)"
         ax.set_ylabel("Residual (m)", fontsize=7)
         ax.set_ylim(shared_ylim)
         ax.text(0.01, 0.95, label, transform=ax.transAxes,
