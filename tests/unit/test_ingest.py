@@ -1815,7 +1815,7 @@ async def test_fetch_bounded_raises_for_error_status() -> None:
     await connector.close()
 
 
-async def test_fetch_bounded_text_honours_the_served_charset() -> None:
+async def test_fetch_bounded_text_honors_the_served_charset() -> None:
     """NDBC serves ISO-8859-1; decoding as UTF-8 would corrupt high bytes.
 
     A mis-decoded byte does not just look wrong: U+00A0 is whitespace to

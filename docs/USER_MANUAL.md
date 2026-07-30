@@ -613,9 +613,31 @@ Generates a legacy process-memory packet for compatibility with the older genera
 
 ---
 
+### POST /api/investigate
+
+Investigates the evidence behind the **currently active** event. Takes no body: the event is whichever one the FSM holds, so a caller cannot direct the investigation at another. For each issue the model chooses which read-only audit queries to run, then reports what the records support.
+
+Three issues are investigated, each a question the pipeline records evidence for but does not answer:
+
+| Issue | Question |
+|---|---|
+| `station_agreement` | The FSM acts on the single highest station score. Do the other stations corroborate it, or does the evidence rest on one instrument? |
+| `evidence_gaps` | `sensor_degraded` is one boolean. Which stations produced no scored window, and does quality control explain it? |
+| `timeline_consistency` | Are the transitions coherent against the seismic origin, for instance did escalation precede any ocean evidence? |
+
+The findings are advisory and cannot reach the assessment. That is enforced by the database, not by prompt wording: findings are written to `evidence_issue_results`, which migration 009 grants to `investigator_writer` alone, and `pipeline_worker` (which drives the FSM) has no INSERT there. The investigator also reads a checkpoint the worker already persisted, so it is not on the detection path and cannot delay ingest, scoring, or a transition.
+
+Each finding is guardrail-scanned before persistence. One that uses reserved alert terminology is dropped whole rather than partially rewritten, and the response says so.
+
+Re-invoking for the same checkpoint, issue, model and prompt version computes the same deterministic `invocation_id`, so the repeat is reported as `existing` instead of recording a second opinion on the same evidence. If one issue fails the others are still returned, and the failed ones are named in `issues_failed`.
+
+**Responses:** 409 when no event is active. 501 when the LLM layer is off. 503 without durable storage, since an unpersisted finding would be advice with no record of its basis. 404 when the active event has no persisted assessment checkpoint yet, which is normal early in an event.
+
+---
+
 ### POST /api/after-action
 
-Runs model-backed analysis for a nonactive event using a 3-node LangGraph graph with tool use. Requires the `llm` optional dependency, `LLM_API_KEY`, and durable database-backed audit storage. This is separate from active-event investigation: the current event is rejected and the requested event must have audit history. Because no trusted event-disposition record exists, these checks do not prove that an event was formally closed.
+Runs model-backed analysis for a nonactive event using a 3-node LangGraph graph with tool use. Requires the `llm` optional dependency, an enabled LLM layer, and durable database-backed audit storage. This is the counterpart of `/api/investigate` and its gates are the mirror image: the current event is rejected and the requested event must have audit history. Because no trusted event-disposition record exists, these checks do not prove that an event was formally closed.
 
 Every tool call is recorded and returned in `tool_calls` (including unknown-tool requests, tool errors, and loop non-convergence), and tool results carry explicit truncation flags. Response 200 is returned only after the `after_action_report` entry is durably committed.
 
@@ -1216,7 +1238,8 @@ Francisco, 9413450 Monterey, and 9410230 La Jolla.
 | `DB_INGEST_WRITER_PASSWORD` | `DB_PASSWORD` | Optional ingest-role password override |
 | `DB_ORCHESTRATOR_WRITER_PASSWORD` | `DB_PASSWORD` | Optional API-role password override |
 | `DB_PIPELINE_WORKER_PASSWORD` | `DB_PASSWORD` | Optional pipeline-role password override |
-| `DB_AGENT_WRITER_PASSWORD`, `DB_AGENT_READER_PASSWORD`, `DB_AUDIT_READER_PASSWORD`, `DB_INVESTIGATOR_WRITER_PASSWORD` | `DB_PASSWORD` | Optional provisioned-role overrides; investigator role has no current service |
+| `DB_AGENT_WRITER_PASSWORD`, `DB_AGENT_READER_PASSWORD`, `DB_AUDIT_READER_PASSWORD` | `DB_PASSWORD` | Optional provisioned-role overrides for offline and read-only roles |
+| `DB_INVESTIGATOR_WRITER_PASSWORD` | `DB_PASSWORD` | Password for `investigator_writer`, the only role granted INSERT on `evidence_issue_results`. `/api/investigate` connects as this role so findings cannot be written by the API's own identity |
 | `KAFKA_BOOTSTRAP_SERVERS` | empty | Broker list; empty disables producer/consumer. Compose sets `kafka:9092`. |
 | `CALIBRATION_DIR` | empty | Flat directory of pipeline-worker station calibration CSVs; empty loads none. Compose mounts archived event data at `/app/data` but does not select one event's retrospective calibration set for live processing. |
 | `METRICS_PORT` | empty | Worker exporter port; empty disables exporter. Compose sets `9100`. |

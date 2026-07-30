@@ -169,6 +169,10 @@ services:
       LLM_BASE_URL: ${LLM_BASE_URL:-}
       LLM_MODEL: ${LLM_MODEL:-}
       DB_ORCHESTRATOR_WRITER_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-}
+      # /api/investigate writes findings as investigator_writer, so the API
+      # needs that role's password too. DB_PASSWORD above is the orchestrator's,
+      # so without this the fallback would present the wrong credential.
+      DB_INVESTIGATOR_WRITER_PASSWORD: ${DB_INVESTIGATOR_WRITER_PASSWORD:-${DB_PASSWORD:?}}
       OTLP_ENDPOINT: http://jaeger:4317
     depends_on:
       <<: *app_db_depends_on

@@ -133,3 +133,71 @@ report with these sections:
 Write for colleagues who will read this in a post-event debrief. Be direct
 and specific. Quote numbers, not generalities.
 Keep the report to 500-1000 words."""
+
+
+# ---------------------------------------------------------------------------
+# Active-event investigator prompts (quality model, tool use)
+# ---------------------------------------------------------------------------
+#
+# One prompt per issue in investigator.ISSUE_NAMES. Each asks a question the
+# deterministic pipeline records evidence for but does not itself answer. The
+# reserved-terminology rule is repeated in every prompt because the guardrail
+# scanner drops a whole finding on a violation, and a dropped finding is worse
+# for the operator than a plainly worded one.
+
+_INVESTIGATOR_COMMON_RULES = """\
+Rules:
+- Report only what the records support. If the records do not settle the
+  question, say so and name what is missing.
+- Cite station IDs, timestamps and scores you actually retrieved.
+- You are not deciding anything. Do not recommend an alert level, an
+  escalation, or a public action.
+- Do NOT use the words "Warning", "Advisory", "Watch",
+  "Information Statement", "Threat Message", "Cancellation",
+  "All Clear", or "Bulletin". These are reserved for official NOAA products.
+- Keep the finding under 200 words."""
+
+STATION_AGREEMENT_PROMPT = f"""\
+This event is still open. Use the tools to retrieve the per-station anomaly
+records and establish whether the stations corroborate each other.
+
+The state machine acts on the single highest station score, so it cannot show
+whether the other stations agree. Report how many stations were scored, how
+their scores are distributed, and whether the highest score stands alone or is
+supported by others. Say plainly if the evidence rests on one instrument.
+
+Stations with no scored window are not evidence against a signal. Do not treat
+them as disagreement; report them as absent.
+
+{_INVESTIGATOR_COMMON_RULES}"""
+
+EVIDENCE_GAPS_PROMPT = f"""\
+This event is still open. Use the tools to establish which stations are
+contributing evidence and which are not.
+
+Report the stations that produced a scored window, the stations that did not,
+and anything in the quality-control records that explains an absence. The
+degraded-coverage flag is a single boolean and does not identify the stations
+behind it.
+
+{_INVESTIGATOR_COMMON_RULES}"""
+
+TIMELINE_CONSISTENCY_PROMPT = f"""\
+This event is still open. Use the tools to retrieve the state transitions and
+the evidence records, and assess whether their order and spacing are coherent.
+
+Consider whether the transitions follow from the evidence available at the time
+each was made, and whether any transition preceded the ocean evidence that
+would normally support it, which is the expected shape of a seismic-only
+escalation rather than an error. Note gaps between the earthquake origin and
+the first scored window.
+
+{_INVESTIGATOR_COMMON_RULES}"""
+
+#: Issue name to system prompt. investigator.ISSUE_NAMES fixes the order and a
+#: test pins the two against each other.
+INVESTIGATOR_ISSUE_PROMPTS: dict[str, str] = {
+    "station_agreement": STATION_AGREEMENT_PROMPT,
+    "evidence_gaps": EVIDENCE_GAPS_PROMPT,
+    "timeline_consistency": TIMELINE_CONSISTENCY_PROMPT,
+}

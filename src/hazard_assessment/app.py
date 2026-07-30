@@ -133,9 +133,14 @@ async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
     configure_tracer_provider(os.getenv("OTLP_ENDPOINT"))
     yield
-    # Shutdown: close database pool
+    # Shutdown: close database pools. The investigator's pool is opened lazily
+    # on first use of /api/investigate, so it may or may not exist.
+    global _investigator_db
     if _db_client is not None:
         _db_client.close()
+    if _investigator_db is not None:
+        _investigator_db.close()
+        _investigator_db = None
 
 
 app = FastAPI(
@@ -175,6 +180,10 @@ def require_internal_api_key(
 # Module-level instances. When DB_HOST is set, these are replaced during
 # lifespan startup with DB-backed instances.
 _db_client: Any = None  # Optional[DatabaseClient], typed as Any to avoid import
+#: Opened on first use of /api/investigate. Separate from _db_client because
+#: findings must be written as investigator_writer, a role the API's own
+#: orchestrator_writer identity is deliberately not granted.
+_investigator_db: Any | None = None
 _audit = AuditLogger()
 _fsm = FSMOrchestrator(audit_writer=_audit)
 _permission_matrix = load_permission_matrix()
@@ -1222,6 +1231,176 @@ class AfterActionRequest(BaseModel):
     """Payload for triggering after-action analysis."""
 
     event_id: str = Field(description="Event UUID to analyze")
+
+
+def _open_investigator_db() -> Any | None:
+    """Return a client connected as investigator_writer, or None.
+
+    Opened on first use and reused, because the investigator runs rarely and a
+    second pool held open for the life of the process would cost connections
+    for nothing. None means the role cannot connect, which the caller turns
+    into a 503 rather than falling back to a role that should not be writing
+    these rows.
+    """
+    global _investigator_db
+    if _investigator_db is not None:
+        return _investigator_db
+    if not os.getenv("DB_HOST", "").strip():
+        return None
+    try:
+        from hazard_assessment.storage.client import ClientConfig, DatabaseClient
+
+        candidate = DatabaseClient(ClientConfig.from_env(role="investigator_writer"))
+        if not candidate.is_connected:
+            candidate.close()
+            return None
+        _investigator_db = candidate
+    except Exception:
+        logger.exception("Could not open a connection as investigator_writer")
+        return None
+    return _investigator_db
+
+
+@app.post("/api/investigate", dependencies=[Depends(require_internal_api_key)])
+def investigate_active_event() -> dict[str, Any]:
+    """Investigate the evidence behind the currently active event.
+
+    This is the counterpart of /api/after-action, and its gates are the
+    mirror image: after-action refuses the active event, this one requires it.
+    The model chooses which read-only audit queries to run for each issue and
+    reports what the records support.
+
+    What it cannot do, by construction rather than by instruction:
+    - Findings are written to evidence_issue_results, which migration 009
+      grants to investigator_writer alone. pipeline_worker, which drives the
+      FSM, has no INSERT there, so a finding cannot re-enter the decision path.
+    - It reads a checkpoint the worker already persisted, so it is not on the
+      detection path and cannot delay or block ingest, scoring, or a
+      transition.
+    - Every finding is guardrail-scanned before persistence, and one that
+      reaches for reserved alert wording is dropped rather than stored.
+
+    Contract enforced here:
+    - 409 when no event is active, since there is nothing to investigate.
+    - 503 without durable storage: an unpersisted finding would be advice with
+      no record of what it was based on.
+    - 404 when the active event has no persisted assessment checkpoint yet,
+      which is the normal state early in an event.
+    - Re-invocation for the same checkpoint, issue, model and prompt version
+      collides on a deterministic invocation id and is reported as "existing"
+      rather than stored twice.
+    """
+    try:
+        from hazard_assessment.agents.llm_advisory.investigator import (
+            ISSUE_NAMES,
+            investigate_assessment,
+        )
+        from hazard_assessment.config.settings import LLMSettings
+    except ImportError as exc:
+        raise HTTPException(
+            status_code=501,
+            detail="LLM dependencies not installed",
+        ) from exc
+
+    settings = LLMSettings()
+    if not settings.is_enabled:
+        raise HTTPException(
+            status_code=501,
+            detail=(
+                "LLM layer not configured. Set LLM_API_KEY for a hosted "
+                "provider, or LLM_BASE_URL for an endpoint you run yourself."
+            ),
+        )
+
+    with _fsm_lock:
+        _refresh_fsm_from_db()
+        active_ctx = _fsm.event_context
+        if active_ctx is None:
+            raise HTTPException(
+                status_code=409,
+                detail="No event is currently active",
+            )
+        event_id = active_ctx.event_id
+        if _db_client is None or not _audit.durable_persistence_configured:
+            raise HTTPException(
+                status_code=503,
+                detail="Investigation requires durable storage for its findings",
+            )
+        # Snapshot under the lock: the tool loop is long-running and
+        # AuditLogger is not thread-safe (see audit/logger.py).
+        try:
+            audit_snapshot = _audit.snapshot(event_id=event_id, raise_on_error=True)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=503,
+                detail="Durable audit history is unavailable",
+            ) from exc
+
+    # Findings are written through the investigator's own database identity.
+    # The API connects as orchestrator_writer, which migration 009 gives no
+    # INSERT on evidence_issue_results; only investigator_writer has it. That
+    # separation is the mechanism keeping a finding out of the decision path,
+    # so the code has to honor it rather than widen the API's grant.
+    investigator_db = _open_investigator_db()
+    if investigator_db is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Cannot reach the database as investigator_writer. Set "
+                "DB_INVESTIGATOR_WRITER_PASSWORD (or DB_PASSWORD) for that role."
+            ),
+        )
+
+    assessment = _db_client.get_latest_assessment_for_event(event_id)
+    if assessment is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "The active event has no persisted assessment checkpoint yet; "
+                "there is no evidence row to investigate"
+            ),
+        )
+    assessment_row_id = int(assessment["id"])
+
+    findings = investigate_assessment(
+        settings,
+        audit_snapshot,
+        event_id=event_id,
+        assessment_row_id=assessment_row_id,
+    )
+
+    from hazard_assessment.telemetry.metrics import record_guardrail_scan
+
+    recorded: list[dict[str, Any]] = []
+    for finding in findings:
+        record_guardrail_scan(passed=not finding.guardrail_violations)
+        status = investigator_db.insert_evidence_issue_result(
+            invocation_id=finding.invocation_id,
+            assessment_row_id=assessment_row_id,
+            issue_name=finding.issue_name,
+            result=finding.to_result_payload(),
+            result_sha256=finding.result_sha256,
+        )
+        recorded.append({
+            "issue_name": finding.issue_name,
+            "invocation_id": finding.invocation_id,
+            "persistence": status,
+            "tool_calls": finding.tool_calls,
+            "guardrail_violations": finding.guardrail_violations,
+            "finding": finding.finding,
+        })
+
+    # Naming the issues that produced nothing keeps a partial run legible; the
+    # investigator keeps going when one issue fails.
+    missing = sorted(set(ISSUE_NAMES) - {r["issue_name"] for r in recorded})
+
+    return {
+        "event_id": str(event_id),
+        "assessment_row_id": assessment_row_id,
+        "issues_recorded": recorded,
+        "issues_failed": missing,
+        "non_authoritative": True,
+    }
 
 
 @app.post("/api/after-action", dependencies=[Depends(require_internal_api_key)])

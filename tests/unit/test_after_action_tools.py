@@ -14,7 +14,7 @@ from uuid import UUID
 
 from hazard_assessment.agents.llm_advisory.tools import (
     _MAX_TOOL_ENTRIES,
-    make_after_action_tools,
+    make_event_query_tools,
 )
 from hazard_assessment.audit.logger import AuditEntry, AuditLogger
 
@@ -89,12 +89,12 @@ def _tool(tools: list[Any], name: str) -> Any:
 class TestMakeAfterActionTools:
     def test_returns_three_tools(self) -> None:
         logger = AuditLogger()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         assert len(tools) == 3
 
     def test_tool_names(self) -> None:
         logger = AuditLogger()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         names = {t.name for t in tools}
         assert names == {
             "query_audit_trail",
@@ -111,7 +111,7 @@ class TestMakeAfterActionTools:
 class TestQueryAuditTrail:
     def test_returns_envelope_object(self) -> None:
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         result = _tool(tools, "query_audit_trail").invoke({"event_type": ""})
         parsed = json.loads(result)
         assert set(parsed) == {
@@ -122,7 +122,7 @@ class TestQueryAuditTrail:
     def test_returns_only_pinned_event(self) -> None:
         """Event_id pinning: must never return entries for OTHER_ID."""
         logger = _make_logger_with_entries(n_other_event=5)
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_audit_trail").invoke({"event_type": ""})
         )
@@ -132,7 +132,7 @@ class TestQueryAuditTrail:
 
     def test_filter_by_event_type(self) -> None:
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_audit_trail").invoke(
                 {"event_type": "state_transition"}
@@ -144,7 +144,7 @@ class TestQueryAuditTrail:
 
     def test_empty_logger_returns_empty_envelope(self) -> None:
         logger = AuditLogger()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_audit_trail").invoke({"event_type": ""})
         )
@@ -165,7 +165,7 @@ class TestQueryAuditTrail:
                 data={"step": i},
             ))
         call_log: list[dict[str, Any]] = []
-        tools = make_after_action_tools(
+        tools = make_event_query_tools(
             logger, pinned_event_id=EVENT_ID, call_log=call_log
         )
         parsed = json.loads(
@@ -187,7 +187,7 @@ class TestQueryAuditTrail:
 class TestQueryFSMTransitions:
     def test_returns_only_transitions(self) -> None:
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(_tool(tools, "query_fsm_transitions").invoke({}))
         assert len(parsed["entries"]) == 3
         assert parsed["truncated"] is False
@@ -201,7 +201,7 @@ class TestQueryFSMTransitions:
 class TestQueryProcessedFeatures:
     def test_returns_agent_outputs(self) -> None:
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_processed_features").invoke({"agent_name": ""})
         )
@@ -216,7 +216,7 @@ class TestQueryProcessedFeatures:
             producer="report_node",
             data={"top_scenario": "aleutian"},
         ))
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_processed_features").invoke(
                 {"agent_name": "verify_node"}
@@ -242,7 +242,7 @@ class TestQueryProcessedFeatures:
             producer="pipeline_worker",
             data={"station": "dart:21413", "ensemble_score": 0.42},
         ))
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_processed_features").invoke({"agent_name": ""})
         )
@@ -254,7 +254,7 @@ class TestQueryProcessedFeatures:
     def test_excludes_non_evidence_types(self) -> None:
         """state_transition entries should not appear in processed features."""
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         parsed = json.loads(
             _tool(tools, "query_processed_features").invoke({"agent_name": ""})
         )
@@ -271,7 +271,7 @@ class TestCallLog:
     def test_every_invocation_is_recorded_in_order(self) -> None:
         logger = _make_logger_with_entries()
         call_log: list[dict[str, Any]] = []
-        tools = make_after_action_tools(
+        tools = make_event_query_tools(
             logger, pinned_event_id=EVENT_ID, call_log=call_log
         )
         _tool(tools, "query_audit_trail").invoke({"event_type": ""})
@@ -293,6 +293,6 @@ class TestCallLog:
 
     def test_no_call_log_is_harmless(self) -> None:
         logger = _make_logger_with_entries()
-        tools = make_after_action_tools(logger, pinned_event_id=EVENT_ID)
+        tools = make_event_query_tools(logger, pinned_event_id=EVENT_ID)
         result = _tool(tools, "query_audit_trail").invoke({"event_type": ""})
         assert json.loads(result)["n_total_matching"] == 5

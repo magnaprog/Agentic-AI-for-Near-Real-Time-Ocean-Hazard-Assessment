@@ -323,6 +323,13 @@ assessment:
     tsunami assessment, constrained by deterministic templates,
     structured output, and guardrail scanning. To our knowledge,
     this is the first application in the tsunami warning domain.
+  \item An evidence investigator that acts while an event is open,
+    choosing which read-only audit queries to run for each of three
+    questions the deterministic pipeline records evidence for but does
+    not answer. Its advisory role is held by a privilege boundary rather
+    than by prompt wording: findings are written under a dedicated
+    database role, and the role that drives the state machine cannot
+    write them, so a finding cannot re-enter the decision path.
   \item Automated Rayleigh wave false-trigger
     detection using haversine distance and seismic surface wave
     group velocity timing correlation ($3.6$\,km/s $\pm 20\%$).
@@ -1521,6 +1528,45 @@ character injection.  An additional 20~synthetic scenarios
 (\texttt{scripts/evaluate\_llm\_synthesis.py}) validate the full
 LLM synthesis pipeline including guardrail scanning under varying
 event magnitudes and verification outcomes.
+
+\paragraph{Active-event evidence investigator.}
+The synthesis layer above writes prose after an assessment exists, and the
+after-action graph runs once an event is over.  Neither examines the evidence
+while an event is open, which is where a duty scientist needs help, so the
+system also carries an investigator that does.  It is the only component in
+which a model acts during an active event, and its agency is real but narrow:
+for each of three issues it chooses which read-only audit queries to run,
+executes up to three rounds of them, and reports what the records support.
+
+The issues are questions the deterministic pipeline records evidence for
+without answering.  \emph{Station agreement} asks whether the stations
+corroborate each other, which the FSM cannot show because it acts on the
+single highest score.  \emph{Evidence gaps} asks which stations produced no
+scored window and whether quality control explains it, which the one
+\texttt{sensor\_degraded} boolean does not say.  \emph{Timeline consistency}
+asks whether the transitions are coherent against the seismic origin, for
+instance whether escalation preceded any ocean evidence, which is the expected
+shape of a seismic-only escalation rather than a fault.
+
+What keeps this advisory is a privilege boundary rather than an instruction in
+a prompt.  Findings are written to a table that migration 009 grants to a
+dedicated \texttt{investigator\_writer} role alone; the \texttt{pipeline\_worker}
+role that drives the FSM has no insert privilege on it, and neither does the
+API's own role, so a finding cannot be read back as evidence by the code that
+escalates.  Each is verified against a provisioned database rather than
+assumed.  The investigator also reads a checkpoint the worker has already
+persisted, so it sits off the detection path and cannot add latency to
+ingest, scoring, or a transition, and every finding passes the same guardrail
+scanner as any other emitted narrative, with a violating finding dropped
+whole rather than partly rewritten.  Re-running an issue over the same
+checkpoint, model and prompt version yields the same deterministic invocation
+identity, so the append-only table records one finding per question rather
+than accumulating opinions on unchanged evidence.
+
+The limitation to keep in view is that this is advice about evidence, not a
+second opinion on the hazard.  Nothing downstream consumes a finding: it does
+not gate the review, alter a score, or move the FSM, and a duty scientist
+remains free to ignore it.
 
 \paragraph{Assessment lifecycle.}
 Generated reports have status \texttt{PROVISIONAL}. A duty scientist

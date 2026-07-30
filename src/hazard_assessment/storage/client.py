@@ -700,6 +700,73 @@ class DatabaseClient:
             logger.exception("Failed to persist assessment")
             return AssessmentPersistResult(status="error", detail=str(exc))
 
+    def insert_evidence_issue_result(
+        self,
+        *,
+        invocation_id: str,
+        assessment_row_id: int,
+        issue_name: str,
+        result: dict[str, Any],
+        result_sha256: str,
+    ) -> str:
+        """Record one investigator finding against a persisted assessment.
+
+        ``invocation_id`` is a deterministic digest of what was investigated,
+        so re-running the same issue over the same assessment collides on the
+        unique index instead of appending a second opinion. That is the point:
+        migration 009 makes these rows append-only, so a repeat has to be
+        recognized rather than layered on top.
+
+        Returns "inserted", "existing", or "error". "existing" is not a
+        failure; it means this exact investigation was already on record.
+        """
+        if not self._pool:
+            return "error"
+        try:
+            with self._conn() as conn:
+                row = conn.execute(
+                    """
+                    INSERT INTO evidence_issue_results
+                        (invocation_id, assessment_row_id, issue_name,
+                         result, result_sha256)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (invocation_id) DO NOTHING
+                    RETURNING id
+                    """,
+                    (
+                        invocation_id,
+                        assessment_row_id,
+                        issue_name,
+                        json.dumps(result, default=str),
+                        result_sha256,
+                    ),
+                ).fetchone()
+                return "inserted" if row else "existing"
+        except Exception:
+            logger.exception("Failed to insert evidence issue result")
+            return "error"
+
+    def get_evidence_issue_results(
+        self, assessment_row_id: int
+    ) -> list[dict[str, Any]]:
+        """Return findings recorded against one assessment, oldest first."""
+        if not self._pool:
+            return []
+        try:
+            with self._conn() as conn:
+                rows = conn.execute(
+                    """
+                    SELECT * FROM evidence_issue_results
+                    WHERE assessment_row_id = %s
+                    ORDER BY produced_at ASC, id ASC
+                    """,
+                    (assessment_row_id,),
+                ).fetchall()
+                return [dict(r) for r in rows]
+        except Exception:
+            logger.exception("Failed to read evidence issue results")
+            return []
+
     def get_assessment_by_checkpoint(
         self, checkpoint_id: str, schema_version: int
     ) -> dict[str, Any] | None:

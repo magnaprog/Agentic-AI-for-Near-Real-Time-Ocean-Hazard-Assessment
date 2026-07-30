@@ -1530,3 +1530,106 @@ def test_agent_writer_cannot_write_processed_features(
         assert raw_select is True, "lineage reads must survive the revoke"
         assert audit_insert is True, "audit append must survive the revoke"
         assert worker_insert is True, "the pipeline worker must still write"
+
+
+def test_insert_evidence_issue_result_is_idempotent(
+    provisioned_test_database: str,
+) -> None:
+    """DatabaseClient.insert_evidence_issue_result against the real table.
+
+    The investigator derives a deterministic invocation ID, so re-running the
+    same issue over the same assessment must be recognized as already recorded
+    rather than raise or append a second opinion. Migration 009 makes these
+    rows append-only, so "existing" is the only correct answer for a repeat.
+    """
+    from uuid import uuid4
+
+    from hazard_assessment.storage.client import ClientConfig, DatabaseClient
+
+    cfg = ClientConfig(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=provisioned_test_database,
+        user=DB_ADMIN_USER,
+        password=DB_ADMIN_PASSWORD,
+        connect_timeout=3,
+    )
+    db = DatabaseClient(cfg)
+    try:
+        persisted = db.persist_assessment(
+            checkpoint_id=_hex64(0x5A1),
+            schema_version=1,
+            event_id=uuid4(),
+            producer_agent="pipeline_worker",
+            handoff_id=uuid4(),
+            trace_id=uuid4(),
+            payload={},
+            input_manifest_hash=_hex64(0x5B1),
+            scientific_content_hash=_hex64(0x5C1),
+        )
+        assert persisted.status == "inserted"
+        assert persisted.row is not None
+        row_id = int(persisted.row["id"])
+
+        from hazard_assessment.agents.llm_advisory.investigator import (
+            compute_invocation_id,
+        )
+
+        invocation = compute_invocation_id(
+            assessment_row_id=row_id,
+            issue_name="station_agreement",
+            model="test-model",
+        )
+        payload = {"issue_name": "station_agreement", "finding": "one station only"}
+
+        first = db.insert_evidence_issue_result(
+            invocation_id=invocation,
+            assessment_row_id=row_id,
+            issue_name="station_agreement",
+            result=payload,
+            result_sha256=_hex64(0x5D1),
+        )
+        assert first == "inserted"
+
+        # Same investigation again, even with a different result digest.
+        repeat = db.insert_evidence_issue_result(
+            invocation_id=invocation,
+            assessment_row_id=row_id,
+            issue_name="station_agreement",
+            result=payload,
+            result_sha256=_hex64(0x5D2),
+        )
+        assert repeat == "existing"
+
+        # A different issue over the same assessment is a distinct finding.
+        other = db.insert_evidence_issue_result(
+            invocation_id=compute_invocation_id(
+                assessment_row_id=row_id,
+                issue_name="evidence_gaps",
+                model="test-model",
+            ),
+            assessment_row_id=row_id,
+            issue_name="evidence_gaps",
+            result={"issue_name": "evidence_gaps"},
+            result_sha256=_hex64(0x5D3),
+        )
+        assert other == "inserted"
+
+        stored = db.get_evidence_issue_results(row_id)
+        assert [r["issue_name"] for r in stored] == [
+            "station_agreement",
+            "evidence_gaps",
+        ]
+        assert stored[0]["result"]["finding"] == "one station only"
+
+        # A malformed digest must be refused by the column CHECK, surfaced as
+        # "error" rather than an exception escaping the client.
+        assert db.insert_evidence_issue_result(
+            invocation_id=_hex64(0x5A9),
+            assessment_row_id=row_id,
+            issue_name="station_agreement",
+            result={},
+            result_sha256="not-a-digest",
+        ) == "error"
+    finally:
+        db.close()

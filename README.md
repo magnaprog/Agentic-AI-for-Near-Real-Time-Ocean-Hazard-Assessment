@@ -216,7 +216,7 @@ Copy `deploy/.env.example` and configure:
 | `DB_INGEST_WRITER_PASSWORD` | No  | Optional `ingest_writer` override used by ingest entrypoints |
 | `DB_ORCHESTRATOR_WRITER_PASSWORD` | No | Optional `orchestrator_writer` override used by api-server |
 | `DB_PIPELINE_WORKER_PASSWORD` | No | Optional `pipeline_worker` override used by pipeline-worker |
-| `DB_INVESTIGATOR_WRITER_PASSWORD` | No | Optional provisioning override for a planned investigator role; no current service uses it |
+| `DB_INVESTIGATOR_WRITER_PASSWORD` | No | Password for the `investigator_writer` role, which `/api/investigate` uses to write findings. Required for that endpoint if it differs from `DB_PASSWORD` |
 | `DB_AGENT_WRITER_PASSWORD` / `DB_AGENT_READER_PASSWORD` / `DB_AUDIT_READER_PASSWORD` | No | Optional provisioning overrides for offline/read roles |
 | `HAZARD_API_KEY`         | Yes (for API access) | Shared internal API key used by core API (`X-Hazard-Api-Key`) and, by default in Docker Compose, Mission Control upstream calls |
 | `MISSION_CONTROL_HAZARD_API_KEY`      | No       | Mission Control key for live core API auth. Not listed in `deploy/.env.example`: Compose supplies it from `HAZARD_API_KEY`. If empty, the Mission Control backend deliberately serves demo data. Live upstream failures never trigger demo fallback. |

@@ -58,9 +58,12 @@ def build_after_action_graph(
         A compiled LangGraph graph.
     """
     from hazard_assessment.agents.llm_advisory.factory import build_chat_model
-    from hazard_assessment.agents.llm_advisory.tools import make_after_action_tools
+    from hazard_assessment.agents.llm_advisory.tools import (
+        make_event_query_tools,
+        resolve_tool_calls,
+    )
 
-    tools = make_after_action_tools(
+    tools = make_event_query_tools(
         audit_logger, pinned_event_id=pinned_event_id, call_log=tool_call_log
     )
     # Two clients over the same model: the draft node writes prose and must not
@@ -78,8 +81,8 @@ def build_after_action_graph(
                 HumanMessage(content=f"Reconstruct the timeline for event {state['event_id']}."),
             ]
             result = llm_with_tools.invoke(initial_messages)
-            timeline_text = _resolve_tool_calls(
-                result, llm_with_tools, tools, state,
+            timeline_text = resolve_tool_calls(
+                result, llm_with_tools, tools,
                 initial_messages=initial_messages,
                 call_log=tool_call_log,
                 node="timeline",
@@ -104,8 +107,8 @@ def build_after_action_graph(
                 ),
             ]
             result = llm_with_tools.invoke(initial_messages)
-            gaps_text = _resolve_tool_calls(
-                result, llm_with_tools, tools, state,
+            gaps_text = resolve_tool_calls(
+                result, llm_with_tools, tools,
                 initial_messages=initial_messages,
                 call_log=tool_call_log,
                 node="gaps",
@@ -144,95 +147,3 @@ def build_after_action_graph(
     graph.add_edge("draft", END)
 
     return graph.compile()
-
-
-def _resolve_tool_calls(
-    result: Any,
-    llm_with_tools: Any,
-    tools: list[Any],
-    state: AfterActionState,
-    *,
-    max_rounds: int = 3,
-    initial_messages: list[Any] | None = None,
-    call_log: list[dict[str, Any]] | None = None,
-    node: str = "",
-) -> str:
-    """Execute tool calls iteratively until the LLM produces a text response.
-
-    This implements the agentic tool-use loop: the LLM decides which tools
-    to call, we execute them, and feed results back until the LLM is satisfied
-    or max_rounds is reached.
-
-    Args:
-        initial_messages: The system/human messages from the original invocation.
-            Included in each LLM re-invocation to preserve context.
-        call_log: Optional mutable list receiving one record per tool
-            call. Successful calls are recorded inside the
-            tools themselves; this loop additionally records unknown
-            tools, tool errors, and non-convergence, and stamps each
-            record with the graph node that made the call.
-        node: Graph node label ("timeline" or "gaps") for attribution.
-    """
-    from langchain_core.messages import ToolMessage
-
-    messages: list[Any] = list(initial_messages or []) + [result]
-    tool_map = {t.name: t for t in tools}
-
-    for _ in range(max_rounds):
-        if not hasattr(result, "tool_calls") or not result.tool_calls:
-            break
-
-        # Execute each tool call
-        for tc in result.tool_calls:
-            tool_fn = tool_map.get(tc["name"])
-            if tool_fn is None:
-                if call_log is not None:
-                    call_log.append({
-                        "node": node,
-                        "tool": tc["name"],
-                        "args": dict(tc.get("args") or {}),
-                        "error": "unknown_tool",
-                    })
-                messages.append(
-                    ToolMessage(content=f"Unknown tool: {tc['name']}", tool_call_id=tc["id"])
-                )
-                continue
-            before = len(call_log) if call_log is not None else 0
-            try:
-                output = tool_fn.invoke(tc["args"])
-            except Exception as exc:
-                logger.warning("Tool %s failed: %s", tc["name"], exc)
-                output = f"Tool error: {type(exc).__name__}"
-                if call_log is not None:
-                    call_log.append({
-                        "node": node,
-                        "tool": tc["name"],
-                        "args": dict(tc.get("args") or {}),
-                        "error": type(exc).__name__,
-                    })
-            if call_log is not None:
-                # Stamp records the tool itself appended with the node.
-                for record in call_log[before:]:
-                    record.setdefault("node", node)
-            messages.append(ToolMessage(content=str(output), tool_call_id=tc["id"]))
-
-        # Feed tool results back to LLM
-        result = llm_with_tools.invoke(messages)
-        messages.append(result)
-
-    # Guard: if the loop exhausted max_rounds with tool calls still pending
-    if hasattr(result, "tool_calls") and result.tool_calls:
-        logger.warning("Tool-call loop did not converge within %d rounds", max_rounds)
-        if call_log is not None:
-            call_log.append({
-                "node": node,
-                "tool": None,
-                "error": "tool_loop_did_not_converge",
-                "max_rounds": max_rounds,
-            })
-        return "(analysis incomplete: tool-call loop did not converge)"
-
-    # Return the final text content
-    if hasattr(result, "content"):
-        return str(result.content)
-    return str(result)
