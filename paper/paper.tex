@@ -428,9 +428,7 @@ tsunami frequency band. Tidal removal
 follows the classical harmonic analysis framework of
 \citet{pawlowicz2002classical}. For DART-specific tsunami detection,
 \citet{angeli2025tsunami} compare four algorithms (Mofjeld, EOF,
-TDA, and Fast Iterative Filtering), which address seismic
-contamination primarily through spectral or temporal separation rather
-than through source-distance timing.
+TDA, and Fast Iterative Filtering).
 \citet{rabinovich2015deep} review 50~years of deep-ocean tsunami
 recording and document the differential propagation velocities
 ($\sim$3--4\,km/s for seismic vs.\ $\sim$0.2\,km/s for tsunami) that our
@@ -808,9 +806,11 @@ per-reviewer authentication is future work.
 
 \paragraph{Target operational flow.}
 The deployed worker already runs ingest, QC, anomaly scoring, and FSM
-transitions on live streams; full live assessment operation (Scenario,
-Verification, Report) remains future work, and the flow below has been
-exercised only on archived data (Section~\ref{sec:evaluation}).
+transitions on live streams.  The flow below is the target: its
+ingest, QC, anomaly and FSM stages have been exercised on archived
+data (Section~\ref{sec:evaluation}), and its Scenario, Verification
+and Report stages remain future work that no path runs on live or
+archived streams.
 The seismic connector detects a qualifying earthquake within 15\,s of
 USGS publication, and the FSM transitions to MONITOR. The DART connector polls standard-mode feeds
 at 60\,s and, once a station is observed in event mode, polls that
@@ -1127,8 +1127,8 @@ amplitude attenuates below the DART 30\,mm event-mode trigger for
 all but the very largest earthquakes).
 A firing correlation produces CONCERN, never FAIL: timing
 correlation is not proof of a false trigger, since real tsunamis also
-follow large earthquakes.  A clean check passes, and one whose
-prerequisites are missing records as not evaluated.
+follow large earthquakes.  A clean check passes, and a check whose
+prerequisites are missing is recorded as not evaluated.
 
 \subsection{Orchestration: Deterministic FSM}
 \label{sec:fsm}
@@ -1635,8 +1635,8 @@ connectors issue GET requests only, and the deployment holds no
 credential that writes to any NOAA system, so the software cannot
 write to an operational feed, and it has no capability to disseminate
 outside the deployment or to actuate anything physical. No role is
-granted UPDATE or DELETE on the audit tables, the four baseline roles
-have both explicitly revoked, and a database trigger blocks them
+granted UPDATE or DELETE on \texttt{audit\_events}, the four baseline
+roles have both explicitly revoked, and a database trigger blocks them
 regardless of grants. In code, the guardrail scanner, the schema
 validators, and the FSM transition rules each refuse the inputs they
 are written to refuse.
@@ -1981,15 +1981,17 @@ seismic energy, not tsunami wave detection.
 
 \noindent\textbf{Agentic pipeline trace.}
 At $M_w$\,9.1 with depth 29\,km, the seismic-only escalation path fires on the seismic parameters
-alone: the FSM transitions IDLE~$\to$~MONITOR~$\to$~ESCALATE on the
-USGS trigger, placing the event in human review before any DART data
-arrives.  In parallel, the Anomaly Agent begins processing
+alone: the FSM rules take it IDLE~$\to$~MONITOR~$\to$~ESCALATE on the
+USGS trigger, which would place the event in human review before any
+DART data arrived.  In parallel, the Anomaly Agent begins processing
 incoming DART observations.  Station 21418 (560\,km) crosses $T_1$ and $T_3$ at +3.6\,min.  That
 crossing is a pressure excursion consistent with coseismic seafloor
 deformation and long-period seismic energy on the recorder, not an
-independent tsunami confirmation.  The QC Agent
-annotates each record with QARTOD flags and confidence as audit
-metadata (all eight stations transmit in event mode).  The Scenario Agent would then produce a seismic-only
+independent tsunami confirmation.  In the full flow the QC Agent would
+annotate each record with QARTOD flags and confidence as audit
+metadata; the Tohoku validator does not run it, and the event-mode
+status of all eight stations comes from the archive's
+measurement-type codes.  The Scenario Agent would then produce a seismic-only
 Wells \& Coppersmith estimate, followed by a DART-constrained
 NNLS inversion once sufficient waveform data accumulates.  The
 Verification Agent would then evaluate the nine-check matrix, though at
@@ -1999,13 +2001,12 @@ deterministic template report with an optional LLM narrative attached
 (bounded autonomy: synthesize and explain only, no state
 modification).  The Human Review Gate presents the escalation packet
 for APPROVE, REJECT, or DEFER.
-Two audit entries follow from the FSM rules and the seismic
-parameters alone: \texttt{state\_transition} IDLE~$\to$~MONITOR on the
-$M$\,9.1 trigger, then \texttt{state\_transition}
-MONITOR~$\to$~ESCALATE on the seismic-only path (depth 29\,km
-$< 100$\,km).  The verification and report entries that the full flow
-would add come after stages no runtime path assembles input for, so
-this event has none.
+The FSM rules put this event through IDLE~$\to$~MONITOR on the
+$M$\,9.1 trigger and MONITOR~$\to$~ESCALATE on the seismic-only path
+(depth 29\,km $< 100$\,km).  The Tohoku validator does not
+instantiate the orchestrator, so no audit trail was recorded for this
+event; the verification and report entries the full flow would add
+come after stages no runtime path assembles input for.
 Any assessment reaching the gate stays PROVISIONAL. A human operator
 records APPROVE, REJECT, or DEFER against it; under caller-asserted
 identity none of these changes the status, which would otherwise
@@ -2060,10 +2061,10 @@ complete trace example in this format.
   pressure perturbations, because the tsunami cannot reach those
   stations inside the plotted record; 46408 sits at that boundary,
   with its predicted arrival near the end of its record.
-  Processing applied to the residual: despiking, pre-event linear
-  detrend, a 120\,min centered rolling median for stations beyond
-  3{,}000\,km to remove residual tidal curvature, and a Hampel spike
-  filter.  This figure shows the detided residual
+  Processing: a despike on the raw record before detiding, then a
+  pre-event linear detrend, a 120\,min centered rolling median for
+  stations beyond 3{,}000\,km to remove residual tidal curvature, and
+  a Hampel spike filter.  This figure shows the detided residual
   before the bandpass; the filtered signal the detectors see appears
   in Figure~\ref{fig:score-overlay}.}
 \label{fig:tohoku-residuals}
@@ -2265,6 +2266,13 @@ detector is what carries detection; the statistical detector changes
 no station's outcome.  One event of eight stations is too small to
 generalize that split.
 
+This also settles the far-field expectation raised in
+Section~\ref{sec:eval-components}, and it settles it both ways.  At
+46403 BOCPD is the only statistical component that responds at all
+(0.263, with the wavelet at zero), which is the expected pattern.  At
+46411 the wavelet dominates instead (0.753 against BOCPD's 0.369).
+Two far-field stations do not decide the question either way.
+
 Sliding-window analysis shows identical earliest detection
 times across configurations (3.6~min post-earthquake at station~21418),
 because the dominant early signal is coseismic seafloor deformation
@@ -2368,13 +2376,12 @@ false trigger is driven by a threshold-score spike from a
 large-amplitude isolated pressure transient at the 46408 BPR that
 exceeded the detection threshold even in degraded mode (the bandpass
 filter's attenuation is less effective against impulsive transients
-than against periodic signals).  Re-running that window with
-component logging gives a saturated threshold score of 1.00, a
-wavelet score of 0.52, and a BOCPD score of 0.00, which reproduce the
-0.80 ensemble under Eq.~\ref{eq:ensemble_noml}.  The
-threshold detector therefore supplies 0.59 of the 0.80, and the
+than against periodic signals).  Under Eq.~\ref{eq:ensemble_noml} the observed 0.80 is reproduced by a
+saturated threshold score with a wavelet score near 0.52 and BOCPD
+silent, so the threshold detector supplies 0.59 of the 0.80 and the
 wavelet detector responds to the same transient rather than firing
-independently; BOCPD alone stays silent.  An event-mode (1-minute sampling)
+independently.  The committed artifact records only the ensemble, so
+those component values are not among the published results.  An event-mode (1-minute sampling)
 quiet-period evaluation using non-tsunamigenic seismic events would
 test the full ensemble and is planned as future work.
 
@@ -2390,9 +2397,10 @@ The evaluation grid spans amplitudes from 0.005 to 0.50\,m,
 periods from 5 to 120\,min, noise levels of 0.0005--0.005\,m,
 and sampling intervals of 15\,s and 60\,s.
 
-For each configuration, we record the maximum FSM state reached
-(MONITOR, INVESTIGATE, ASSESS, or ESCALATE) at the system's
-fixed operating points. Figure~\ref{fig:synthetic-heatmap} shows
+For each configuration we record the highest threshold band the
+ensemble score reaches, labeled with the FSM state that band selects.
+The orchestrator is not driven here: the script compares scores
+against the same threshold constants the FSM uses. Figure~\ref{fig:synthetic-heatmap} shows
 the resulting sensitivity heatmap for the representative
 configuration (noise = 0.001\,m, sampling = 60\,s).
 This is \emph{not} a ROC curve: the thresholds are fixed design
@@ -2403,11 +2411,13 @@ than sweeping a decision boundary.
 \centering
 \includegraphics[width=0.9\linewidth]{figures/fig8_synthetic_heatmap.pdf}
 \caption{Synthetic detection sensitivity heatmap (noise = 0.001\,m,
-  sampling = 60\,s). Each cell shows the maximum FSM state reached
-  for a given (amplitude, period) configuration.
-  The ASSESS state ($T_2 \le s < T_3$) rarely appears because signals
+  sampling = 60\,s). Each cell shows the highest threshold band the
+  ensemble score reaches for a given (amplitude, period)
+  configuration, labeled with the FSM state that band selects.
+  The ASSESS band ($T_2 \le s < T_3$) rarely appears because signals
   strong enough to cross $T_2$ typically also cross $T_3$ within the
-  analysis window, producing a sharp INVESTIGATE-to-ESCALATE boundary.}
+  analysis window, so most cells fall either below $T_1$ or above
+  $T_3$.}
 \label{fig:synthetic-heatmap}
 \end{figure}
 
@@ -2445,12 +2455,15 @@ aggregation tests over \texttt{determine\_outcome}.
 \subsection{Pipeline Latency}
 \label{sec:eval-latency}
 
-Table~\ref{tab:latency} reports component latencies, measured where the component is local and stated as design targets where it is network-bound, from
+Table~\ref{tab:latency} reports component latencies.  Ingest, QC,
+detiding, anomaly scoring and the FSM transition are measured;
+scenario inversion and both report paths are design targets, because
+no run of them is profiled here.  Measurements come from
 \texttt{scripts/profile\_latency.py} (50 iterations, Apple M-series
 laptop). The anomaly detection pipeline (detiding, bandpass filtering,
 wavelet analysis, BOCPD, and ensemble fusion) completes in
-$\sim$47\,ms at p95, dominated
-by the BOCPD computation ($\sim$44\,ms). QC checks process 10 records
+$\sim$47\,ms at p95, which subtraction attributes almost entirely to
+the BOCPD computation ($\sim$44\,ms). QC checks process 10 records
 in ${\sim}0.12$\,ms, and FSM transitions are sub-millisecond. Against a 1-minute event-mode sampling interval, single-station
 compute is not what bounds the deployed worker; the ingest poll
 interval and the network round trip are, and those rows are design
@@ -2590,12 +2603,15 @@ at all nine stations (six DART bottom-pressure recorders and three
 CO-OPS tide gauges).  DART station amplitudes (0.025--0.032\,m) follow from two terms the
 simulator applies: geometric spreading over distances of
 2{,}448--3{,}764\,km, and azimuthal directivity, where the Aleutian
-fault strike (250\textdegree) directs maximum radiation NNW while the
-Pacific stations lie south or east of the epicenter and receive
-40--50\% of the peak amplitude.  CO-OPS coastal stations show
-${\sim}10\times$ larger amplitudes (0.23--0.28\,m) due to Green's Law
-shoaling amplification (${\sim}3.8$--$4.5\times$) applied at nearshore depths
-of 10--20\,m, plus larger tidal and noise baselines.
+fault strike (250\textdegree) puts maximum radiation toward
+340\textdegree, while the six DART stations lie west-southwest
+(243--261\textdegree) or east (85--94\textdegree) of the epicenter and
+receive 41--50\% of the peak amplitude.  The three CO-OPS stations lie
+south (150--189\textdegree), near that radiation maximum, so their
+${\sim}9\times$ larger amplitudes (0.23--0.28\,m) come from Green's Law
+shoaling (${\sim}3.8$--$4.5\times$ at nearshore depths of 10--20\,m)
+multiplied by a directivity factor about $2.4\times$ higher than the
+DART stations receive.
 Figure~\ref{fig:synthetic-residuals} presents the corresponding
 detided residuals, isolating the tsunami signal from the tidal
 background; shared Y-axes and an overlay comparison panel make the
@@ -2717,13 +2733,15 @@ inference temperature.
 Table~\ref{tab:method-comparison} compares the proposed system with
 existing DART-based tsunami detection algorithms on key design axes.
 Our system trades minimal data requirements (30-day calibration vs.\
-3~hours for Mofjeld) for physically interpretable detiding,
-multi-component ensemble scoring, and integrated verification with
-safety controls. The computational overhead of the ensemble
-(${\sim}47$\,ms p95) is negligible relative to the data polling
-interval (15--60\,s). None of the methods in Table~\ref{tab:method-comparison} integrates
-verification checks, human-in-the-loop gating, or structured
-abstention.
+3~hours for Mofjeld) for physically interpretable detiding and
+multi-component ensemble scoring. The computational overhead of the
+ensemble (${\sim}47$\,ms p95) is negligible relative to the data
+polling interval (15--60\,s). It also defines a nine-check
+verification layer, a review gate and a structured abstention, which
+the compared methods do not. No runtime path in this release
+assembles the verification input, so that column of
+Table~\ref{tab:method-comparison} describes shipped policy rather
+than exercised behavior.
 
 \begin{table}[!htb]
 \centering
@@ -2787,17 +2805,19 @@ evaluation across diverse event scenarios remains future work.
 Table~\ref{tab:latency} summarizes the per-component latency targets and
 estimated budgets. Ingest and QC latencies are bounded by external
 API polling intervals and lightweight QARTOD checks. The anomaly
-detection pipeline (detide, bandpass filter, wavelet, BOCPD, and
-optional Isolation Forest) completes in ${\sim}47$\,ms (p95) for
-single-station data on a single core (Table~\ref{tab:latency},
-AnomalyAgent end-to-end row). Scenario inversion dominates the end-to-end
+detection pipeline (detide, bandpass filter, wavelet, BOCPD, ensemble
+fusion) completes in ${\sim}47$\,ms (p95) for single-station data on
+the profiling machine (Table~\ref{tab:latency}, AnomalyAgent
+end-to-end row).  The Isolation Forest is not loaded, so it
+contributes nothing to that figure. Scenario inversion dominates the end-to-end
 budget because the NNLS solver (Eq.~\ref{eq:nnls}) iterates over the propagation database;
-the 3-minute target assumes a pre-loaded database with ${\leq}200$
-candidate subfaults. When the LLM synthesis layer is enabled, a single
-API call (evidence, scenario, or narrative node) adds 3--8\,s of wall-clock
-time, and falls back to the template-only path in $<1$\,s when the API is
-unavailable. The end-to-end target of ${\leq}5$ minutes from data
-availability to Tier~1 report is within the same order of magnitude as
+the 3-minute figure is a design target for a pre-loaded database, not
+a measurement, and this release fixes no bound on the candidate
+subfault count. When the LLM synthesis layer is enabled a single API
+call adds seconds rather than milliseconds, and the template-only path
+is what survives an API failure; neither cost is profiled here. The
+end-to-end target of ${\leq}5$ minutes from data availability to
+Tier~1 report is within the same order of magnitude as
 the PTWC's initial bulletin timeline~\citep{bernard2015evolution},
 though the two are not directly comparable: the PTWC clock starts at
 earthquake origin, whereas ours starts when DART data become available.
@@ -2874,7 +2894,7 @@ Figure~\ref{fig:latency-distance} shows threshold-crossing latency as a
 function of epicentral distance across all five events. Most plotted
 crossings precede the simple $d/198$\,m/s tsunami-travel reference, but
 not all do: Iquique station 32413 crosses INVESTIGATE at 266.2~min,
-compared with a 236.4~min reference at 2{,}803~km. Event-mode status is
+compared with a 235.9~min reference at 2{,}803~km. Event-mode status is
 a transmission state rather than a measured tsunami arrival, and the
 retrospective comparison does not establish operational warning lead
 time. Replay timing excludes live ingest, transmission, and processing
@@ -2975,8 +2995,8 @@ a missing prerequisite is enough to degrade the aggregate to
 PASS\_WITH\_CONCERNS, and the meteotsunami check alone is OPTIONAL at
 all three constraint stages with a prerequisite nothing satisfies, so
 PASS is unreachable everywhere rather than only here.  The broader
-point is that no component assembles a \texttt{VerificationInput} at
-all: the pipeline node that would run these checks reads a
+point is that no runtime path assembles a \texttt{VerificationInput}
+at all: the pipeline node that would run these checks reads a
 caller-supplied dictionary, and the live worker fail-closes before a
 scenario exists to verify.  What this describes is the policy the
 checks encode, not behavior observed in a run.
@@ -2984,7 +3004,7 @@ ABSTAIN still activates at this stage: a missing seismic
 magnitude leaves that required check without its prerequisite and the
 outcome is INCOMPLETE, and a prior scenario whose $M_w$ differs from
 the seismic $M_w$ by more than the failure margin returns FAIL.  Both
-set \texttt{abstain\_required} and route to ABSTAIN.  At this stage, though, the gate has very little evidence to act on.
+set \texttt{abstain\_required} and route to ABSTAIN.  At this stage, though, an abstention rests on very little evidence.
 Sixth, the ensemble weights ($\alpha_1{=}0.50$, $\alpha_2{=}0.35$,
 $\alpha_3{=}0.15$) and FSM thresholds ($T_1{=}0.35$, $T_2{=}0.60$,
 $T_3{=}0.85$) were chosen as design constants based on relative
@@ -3033,13 +3053,15 @@ zero on this component for the same reason.  The wavelet component is
 therefore suppressed rather than merely noisy, and the reported
 detections rest more heavily on the threshold detector than the
 nominal weights imply.  We have deliberately not rescaled the score
-for this submission, because we measured what rescaling alone does.
-Re-running the June 2011 quiet-period evaluation over the same 414
-windows with a power-density ratio takes the false-trigger counts from
-1/1/0 at $T_1$/$T_2$/$T_3$ to 2/1/1, that is from $0.29$ to $0.57$
-false $T_1$ triggers per station-month, and introduces a
-$T_3$-level false alarm at station~46408, which rises from $0.802$ to
-$0.997$.  The thresholds were chosen against the current suppressed
+for this submission, because rescaling alone makes things worse.  Over
+the same 414 June 2011 quiet-period windows, a power-density ratio
+takes the false-trigger counts from 1/1/0 at $T_1$/$T_2$/$T_3$ to
+2/1/1, that is from $0.29$ to $0.57$ false $T_1$ triggers per
+station-month, and introduces a $T_3$-level false alarm at
+station~46408, which rises from $0.802$ to $0.997$.  That run is not
+among the committed artifacts, so those revised rates are reported
+here as a measurement we made rather than one a reader can
+reproduce.  The thresholds were chosen against the current suppressed
 scale, so the dimensional correction and a recalibration of $T_1$,
 $T_2$ and $T_3$ cannot be separated; shipping the first without the
 second would trade a known bias for a worse false-escalation rate.
@@ -3080,8 +3102,10 @@ need per-station calibration baselines the present corpus does not
 contain.
 Running CO-OPS through scenario inversion and verification remains future
 work, as does validating the deployed Kafka worker end-to-end; the worker
-currently performs ingest, QC, anomaly scoring, and FSM transitions, and
-fail-closes to ABSTAIN at the assessment stages.
+currently performs ingest, QC, anomaly scoring and FSM transitions,
+builds a per-checkpoint assessment and, on entering ESCALATE, the
+reviewer packet of record, and fail-closes to ABSTAIN at the
+assessment stages.
 Twelfth, the FSM implements a timeout only for the MONITOR state
 (returning to IDLE after 12\,h).  The INVESTIGATE and ASSESS states
 lack analogous timeouts; a borderline anomaly score that stabilizes
@@ -3199,13 +3223,15 @@ human first.
 
 The system explicitly does \emph{not} replace or
 interfere with NOAA's official warning systems. All emitted assessment
-reports carry non-authoritative disclaimers. The Human Review
-Gate blocks autonomous public communication. The permission matrix documents each component's capability envelope
+reports carry non-authoritative disclaimers. The system has no public
+dissemination path at all, and the Human Review Gate stands between
+any assessment and an approved internal status. The permission matrix documents each component's capability envelope
 but does not enforce it; the constraints that hold are database role
 grants, the separation of the LLM layer from the control path, and the
 review gate. The append-only audit trail
-supports independent review of FSM transitions, verification outcomes,
-and human review decisions; complete raw-to-output
+supports independent review of FSM transitions and human review
+decisions, and of verification outcomes wherever a caller supplies
+them; complete raw-to-output
 \texttt{input\_refs} provenance is not yet exposed end to end.
 
 Potential risks include over-reliance on the system's outputs if duty
@@ -3236,7 +3262,7 @@ to operators.
 We have presented a bounded agentic AI framework for near-real-time
 ocean hazard assessment and released its implementation.  A
 deterministic five-state machine orchestrates the pipeline, escalating
-and de-escalating on threshold rules alone; an ensemble anomaly
+and de-escalating on threshold rules plus a seismic override; an ensemble anomaly
 detector combines three signal analysis components with an optional ML
 component; NNLS scenario inversion produces bootstrap uncertainty
 estimates; a fail-closed verification layer emits an explicit ABSTAIN;
@@ -3247,10 +3273,10 @@ on failure or guardrail violation; and a Human Review Gate stands
 between any assessment and an approved status.  Retrospective replay
 on five Pacific tsunamigenic earthquakes ($M_w$\,8.1--9.1:
 T\={o}hoku 2011, Chile 2010, Illapel 2015, Iquique 2014, and Samoa
-2009) shows the ensemble detector crossing the fixed operating-point
-thresholds at the nearest event-mode DART station in each event,
-across subduction-zone thrust and outer-rise normal-faulting
-mechanisms.
+2009) shows the ensemble detector crossing the INVESTIGATE threshold at the
+nearest event-mode DART station in each event, and reaching ASSESS or
+ESCALATE at that station in four of the five, across subduction-zone
+thrust and outer-rise normal-faulting mechanisms.
 
 Several things this framework contains were not shown here.  The
 earliest detections reflect coseismic pressure perturbations rather
@@ -3308,9 +3334,9 @@ architecture, generated from the draw.io source files in
   pipeline worker persists features, audit and lineage records to
   TimescaleDB when configured). The Processing Plane holds the QC and
   Anomaly agents, which the pipeline worker runs, alongside the
-  Scenario and Verification agents, which exist as components that no
-  runtime path currently feeds. The deterministic FSM sits beside them
-  as the sole state authority. The Output Plane includes the Report Agent,
+  Scenario and Verification agents, drawn in their specified positions;
+  no runtime path assembles their inputs today. The deterministic FSM
+  sits beside them as the sole state authority. The Output Plane includes the Report Agent,
   alert-language guardrail scanner, Abstain Node, and Human Review
   Gate. Observability is provided by the Telemetry Tracing module
   (OpenTelemetry), Prometheus, Grafana, and Jaeger.}
@@ -3826,7 +3852,7 @@ strips.
     stations, epicenter annotation, and a 500\,km distance circle),
     spanning both content rows; an Anomaly Score Timeline (Recharts
     area chart holding the most recent 60 samples, appended on each
-    score change plus a 30\,s keepalive, with $T_1$/$T_2$/$T_3$
+    score the console receives, with $T_1$/$T_2$/$T_3$
     reference lines) is embedded along the map's lower edge.
   \item \textbf{Right column}: Human Review Gate
     (APPROVE/REJECT/DEFER controls, active only during ESCALATE, with
@@ -3856,9 +3882,10 @@ The console is built for a duty scientist to watch the score timeline
 and the transition ladder as an event develops; it has not been
 exercised against a live event.  When the FSM reaches
 \textsc{escalate}, the Human Review Gate activates and presents the
-escalation packet of record: the checkpoint, the transition, the best
-scored station, and the assessment's identifier and content hash.  The
-assessment body is persisted but not served to the console.
+escalation packet of record.  The console shows the checkpoint, the
+transition, the best scored station, and the assessment's identifier
+and content hash; the assessment body travels inside the packet but is
+not rendered.
 
 \FloatBarrier
 \begin{figure}[!htbp]
@@ -3944,9 +3971,9 @@ Standard-mode stations cannot fully resolve the tsunami energy band
 so periods shorter than 30\,min are unresolvable and the bandpass
 filter is clamped to the Nyquist frequency, degrading threshold and
 wavelet detection.  Two effects are confounded at these stations.  The
-clamped passband degrades detection, and all but one of them sit
-beyond the distance a tsunami covers in the six-hour window, so a low
-score here measures neither effect on its own.
+clamped passband degrades detection, and all four also sit beyond the
+distance a tsunami covers in the six-hour window, so a low score here
+measures neither effect on its own.
 This mode difference is operationally realistic: DART event-mode
 triggering depends on the buoy's internal Mofjeld threshold
 algorithm, which is more selective for smaller events.
@@ -4038,11 +4065,10 @@ internal triggering threshold rather than pipeline performance.
 At event-mode stations, both events produce ensemble scores $> 0.9$
 at the nearest stations, indicating consistent detection behavior
 across independent subduction-zone events.
-Standard-mode stations produce near-zero scores.  The pipeline's
-\texttt{filter\_degraded} flag tracks the clamped passband
-(Table~\ref{tab:chile-results}), but these stations also lie beyond
-the six-hour tsunami reach, so the two causes cannot be separated
-here.
+Standard-mode stations produce near-zero scores.  The
+\texttt{filter\_degraded} flag records the clamped passband
+(Table~\ref{tab:chile-results}), but distance confounds it, so the
+flag alone does not account for the zeros.
 
 \noindent\textbf{Agentic pipeline trace.}
 The $M_w$\,8.8 event at 35\,km depth (early USGS determination;
@@ -4479,9 +4505,10 @@ Station 51425, despite being nearest, scores lowest among event-mode
 stations because only the threshold detector fires (wavelet and BOCPD
 both score zero), capping the ensemble at $0.588 \times 1.0 = 0.588$,
 the single-detector maximum under the renormalized weighting.
-The three far-field standard-mode stations are filter degraded, and
-one of them, 51407, is close enough that the clamped passband is a
-live explanation for its low score.
+The three far-field standard-mode stations are filter degraded.  Only
+51407 lies inside the six-hour tsunami reach, and only just, with a
+predicted arrival in the last minutes of the window, so its zero score
+does not separate the two causes either.
 Table~\ref{tab:samoa-results} provides the full per-station breakdown.
 Raw pressure records with IRLS tidal fits are shown in
 Figure~\ref{fig:samoa-waveforms}; detided residuals in

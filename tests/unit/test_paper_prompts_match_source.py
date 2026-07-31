@@ -36,6 +36,22 @@ _BOX = re.compile(
 
 _CONST = re.compile(r'^([A-Z_]+_PROMPT) = """\\?\n(.*?)"""', re.DOTALL | re.MULTILINE)
 
+#: Which source constant each appendix listing claims to reproduce.
+#:
+#: Set membership alone is not enough. Checking only that every listing matches
+#: *some* constant lets the bodies be swapped between two titles, or one prompt
+#: be printed twice while another silently disappears from the appendix, and
+#: the listing still passes. Binding the title to the constant is what makes a
+#: mislabelled or missing prompt fail.
+EXPECTED = {
+    "Evidence Synthesis Prompt": "EVIDENCE_SYSTEM_PROMPT",
+    "Scenario Interpretation Prompt": "SCENARIO_SYSTEM_PROMPT",
+    "Narrative Synthesis Prompt": "NARRATIVE_SYSTEM_PROMPT",
+    "Timeline Reconstruction Prompt": "TIMELINE_SYSTEM_PROMPT",
+    "Detection Gap Analysis Prompt": "GAPS_SYSTEM_PROMPT",
+    "Incident Report Draft Prompt": "DRAFT_SYSTEM_PROMPT",
+}
+
 
 def _paper_listings() -> list[tuple[str, str]]:
     return [(title.strip(), body.strip()) for title, body in _BOX.findall(PAPER.read_text())]
@@ -50,21 +66,28 @@ def test_every_prompt_listing_is_byte_exact_against_source() -> None:
     prompts = _source_prompts()
     assert listings, "no promptbox listings found; has the appendix macro changed?"
 
-    unmatched: list[str] = []
+    problems: list[str] = []
+    seen: dict[str, str] = {}
     for title, body in listings:
-        if body not in prompts.values():
-            near = max(
-                prompts.items(),
-                key=lambda kv: len(set(kv[1].split()) & set(body.split())),
-            )
-            unmatched.append(
-                f"{title!r} is not byte-exact against any prompt in prompts.py "
-                f"(closest: {near[0]})"
-            )
+        expected = EXPECTED.get(title)
+        if expected is None:
+            problems.append(f"{title!r} is not a listing this test knows about")
+            continue
+        if expected not in prompts:
+            problems.append(f"{title!r} claims {expected}, which prompts.py no longer defines")
+            continue
+        if prompts[expected] != body:
+            problems.append(f"{title!r} is not byte-exact against {expected}")
+        if expected in seen:
+            problems.append(f"{expected} is reproduced under both {seen[expected]!r} and {title!r}")
+        seen[expected] = title
 
-    assert not unmatched, (
-        "the paper reproduces prompts that do not match the source verbatim:\n  "
-        + "\n  ".join(unmatched)
+    missing = sorted(set(EXPECTED.values()) - set(seen))
+    if missing:
+        problems.append(f"prompts the appendix no longer reproduces: {missing}")
+
+    assert not problems, (
+        "the paper's prompt listings disagree with prompts.py:\n  " + "\n  ".join(problems)
     )
 
 
@@ -92,7 +115,11 @@ def test_the_investigator_prompts_are_not_claimed_as_reproduced() -> None:
         "investigator prompts moved; the appendix disclaimer needs rechecking"
     )
     paper = PAPER.read_text()
-    assert "omitted here for length" in paper, (
-        "the appendix no longer discloses that the investigator prompts are "
-        "omitted, but prompts.py still defines them"
+    # Anchor the disclaimer to the prompt appendix. A bare substring search
+    # would be satisfied by the phrase appearing anywhere in a 90-page file.
+    start = paper.index("\\label{sec:appendix-prompts}")
+    section = paper[start : paper.index("\\promptlabel", start)]
+    assert "omitted here for length" in section, (
+        "the prompt appendix no longer discloses that the investigator "
+        "prompts are omitted, but prompts.py still defines them"
     )

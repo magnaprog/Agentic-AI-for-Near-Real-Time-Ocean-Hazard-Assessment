@@ -91,7 +91,7 @@ Cross-cutting: OpenTelemetry | Prometheus | Immutable Audit Trail
 | State | Meaning | Entry Condition |
 |---|---|---|
 | `IDLE` | No active event | Initial state or MONITOR timeout |
-| `MONITOR` | Seismic trigger received; watching | Seismic event >= min. magnitude |
+| `MONITOR` | Seismic trigger received; watching | Seismic event >= min. magnitude in a configured tsunamigenic region |
 | `INVESTIGATE` | Anomaly score elevated | Anomaly score >= T1 (default 0.35) |
 | `ASSESS` | Deterministic FSM threshold state; live checkpoints fail-close to ABSTAIN because Scenario and Verification are offline-only | Anomaly score >= T2 (default 0.60) |
 | `ESCALATE` | Event is eligible for packet review once the durable packet exists | Anomaly score >= T3 (default 0.85), M >= 7.5 plus DART event-mode activation, or direct large-shallow-earthquake override from MONITOR |
@@ -108,7 +108,8 @@ live:    ingest -> qc metadata -> anomaly -> FSM -> OceanEvidenceAssessment
                                   durable packet -> caller-gated review
                                                    (FSM unchanged)
 
-offline: archived inputs -> scenario -> Verification -> report or ABSTAIN
+offline (archived inputs): ingest -> qc -> anomaly -> FSM -> detection artifact
+synthetic only (verify_e2e_workflow.py): scenario -> Verification -> report or ABSTAIN
 ```
 
 ---
@@ -399,9 +400,10 @@ This is a static registry read from the core API, not a health monitor.
 
 Along the lower edge of the map, a live anomaly score chart plots the most
 recent 60 samples with dashed reference lines at T1, T2, and T3. A sample is
-appended on every score change plus a 30-second keepalive, and the trace is
-built in the browser from page load, so it covers 30 minutes only when nothing
-but the keepalive fires and less than that whenever scores update. With no active
+appended for each score the console receives while an event is active, so the
+chart spans the last 60 scores rather than a fixed period, and the trace resets
+when an event begins or ends. If the core API stops responding the line stops
+where the data stopped rather than extending flat. With no active
 event it shows a standby message rather than a zero line, because the stored
 score resets to zero between events and zero is not a reading.
 
@@ -911,13 +913,16 @@ In the offline evaluation path, a Scenario component runs NNLS inversion for pre
 4. Ranks top-K source models by residual norm.
 5. Estimates uncertainty via bootstrap resampling (P10/P50/P90 envelopes).
 
-**Offline seismic-only scenario mode:** The Scenario component can produce a magnitude-scaling estimate labeled `constraint_stage: SEISMIC_ONLY` with the caption *"Seismic-only estimate. No DART constraint. High uncertainty."* Current offline validators exercise this mode. The live Kafka worker does not call it. A live large, shallow seismic trigger can move the FSM directly from MONITOR to ESCALATE, but the worker emits a separate seismic-only ABSTAIN checkpoint, not this Scenario estimate.
+**Offline seismic-only scenario mode:** The Scenario component can produce a magnitude-scaling estimate labeled `constraint_stage: SEISMIC_ONLY` with the caption *"Seismic-only estimate. No DART constraint. High uncertainty."* `scripts/verify_e2e_workflow.py` exercises this mode on synthetic inputs; the retrospective event validators do not, and the live Kafka worker does not call it. A live large, shallow seismic trigger can move the FSM directly from MONITOR to ESCALATE, but the worker emits a separate seismic-only ABSTAIN checkpoint, not this Scenario estimate.
 
 > **Deployment note:** The Scenario inversion described above (and Verification
-> and Report generation in 9.5-9.6) is the validated behavior exercised by the
-> offline/replay evaluation that produces the published results. The unit-source
-> library is a precomputed set of unit-source Green's functions; current builds ship
-> a synthetic test library, and operational use requires the NOAA NCTR Forecast
+> and Report generation in 9.5-9.6) is exercised only by
+> `scripts/verify_e2e_workflow.py` on synthetic inputs. No script that produces
+> the committed `results/` artifacts runs Scenario inversion or the Verification
+> checks. The unit-source library is a precomputed set of unit-source Green's
+> functions; no library ships with this repository, because
+> `InMemoryUnitSourceDatabase` is populated by the caller with synthetic
+> waveforms, and operational use requires the NOAA NCTR Forecast
 > Propagation Database. The *deployed*
 > Kafka worker does NOT yet run live Scenario inversion, Verification, or Report
 > generation; on reaching `ASSESS`/`ESCALATE` it fail-closes to an ABSTAIN
@@ -1052,7 +1057,7 @@ Your reason is recorded in the append-only audit trail. It should explain:
 - Why the selected assessment-review label fits that evidence
 - Any relevant external context, clearly identified as external to the packet
 
-**Prohibited terms:** Do not use the words "Warning," "Advisory," "Watch," "Information Statement," "Threat Message," "Cancellation," "All Clear," or "Bulletin" in your decision reason. These eight terms are reserved for official NOAA products; their use here will be blocked by the guardrail scanner. A two-word term matches whether its words are separated by spaces, run together, or joined by a hyphen, so "All Clear," "AllClear," and "All-Clear" are all rejected. Substituting a lookalike character does not help either: the scanner folds the Unicode confusables set to ASCII before matching, and separately collapses characters that only share a shape, so "CanceIlation" written with a capital I is rejected as well. Write plainly and the scanner stays out of your way.
+**Prohibited terms:** Do not use the words "Warning," "Advisory," "Watch," "Information Statement," "Threat Message," "Cancellation," "All Clear," or "Bulletin" in your decision reason. These eight terms are reserved for official NOAA products; their use here will be blocked by the guardrail scanner. A two-word term matches whether its words are separated by spaces, run together, or joined by a hyphen, so "All Clear," "AllClear," and "All-Clear" are all rejected. Substituting a lookalike character does not help either: the scanner folds the Unicode confusables set to ASCII before matching, and separately collapses characters that only share a shape, so "CanceIlation" written with a capital I is rejected as well. Organization names that contain a reserved word are allowlisted, so "Pacific Tsunami Warning Center" and "Tsunami Bulletin Board" pass. Write plainly and the scanner stays out of your way.
 
 ### 10.5 After Review
 
@@ -1097,6 +1102,8 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `evidence_investigation` | An active-event investigation ran. Records which issues produced findings, which failed, which were not stored, and which were guardrail-withheld |
 | `llm_call` | LLM advisory call recorded |
 | `anomaly_scored` | Worker anomaly assessment persisted as a lineage feature row |
+| `escalation_packet_conflict` | A second escalation packet was generated for a checkpoint that already had one |
+| `after_action_report` | A post-event after-action analysis ran, with its tool-call log |
 | `fsm_recovery_failed` | FSM state recovery from the database failed; event context lost |
 
 ### 11.2 Provenance Chain
@@ -1339,7 +1346,7 @@ the file is treated as already applied:
 python - <<'EOF'
 import hashlib, pathlib
 f = pathlib.Path("src/hazard_assessment/storage/migrations/001_baseline.sql")
-print(f.stem, hashlib.sha256(f.read_bytes()).hexdigest())
+print(f.stem, hashlib.sha256(f.read_text(encoding="utf-8").encode("utf-8")).hexdigest())
 EOF
 # then, as the admin role:
 # UPDATE schema_migrations SET checksum = '<printed value>' WHERE version = '001_baseline';
@@ -1492,9 +1499,9 @@ bash scripts/run_full_evaluation.sh   # all 17 steps
 cd paper && tectonic paper.tex        # rebuilds paper.pdf
 ```
 
-Three scripts sit outside `run_full_evaluation.sh` because they produce inputs rather than results. `scripts/download_coops_data.py` fetches the CO-OPS water-level and tide-prediction CSVs that the appendix de-tiding figures read, `scripts/archive_native_dart.py` keeps a copy of the raw NDBC payloads alongside the parsed CSVs, and `scripts/evaluate_llm_synthesis.py` produces the 20-scenario guardrail sweep the paper cites for the optional narrative layer. None of them is needed to reproduce the detection artifacts.
+Several scripts sit outside `run_full_evaluation.sh`. The `download_*.py` group and `scripts/archive_native_dart.py` fetch or archive inputs rather than produce results, `scripts/generate_confusable_map.py` regenerates the confusable table in `policy/_confusables.py`, and `scripts/verify_e2e_workflow.py` exercises the scenario, verification and report stages on synthetic inputs. Of these, `scripts/download_coops_data.py` fetches the CO-OPS water-level and tide-prediction CSVs that the appendix de-tiding figures read, `scripts/archive_native_dart.py` keeps a copy of the raw NDBC payloads alongside the parsed CSVs, and `scripts/evaluate_llm_synthesis.py` produces the 20-scenario guardrail sweep the paper cites for the optional narrative layer. None of them is needed to reproduce the detection artifacts.
 
-Steps 1 and 6 download NDBC historical archive data, so a full run needs network access. The remaining steps read the local CSVs under `data/`. The station-map figures use Cartopy Natural Earth features, which Cartopy fetches into its own cache the first time they render.
+Step 1 downloads NDBC historical archive data, so a full run needs network access. The remaining steps read the local CSVs under `data/`. The station-map figures use Cartopy Natural Earth features, which Cartopy fetches into its own cache the first time they render.
 
 Most artifacts reproduce byte for byte from the checked-in data. Three do not, by design. `latency_profile.json` records hardware-bound timings. `physics_validation.json` and `synthetic_timelines.json` embed a `generated_at` wall-clock timestamp; ignoring that field, `synthetic_timelines.json` has shown floating-point reassociation differences up to 5.2e-15.
 
@@ -1558,7 +1565,7 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 
 **QARTOD**: Quality Assurance of Real-Time Oceanographic Data. A set of standardized data quality tests maintained by the U.S. Integrated Ocean Observing System (IOOS).
 
-**Scenario Agent**: The pipeline agent specified to perform NNLS inversion and uncertainty estimation. The deployed worker does not run it; see section 8.
+**Scenario Agent**: The pipeline agent specified to perform NNLS inversion and uncertainty estimation. The deployed worker does not run it; see section 9.4.
 
 **SIFT**: Short-term Inundation Forecasting for Tsunamis. NOAA's operational tsunami forecast tool based on a precomputed database of unit-source Green's functions.
 

@@ -433,8 +433,9 @@ _TRACE_INTROS = [
 _STAGE_LEADINS = [
     {
         "QC": (
-            "QC Agent validates incoming records and reports per-station\n"
-            "usability, confidence, evaluated-check coverage, and data mode:"
+            "QC Agent output for the first record of the stream. It annotates\n"
+            "rather than filters, and with no history zero checks evaluate, so\n"
+            "confidence 1.0 is the no-evidence convention rather than a pass:"
         ),
         "AnomalyAssessment": (
             "Anomaly Agent fuses threshold, wavelet, and BOCPD\n"
