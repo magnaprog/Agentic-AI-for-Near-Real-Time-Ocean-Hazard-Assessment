@@ -576,25 +576,30 @@ assessment pipeline.
 \node[anchor=north west, font=\bfseries\scriptsize]
   at ([xshift=2pt, yshift=-2pt]data.north west) {Data Plane};
 
-% TimescaleDB - wide persistent store at top of data plane
-\node[store, minimum width=10cm] (tsdb) at (0, 0.35) {TimescaleDB};
+% Kafka - event bus carrying observations up into the Processing Plane.
+% This is the live path: the pipeline worker consumes the topic. The
+% database is a side branch, so Kafka sits directly under the agents and
+% TimescaleDB is off to the right.
+\node[store, fill=red!6, minimum width=8cm] (kafka) at (-1.2, -0.55) {Kafka};
 
-% Kafka - event bus below TimescaleDB
-\node[store, fill=red!6, minimum width=8cm] (kafka) at (0, -0.55) {Kafka};
+% TimescaleDB - durable store written by the connectors and by the worker.
+% Nothing reads raw observations back out of it.
+\node[store, minimum width=2.6cm] (tsdb) at (5.5, -0.55) {TimescaleDB};
 
-% Ingest connectors - evenly spaced at bottom
-\node[box] (dart)  at (-3.5, -1.55) {DART\\Ingest};
-\node[box] (coops) at ( 0.0, -1.55) {CO-OPS\\Ingest};
-\node[box] (usgs)  at ( 3.5, -1.55) {Seismic\\Ingest};
+% Ingest connectors - evenly spaced under Kafka
+\node[box] (dart)  at (-3.9, -1.55) {DART\\Ingest};
+\node[box] (coops) at (-1.2, -1.55) {CO-OPS\\Ingest};
+\node[box] (usgs)  at ( 1.5, -1.55) {Seismic\\Ingest};
 
-% Ingest -> Kafka (all arrows straight up)
-\draw[arrow] (dart.north)  -- ([xshift=-3.5cm]kafka.south);
-\draw[arrow] (coops.north) -- (kafka.south);
-\draw[arrow] (usgs.north)  -- ([xshift= 3.5cm]kafka.south);
-
-% Kafka -> TimescaleDB (vertical, with topic label)
-\draw[arrow] (kafka.north) -- (tsdb.south)
+% Ingest -> Kafka, carrying the raw.observations topic
+\draw[arrow] (dart.north)  -- ([xshift=-2.7cm]kafka.south);
+\draw[arrow] (coops.north) -- (kafka.south)
   node[font=\tiny, midway, right, xshift=2pt] {\texttt{raw.observations}};
+\draw[arrow] (usgs.north)  -- ([xshift= 2.7cm]kafka.south);
+
+% Ingest -> TimescaleDB (each connector also persists the raw record)
+\draw[arrow] (usgs.east) -| (tsdb.south)
+  node[font=\tiny, pos=0.25, above] {raw observations};
 
 % ---- Processing Plane (middle) - agents + FSM Orchestrator ----
 \node[plane, minimum height=5.4cm] (proc) at (0, 4.0) {};
@@ -615,8 +620,12 @@ assessment pipeline.
 \draw[seqarrow] (scen.east) -- (veri.west)
   node[schema, midway, above, yshift=2pt] {\texttt{Scenario-}\\\texttt{Assessment}};
 
-% TimescaleDB -> QC (data flows up into processing plane)
-\draw[arrow] ([xshift=-4.5cm]tsdb.north) -- (qc.south);
+% Kafka -> QC (the worker consumes the topic; this is the live path)
+\draw[arrow] ([xshift=-3.3cm]kafka.north) -- (qc.south);
+
+% Processing plane -> TimescaleDB (features and audit rows written back)
+\draw[arrow] ([xshift=5.5cm]proc.south) -- (tsdb.north)
+  node[font=\tiny, midway, left, xshift=-2pt] {features + audit};
 
 % FSM Orchestrator (inside Processing Plane, above agents)
 \node[draw, rounded corners=3pt, fill=yellow!10, inner sep=6pt,
@@ -685,10 +694,13 @@ assessment pipeline.
   at (3.8, 7.0) {FAIL};
 
 \end{tikzpicture}
-\caption{System architecture and agentic pipeline. The \textbf{Data Plane}
-  ingests DART, CO-OPS, and seismic observations via Kafka
-  (\texttt{raw.observations} topic) into TimescaleDB (with in-memory
-  fallback when the database is unavailable).
+\caption{System architecture and agentic pipeline. In the
+  \textbf{Data Plane}, each connector publishes to the Kafka
+  \texttt{raw.observations} topic and separately writes the raw record to
+  TimescaleDB.  The worker consumes the topic, so the live path runs
+  through Kafka, not the database, which holds the durable record and the
+  features and audit rows written back (in-memory fallback when
+  unavailable).
   The \textbf{Processing Plane} sequences four specialized agents (blue
   arrows) with typed Pydantic handoff schemas (yellow labels):
   QC $\to$ Anomaly Detection $\to$ Scenario Inversion $\to$ Verification.
@@ -707,7 +719,10 @@ assessment pipeline.
   through the review-gated path (Section~\ref{sec:scenario}). The figure shows the
   target architecture; the deployed Kafka worker currently performs
   ingest, quality control, anomaly scoring, and FSM transitions, and
-  fail-closes to ABSTAIN at the assessment stages.}
+  fail-closes to ABSTAIN at the assessment stages.  There, QC and anomaly
+  scoring run before the FSM evaluates the resulting score, so the control
+  lines to those two agents show the target arrangement, not the current
+  call order.}
 \label{fig:architecture}%
 \label{fig:pipeline}% alias for cross-referencing both architecture and pipeline aspects
 \end{figure*}
