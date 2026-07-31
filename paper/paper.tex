@@ -217,7 +217,7 @@ inversion~\citep{lawson1974solving, percival2011extraction}, and a
 nine-check verification stage.
 A scenario that fails verification routes to ABSTAIN, which suppresses
 probabilistic guidance and sends a structured abstention to the
-mandatory human review gate instead.
+mandatory Human Review Gate instead.
 An optional LLM layer synthesizes operator-readable narratives but
 cannot modify detection state or bypass verification.  While an event is open, an
 investigator chooses its own read-only queries over the recorded
@@ -260,38 +260,37 @@ multi-agent system, finite-state machine, anomaly detection
 Tsunamis rank among the most destructive geophysical hazards. The 2004
 Indian Ocean event caused approximately 230,000
 fatalities~\citep{synolakis2006tsunami}; the 2011
-T\={o}hoku event caused 19,759 confirmed deaths with 2,553 persons still missing~\citep{npa2023tohoku}, and field surveys recorded
+T\={o}hoku event caused 19,759 confirmed deaths with 2,553 persons still missing~\citep{npa2023tohoku}. Field surveys recorded
 run-up heights exceeding 30\,m along the Sanriku coast~\citep{mori2011survey}. NOAA's operational warning
 centers, the National Tsunami Warning Center (NTWC) and Pacific Tsunami
 Warning Center (PTWC), provide authoritative forecasts using the
 Deep-ocean Assessment and Reporting of Tsunamis (DART) buoy
 network~\citep{bernard2011history} and the Short-term Inundation
 Forecasting for Tsunamis (SIFT) system~\citep{titov2005realtime,
-gica2008development}. These systems meet the rigorous validation
-standards required for life-safety products and represent decades of
-operational development.
+gica2008development}. These systems meet the validation standards required for life-safety
+products and are the result of decades of operational development.
 
 Yet a gap in situational awareness persists. Duty
 scientists who monitor real-time data streams must manually integrate
 heterogeneous sensor feeds (deep-ocean bottom-pressure records, coastal
 water-level gauges, and seismic event catalogs) while simultaneously
 evaluating evolving scenarios and communicating uncertainty to colleagues
-and decision-makers. Under the operational pressure of a developing
-event, this manual integration is both time-consuming and error-prone.
-During fast-developing events, duty scientists may have as few as
-3--5 minutes between initial seismic detection and the need for a
-preliminary assessment~\citep{bernard2015evolution}, while simultaneously monitoring dozens of
-sensor streams across multiple visualization tools.
+and decision-makers. Under the operational pressure of a developing event, this manual
+integration is slow and error-prone. In the fastest cases duty
+scientists may have as few as 3--5 minutes between initial seismic
+detection and the need for a preliminary
+assessment~\citep{bernard2015evolution}, with dozens of sensor streams
+spread across multiple visualization tools.
 
 Agentic AI can address this gap by automating data integration. Recent
 work on LLM-based agents~\citep{yao2023react, wang2024survey} has
 shown the value of combining reasoning with tool use, though
 LLM-driven approaches introduce non-determinism that is unacceptable
-in safety-critical hazard assessment. An agentic framework that constrains LLM involvement to advisory
-roles while using deterministic signal processing for detection and
-assessment can automate data integration, anomaly detection, scenario
-ranking, and structured communication in a pipeline that produces
-human-interpretable probabilistic guidance. The challenge is
+in safety-critical hazard assessment. An agentic framework can constrain LLM involvement to advisory roles
+and use deterministic signal processing for detection and assessment.
+Such a framework can automate the integration step together with
+anomaly detection, scenario ranking, and structured communication, and
+produce human-interpretable probabilistic guidance. The challenge is
 implementing such a framework with the safety properties required in a
 maritime hazard context: no autonomous public communication, no
 interference with operational data streams, deterministic reasoning that
@@ -300,11 +299,10 @@ any guidance is distributed internally.
 
 We present a \textbf{bounded agentic AI framework} that addresses these
 requirements. The system ingests DART buoy observations, NOAA CO-OPS water-level
-data, and USGS seismic event catalogs through the pipeline
-(retrospective evaluation in this paper uses DART bottom-pressure
-records; the CO-OPS and USGS connectors are implemented and unit-tested
-but are not yet exercised in the deployed worker or evaluated on
-historical events). A
+data, and USGS seismic event catalogs. The retrospective evaluation in
+this paper uses DART bottom-pressure records; the CO-OPS and USGS
+connectors are implemented and unit-tested but are not yet exercised in
+the deployed worker or evaluated on historical events. A
 five-state deterministic finite-state machine (FSM) orchestrates a
 sequential pipeline of four processing agents and a Report Agent. An ensemble anomaly
 detector triggers the scenario-inversion and verification stages.
@@ -313,18 +311,17 @@ confirm that the scenario assessment is supported by the data.
 The Human Review Gate prevents any assessment from being
 classified as approved without an explicit review decision.
 A bounded LLM advisory layer provides optional narrative synthesis
-via a four-node LangGraph~\citep{langgraph2024} graph and
-tool-use-driven after-action analysis, constrained to read-only
-operations; deterministic templates remain the report of record,
-with LLM output stored as separate advisory commentary that is
-dropped on any failure or guardrail violation.
+through a four-node graph built with LangGraph~\citep{langgraph2024}
+and a tool-use-driven after-action analysis, both restricted to
+read-only operations. Deterministic templates remain the report of
+record, and LLM output is stored as separate advisory commentary that
+is dropped on any failure or guardrail violation.
 
 \textbf{Contributions.} This work makes two primary contributions
 (items 1--2), four domain applications of established patterns
-(items 3--6), and a public release (item 7), showing how proven
-safety-engineering and AI techniques
-can be integrated into a bounded agentic architecture for tsunami
-assessment:
+(items 3--6), and a public release (item 7). Together they show how
+established safety-engineering and AI techniques can be combined in a
+bounded agentic architecture for tsunami assessment:
 
 \begin{enumerate}
   \item LLM-synthesized operator narratives for
@@ -346,8 +343,9 @@ assessment:
     deployments~\citep{mofjeld1997tsunami}; existing algorithms address
     it through spectral filtering~\citep{chierici2017new, angeli2025tsunami}.
     Our timing-based prediction flags suspect triggers before spectral
-    processing, complementing spectral approaches in existing detection pipelines.
-  \item A modular three-plane architecture (Data, Processing, Output)
+    processing and can run alongside those filters rather than replace
+    them.
+  \item A three-plane architecture (Data, Processing, Output)
     with machine-readable agent permission policies and append-only
     data provenance. Related architectural patterns include the
     Simplex Architecture~\citep{sha2001using} and dual-channel
@@ -402,11 +400,11 @@ from offshore observations using neural networks, and report comparable
 accuracy at 99\% lower computational cost. \citet{kadri2025great}
 combine hydroacoustic signal analysis with ML-based earthquake
 classification for global real-time tsunami assessment in tens of
-seconds. These ML-based systems point toward faster
-tsunami forecasting; our system is complementary, orchestrating DART observations within an agentic pipeline whose
-scenario stage applies the unit-source Green's-function inversion
-method of SIFT~\citep{titov2005realtime} while preserving
-deterministic auditability.
+seconds. These ML-based systems point toward faster tsunami forecasting. Our
+system is complementary: it orchestrates DART observations within an
+agentic pipeline whose scenario stage applies the unit-source
+Green's-function inversion method of SIFT~\citep{titov2005realtime},
+and it keeps that path deterministic and auditable.
 
 \paragraph{Oceanographic data quality.}
 The U.S. Integrated Ocean Observing System (IOOS) maintains the Quality
@@ -420,8 +418,9 @@ summarized into the audit trail for duty-scientist review.
 
 \paragraph{Anomaly detection in time series.}
 BOCPD~\citep{adams2007bayesian} detects distributional shifts in
-streaming data without requiring a fixed window, making it suitable for
-detecting tsunami onset before the full waveform arrives. Isolation
+streaming data without requiring a fixed window. That property suits
+tsunami onset, where the shift appears before the full waveform
+arrives. Isolation
 Forest~\citep{liu2008isolation} provides complementary multi-feature
 anomaly scoring. Wavelet decomposition~\citep{daubechies1992ten},
 specifically the Daubechies-4 (db4) wavelet, isolates energy in the 5--120\,min
@@ -429,9 +428,9 @@ tsunami frequency band. Tidal removal
 follows the classical harmonic analysis framework of
 \citet{pawlowicz2002classical}. For DART-specific tsunami detection,
 \citet{angeli2025tsunami} compare four algorithms (Mofjeld, EOF,
-TDA, and Fast Iterative Filtering) and show that existing
-approaches address seismic wave contamination through spectral or
-temporal filtering rather than source-distance timing prediction.
+TDA, and Fast Iterative Filtering), all of which separate seismic
+contamination spectrally or temporally rather than by source-distance
+timing.
 \citet{rabinovich2015deep} review 50~years of deep-ocean tsunami
 recording and document the differential propagation velocities
 ($\sim$3--4\,km/s for seismic vs.\ $\sim$0.2\,km/s for tsunami) that our
@@ -456,23 +455,20 @@ to separate tsunami signals from noise in ocean-bottom pressure data,
 and \citet{makinoshima2021early} used convolutional neural networks for
 early tsunami inundation forecasting from offshore observations. The
 detection-focused methods above address seismic wave contamination
-primarily through spectral separation. Our Rayleigh wave detector uses a
-timing-based approach: rather than filtering Rayleigh energy from the
-signal, it predicts the expected arrival time from the epicenter
-distance and flags triggers correlating with the predicted seismic
-surface wave window.
+primarily through spectral separation. Our Rayleigh wave detector works on timing instead: rather than
+filtering Rayleigh energy out of the signal, it predicts the
+surface-wave arrival time from the epicentral distance and flags any
+trigger that falls inside that window.
 
 \paragraph{Dual-plane and safety architectures.}
-The concept of isolating a high-assurance safety core from an
-AI-powered primary function is well-established in safety engineering.
+Isolating a high-assurance safety core from an AI-driven primary
+function is an established pattern in safety engineering.
 \citet{sha2001using} proposed the Simplex Architecture with two
 execution domains: a complex (potentially unverified) controller for
 primary operation and a simple verified controller for safety
 assurance. \citet{nesti2025simplex} extend this pattern to
 deep-learning-powered autonomous systems, isolating neural network
 execution in an untrusted domain from safety-critical functions.
-Production autonomous driving systems commonly employ dual-stack
-designs with AI perception and classical safety monitors.
 IEC~61508~\citep{iec61508} defines dual-channel patterns for
 safety-critical systems. For LLM-specific safety,
 \citet{debenedetti2025camel} propose CaMeL, a dual-model architecture
@@ -481,12 +477,10 @@ prompt instructions) of privileged and quarantined LLMs, and
 \citet{shi2025progent} introduce programmable least-privilege control
 for LLM agents with deterministic runtime enforcement. Our
 contribution is not the dual-plane pattern itself, but its application
-to LLM advisory agents in the tsunami warning domain, which introduce
-distinct failure modes (hallucination, prompt injection, confidence
-miscalibration) requiring enforcement mechanisms beyond those designed
-for ML perception systems. Related concepts include constrained
-autonomy, least-privilege agency~\citep{shi2025progent}, and
-structural safety enforcement~\citep{debenedetti2025camel}.
+to LLM advisory agents in the tsunami warning domain. LLM agents
+introduce distinct failure modes (hallucination, prompt injection,
+confidence miscalibration) that call for enforcement mechanisms beyond
+those designed for ML perception systems.
 
 \paragraph{Agentic AI systems.}
 \citet{yao2023react} demonstrated that interleaving reasoning traces
@@ -533,11 +527,12 @@ structured abstention document.
 Automated text generation from geophysical data has a two-decade
 history: \citet{sripada2003sumtime} deployed the SumTime-Mousam
 system for marine weather forecast generation from numerical weather
-prediction data, producing 150~draft forecasts per day post-edited by
-meteorologists, a workflow analogous to our human review gate.  With
-modern LLMs, \citet{lawson2025pixels} evaluated GPT-4V for generating
-severe-weather outlooks from meteorological imagery, documenting
-hallucination and reasoning errors that motivate safety guardrails.
+prediction data. It produced 150~draft forecasts per day, each
+post-edited by a meteorologist, a division of labor analogous to our
+Human Review Gate.  With modern LLMs, \citet{lawson2025pixels}
+evaluated GPT-4V for generating severe-weather outlooks from
+meteorological imagery and documented hallucination and reasoning
+errors of the kind that motivate safety guardrails.
 \citet{lei2025harnessing} survey 70+ studies on LLMs for disaster
 management and identify warning generation as a recognized application,
 but find no tsunami-specific work. To our knowledge, no prior system
@@ -742,17 +737,17 @@ and hand off to one another through typed schemas; a fifth agent
 
 \paragraph{Data Plane.}
 Three ingest connectors poll external NOAA and USGS endpoints at
-configurable poll cycles (DART: 60\,s standard / 15\,s event mode;
+configurable intervals (DART: 60\,s standard / 15\,s event mode;
 CO-OPS: 30\,s; USGS seismic: 15\,s);
 the full DART and CO-OPS station network is shown in
-Appendix~\ref{sec:appendix-coops}. Note that standard-mode DART
+Appendix~\ref{sec:appendix-coops}. Standard-mode DART
 Bottom Pressure Recorder (BPR) data arrives in 6-hour batches of 24~observations at 15\,min
 intervals; the 60\,s poll cycle detects mode transitions promptly. Each connector canonicalizes
 records into validated Pydantic schemas, computes a SHA-256 payload
 hash, appends to an in-memory buffer, and (when a database is configured)
 persists the raw observation to TimescaleDB; records that fail schema
-validation are quarantined. The payload hash is carried in the
-\texttt{InputRef} field of handoff schemas where populated; end-to-end
+validation are quarantined. The payload hash is carried in the input-reference field of the
+handoff schemas where populated; end-to-end
 provenance propagation from raw ingest to the escalation packet is not yet
 complete.
 
@@ -763,10 +758,9 @@ and seismic event parameters (Section~\ref{sec:fsm}). Four specialized
 agents (QC, Anomaly, Scenario, Verification) execute sequentially.
 Each agent exposes a single typed entrypoint, returns a Pydantic
 schema, and cannot modify agent state outside its schema output. Agent
-permissions are specified by a machine-readable YAML policy. The policy
-is a declarative contract evaluated on demand through a queryable
-internal endpoint; nothing in the pipeline execution path consults it,
-and it is not wired as an enforcing interceptor
+permissions are declared in a machine-readable policy matrix that
+documents the intended capability envelope; nothing in the execution
+path consults it, so it does not enforce anything at runtime
 (Section~\ref{sec:safety}).
 
 \paragraph{Output Plane.}
@@ -778,15 +772,14 @@ classification as \texttt{APPROVED\_INTERNAL}
 (Section~\ref{sec:scenario}).
 
 \paragraph{Cross-cutting concerns.}
-An OpenTelemetry~\citep{opentelemetry2024} span wraps each pipeline
-run in the API and the deployed worker, exported to Jaeger when an OTLP
-endpoint is configured; finer-grained per-agent spans are future work. The observability stack (Prometheus, Grafana,
-Jaeger) is deployed; a Prometheus \texttt{/metrics} endpoint reports
-the current FSM state plus domain counters (ingest outcomes, anomaly
-scores, FSM transitions, abstains, verification outcomes, guardrail
-scans) and a per-station scoring-latency histogram, with broader
-end-to-end latency histograms left to future work. Every significant
-system event is appended to an append-only audit log, held in memory
+Each pipeline run in the API and the deployed worker is wrapped in an
+OpenTelemetry~\citep{opentelemetry2024} trace span, exported to Jaeger
+when an OTLP endpoint is configured; per-agent spans are future
+work. A metrics endpoint reports the current FSM state, domain
+counters (ingest outcomes, anomaly scores, FSM transitions, abstains,
+verification outcomes, guardrail scans), and a per-station
+scoring-latency histogram; end-to-end latency histograms are future
+work. Every audited system event is appended to that log, held in memory
 and persisted to TimescaleDB when a database is configured
 (Section~\ref{sec:audit}).
 
@@ -800,17 +793,15 @@ authentication.
 
 \paragraph{Mission Control dashboard.}
 A browser-based dashboard (Figure~\ref{fig:dashboard-layout},
-Appendix~\ref{sec:appendix-dashboard}) provides real-time situational
-awareness via a WebSocket connection streaming FSM state, anomaly
-scores, and audit entries.  The interface is organized into a
-three-column grid: FSM state visualization with transition history, a
-Pacific Ocean map with station markers and epicenter annotation (an
-anomaly score time-series with threshold annotations ($T_1$, $T_2$,
-$T_3$) is embedded along the map's lower edge), a Human Review Gate
-for APPROVE/REJECT/DEFER decisions, a component registry, an active
-event panel, and an append-only audit log.  Dashboard displays are read-only; the sole write path is the
-Human Review Gate, which issues decisions through a separate
-service-authenticated REST endpoint. Reviewer identity on that
+Appendix~\ref{sec:appendix-dashboard}) streams FSM state, anomaly
+scores, and audit entries to the duty scientist over a WebSocket
+connection.  It shows the current state and its transition history, a
+Pacific map of station markers and the epicenter with the anomaly
+score time series and thresholds ($T_1$, $T_2$, $T_3$) along its lower
+edge, the component registry, the active event, and the audit log.
+Displays are read-only; the sole write path is the Human Review Gate,
+which issues APPROVE, REJECT and DEFER decisions through a separate
+service-authenticated endpoint. Reviewer identity on that
 endpoint is caller-asserted and is recorded as such
 (\texttt{CALLER\_ASSERTED}) in the tamper-evident decision record;
 per-reviewer authentication is future work.
@@ -831,8 +822,6 @@ scoring). When anomaly thresholds are crossed, scenario inversion
 is triggered asynchronously; the NNLS solve plus 500-iteration
 bootstrap targets completion within three minutes
 (Section~\ref{sec:discussion}).
-The retrospective evaluation in Section~\ref{sec:evaluation}
-validates the signal-processing pipeline on archived DART data.
 
 % ============================================================
 %  4. Methods
@@ -861,8 +850,8 @@ tsunami signal trips several of these checks:
     datum are flagged, with a $1.5\times$ SUSPECT range.  For DART,
     gross range applies to detided residuals ($\pm0.5$\,m); raw
     water-column heights bypass this check pending the detiding
-    pipeline.  The ingest layer applies a \texttt{math.isfinite()}
-    guard that rejects NaN and Inf values; NDBC 9999.000\,m
+    pipeline.  The ingest layer rejects non-finite values (NaN and
+    infinities), and NDBC 9999.000\,m
     missing-data sentinels are filtered at parse time
     (see Section~\ref{sec:eval-detiding}).
 
@@ -891,12 +880,10 @@ observation as $c = 1 - (0.3\, n_{\text{suspect}} + 1.0\, n_{\text{fail}})
 / n_{\text{tests}}$, where $n_{\text{tests}}$ counts only evaluated
 checks (excluding \texttt{NOT\_APPLICABLE}, \texttt{NOT\_EVALUATED},
 and \texttt{MISSING}).
-Records with $c < 0.5$ are marked \texttt{record\_usable: false}.
-The flag is advisory: anomaly scoring deliberately consumes all records
-regardless, because a genuine tsunami signal trips the same spike and
-rate-of-change checks. The deployed worker summarizes each batch's QC
-into the audit trail (record and usable counts, minimum confidence, and
-the number of records whose checks produced no definitive result).
+Records with $c < 0.5$ are marked unusable. As noted above, the mark is
+advisory: anomaly scoring consumes every record regardless. The
+deployed worker summarizes each batch of QC results into the audit
+trail.
 
 \subsection{Anomaly Detection}
 \label{sec:anomaly}
@@ -923,14 +910,12 @@ constituent amplitudes (M2, S2, etc.) that enable quantitative
 validation of detiding quality (Section~\ref{sec:eval-detiding}).
 This approach corresponds to Method~1 in the five-method comparison
 of~\citet{percival2015detiding}, who found that RMSE varies over two
-orders of magnitude among detiding methods; the Mofjeld polynomial
-requires only 3~hours of prior data but trades waveform
-characterization accuracy for speed.
-The Mofjeld polynomial remains operational in NOAA's
-Tsunami Detection Algorithm~\citep{mofjeld1997tsunami} due
-to its minimal data requirements;
-we accept the 30-day calibration constraint in exchange for
-physically interpretable constituent amplitudes.
+orders of magnitude among detiding methods.  The Mofjeld polynomial
+needs only 3~hours of prior data, which is why it remains operational
+in NOAA's Tsunami Detection Algorithm~\citep{mofjeld1997tsunami}, but
+it trades waveform characterization accuracy for that speed.  We
+accept the 30-day calibration constraint in exchange for the
+interpretable constituents.
 The fit window spans 30 days of pre-event standard-mode data,
 which cleanly resolves the six dominant constituents per the
 Rayleigh criterion; the closely spaced P1--K1 and K2--S2 pairs require
@@ -939,18 +924,18 @@ The detided residual $r(t) = \eta(t) - \hat{\eta}_T(t)$ is then
 bandpass-filtered with a causal 4th-order Butterworth filter
 (forward-only IIR, initialized with steady-state conditions;
 passband $0.000139$--$0.00333$\,Hz, corresponding to 5--120\,min periods)
-to isolate the tsunami frequency band.  The causal (forward-only)
-implementation ensures that the filtered value at time $t$ depends
-only on observations at or before $t$, as required for real-time
-processing where future data is unavailable.
+to isolate the tsunami frequency band.  Because the filter is causal,
+the filtered value at time $t$ depends only on observations at or
+before $t$, which is what real-time processing requires.
 
 \paragraph{Residual post-processing.}
 The evaluation figures (Section~\ref{sec:eval-tohoku} and Appendix~\ref{sec:appendix-case-studies})
 display detided residuals produced by the offline extraction pipeline
-summarized in Algorithm~\ref{alg:residual}.  This pipeline applies
-despike filtering, tidal removal via IRLS, pre-event linear detrend, an
-optional rolling-median baseline correction (window size depends on
-epicentral distance and event), and Hampel spike cleaning.
+summarized in Algorithm~\ref{alg:residual}.  Two further steps act on
+the event residual, where the algorithm shows their equivalents only
+for the calibration window: an optional rolling-median baseline
+correction whose window depends on epicentral distance and event, and
+a Hampel spike clean.
 
 \begin{algorithm}[t]
 \caption{Detided Residual Extraction}
@@ -1125,8 +1110,7 @@ earthquakes ($M_w > 8.5$), significant energy extends to 100--300\,s,
 overlapping the lower edge of the 5--120\,min tsunami passband
 (see the far-field seismic contamination in
 Section~\ref{sec:eval-tohoku}).
-Detection therefore relies on timing correlation with the
-earthquake epicenter rather than spectral separation. The expected Rayleigh arrival time is
+The expected Rayleigh arrival time is
 $t_R = d / v_R$ where $d$ is the haversine distance and
 $v_R \approx 3.6$\,km/s is the oceanic Rayleigh wave group
 velocity at ${\sim}20$\,s dominant period~\citep{lay1995modern}.
@@ -1152,10 +1136,10 @@ leave IDLE regardless of magnitude. All
 subsequent transitions are driven by the ensemble anomaly score $s$
 relative to three configurable thresholds: $T_1 = 0.35$,
 $T_2 = 0.60$, $T_3 = 0.85$ (Table~\ref{tab:fsm}).
-These thresholds are design constants chosen to provide
-progressive escalation with meaningful separation between stages;
-$T_3$ is intentionally high to reduce false escalation (see
-Limitation~6 in Section~\ref{sec:discussion} for calibration status).
+These thresholds are design constants, spaced to separate the
+escalation stages, with $T_3$ set high to reduce false escalation.
+They are not calibrated against historical events (see Limitation~6 in
+Section~\ref{sec:discussion}).
 
 \begin{table}[t]
 \centering
@@ -1190,14 +1174,12 @@ activation) prevents a sub-$T_1$ ensemble score from holding the FSM
 back: from MONITOR it advances to INVESTIGATE, and de-escalation from
 INVESTIGATE is suppressed (the FSM advances to ASSESS instead).  The
 same holds at ASSESS, where the override is evaluated before the
-$s < T_2$ check and so escalates rather than de-escalates.  A low
-interim ensemble score therefore cannot hold down or de-escalate an
-event with a large earthquake and active event-mode DART reporting.\\
+$s < T_2$ check and so escalates rather than de-escalates.\\
 $\P$ The magnitude test is not sufficient on its own: the event region
 must also be one of the configured tsunamigenic zones, or the FSM stays in
 IDLE however large the earthquake.\\
-$\S$ Explicit event resolution is implemented as
-\texttt{resolve\_event()}. No current API route invokes it, and the
+$\S$ Explicit event resolution exists in the state machine but no
+API route invokes it, and the
 caller-asserted review decisions (APPROVE, REJECT, DEFER) are all
 recorded without changing FSM state.\\
 See Appendix~\ref{sec:appendix-fsm} for the complete transition rule
@@ -1392,8 +1374,8 @@ The inversion operates in three constraint stages:
 \texttt{SEISMIC\_ONLY} (magnitude scaling, no DART data),
 \texttt{DART\_CONSTRAINED} (initial DART waveform onset), and
 \texttt{MULTI\_STATION} (multiple DART stations providing tighter
-constraints). The active stage is recorded in the
-\texttt{ScenarioAssessment} schema and propagated to the final report.
+constraints). The active stage is recorded with the assessment and
+carried into the final report.
 
 \paragraph{Seismic-only estimate.}
 When the FSM enters MONITOR and no DART data are yet available, a
@@ -1464,8 +1446,9 @@ Rayleigh wave$\dagger$ & ---                         & Timing match   \\
 \end{table}
 
 \paragraph{ABSTAIN invariant.}
-The \texttt{VerificationResult} schema enforces a Pydantic
-\texttt{model\_validator} that:
+Two independent defenses hold this invariant, one of which is live
+today. The verification result schema carries a model validator
+that:
 \begin{enumerate}
   \item Requires \texttt{abstain\_required=true} whenever
     \texttt{overall=FAIL}.
@@ -1474,9 +1457,11 @@ The \texttt{VerificationResult} schema enforces a Pydantic
   \item Requires a non-empty \texttt{abstain\_reason} string when
     \texttt{abstain\_required=true}.
 \end{enumerate}
-The pipeline router (\texttt{route\_after\_verify}) is fail-closed:
-missing, malformed, or FAIL verification results all route to the
-ABSTAIN path. The ABSTAIN output is a structured document recording the reason
+The pipeline router is fail-closed independently of the schema:
+missing, malformed, and FAIL verification results all route to the
+ABSTAIN path.  The missing case is the one that fires today, since the
+live worker reaches ASSESS and ESCALATE with no verification result at
+all and abstains there. The ABSTAIN output is a structured document recording the reason
 for abstention, routed to the Human Review Gate.
 
 \subsection{Report Generation and Human Review}
@@ -1495,7 +1480,7 @@ The Report Agent generates narrative summaries from deterministic
 templates parameterized by scenario results and verification outcomes.
 When an LLM API key is configured, the agent supplements template output
 with a separately stored narrative (the deterministic template text is
-emitted unchanged either way) synthesized via a four-node LangGraph graph:
+emitted unchanged either way) synthesized by a four-node LangGraph pipeline:
 \emph{retrieval} (historical event retrieval by magnitude, pure Python),
 \emph{evidence} (sensor data summary, fast model),
 \emph{scenario} (inversion interpretation, fast model), and
@@ -1531,7 +1516,7 @@ product even though no entry on the current product list contains it.
 ``All Clear'' appears in neither document, and is scanned
 because it reads as an authoritative end-of-threat statement, which is
 the role NWSI 10-701 assigns to the Cancellation product.
-Prior to matching,
+Before matching,
 zero-width characters (U+200B--U+200F, U+2060--U+2064, and related)
 are stripped to prevent term-splitting bypass.  The scanner then folds
 visually confusable characters to their Latin equivalents, applies NFKC
@@ -1598,12 +1583,13 @@ dedicated \texttt{investigator\_writer} role alone.  The
 select on that table, and neither does the API's own role, so a finding can be
 neither written nor read by the code that escalates.  Migration 009 makes
 exactly one grant on that table, and the integration suite asserts the
-insert denial against a provisioned database.  The investigator also runs only once the worker has persisted a
-checkpoint, binding its findings to that row while reading the event's audit
-trail for evidence, so it sits off the detection path and cannot add latency
-to ingest, scoring, or a transition, and every finding passes the same guardrail
-scanner as any other emitted narrative, with a violating finding dropped
-whole rather than partly rewritten.  Re-running an issue over the same
+insert denial against a provisioned database.  The investigator runs on request, and only once the worker has
+persisted a checkpoint. It binds its findings to that row and reads
+the event's audit trail for evidence, so it sits off the detection
+path and cannot add latency to ingest, scoring, or a transition. Every
+finding passes the same guardrail scanner as any other emitted
+narrative, and a violating finding is dropped whole rather than partly
+rewritten.  Re-running an issue over the same
 checkpoint, model and prompt version yields the same deterministic invocation
 identity, so the append-only table records one finding per question rather
 than accumulating opinions on unchanged evidence.
@@ -1639,19 +1625,25 @@ each agent in a machine-readable YAML policy matrix. The
 check, but the interface is passive: no agent or pipeline node consults
 it during execution, so the matrix documents the intended capability
 envelope rather than enforcing it at runtime.
-Three implementation layers enforce safety constraints:
-infrastructure (no outbound write credentials to NOAA systems),
-database (no UPDATE or DELETE on audit tables), and code (guardrail
-scanner, schema validators, FSM constraints).
-This multi-layer defense is consistent with the Simplex Architecture
-principle of checked redundancy~\citep{sha2001using}, though the
-current implementation has not undergone formal safety integrity
-level assessment.
+What is enforced sits in three places, none of them the matrix. The
+connectors issue GET requests only, and the deployment holds no
+credential that writes to any NOAA system, so the software cannot
+write to an operational feed; it has no dissemination or physical
+actuation capability of any kind. No role is granted UPDATE or DELETE
+on the audit tables, the four roles that predate the assessment tables
+have both explicitly revoked, and a database trigger blocks them
+regardless of grants. In code, the guardrail scanner, the schema
+validators, and the FSM transition rules each refuse the inputs they
+are written to refuse.
+This layering follows the Simplex Architecture principle of checked
+redundancy~\citep{sha2001using}, though nothing here has undergone a
+formal safety integrity level assessment.
 
 \begin{table}[t]
 \centering
 \caption{Permission codes. Each agent's allowed codes are declared in
-  \texttt{policy/permissions.yaml}.}
+  \texttt{policy/permissions.yaml}. The declaration is queryable but is
+  not consulted during execution; see the text.}
 \label{tab:permissions}
 \begin{tabular}{lll}
 \toprule
@@ -1672,9 +1664,14 @@ AO & APPROVE\_OUTPUT & Approve outputs \\
 
 \paragraph{Append-only audit trail.}
 \label{sec:audit}
-Every significant system event is appended to an audit log as an
-\texttt{AuditEntry} containing a UUID, UTC timestamp, event ID,
-pipeline trace ID, event type, producer, and a full data snapshot.
+Each FSM transition, review decision, abstention, and pipeline outcome
+is appended to an audit log as an \texttt{AuditEntry} carrying a UUID,
+UTC timestamp, event ID, pipeline trace ID, event type, producer, and
+a full data snapshot. A transition writes its entry before the
+in-memory state changes and aborts if that write raises, so the
+in-memory trail cannot skip a transition; the database write is a
+separate best-effort transaction whose failure is logged while
+processing continues.
 Entries are never modified or deleted (enforced by database role
 permissions). Each connector records a SHA-256 hash of the raw payload at the ingest
 boundary and carries it in the handoff schemas, so a downstream record
@@ -1747,9 +1744,8 @@ Table~\ref{tab:seismic-events} summarizes the five evaluation earthquakes,
 sourced from the USGS FDSN event web service
 (\texttt{data/*/seismic\_event.json}).
 The events span a magnitude range of $M_w$\,8.1--9.1 and include four
-subduction-zone thrust events along the Pacific Rim and one outer-rise
-normal-faulting event (Samoa 2009), testing generalization across
-diverse source mechanisms.
+subduction-zone thrust events along the Pacific Rim and one outer-rise normal-faulting event (Samoa 2009), so the set covers
+two source mechanisms rather than one.
 
 \begin{table}[!htbp]
 \centering
@@ -1791,11 +1787,9 @@ bandpass-dependent threshold and wavelet components are computed on the
 Nyquist-clamped filter output and marked unreliable, while BOCPD
 operates on the pre-bandpass detided residual. Degraded stations are
 still scored but interpreted conservatively.
-Stations in DART event mode (high-cadence sampling) provide the
-highest-confidence detections, though not every event-mode station
-crosses the thresholds: detection remains dependent on distance and
-signal strength (46403 for T\={o}hoku and 46412 for Chile stay below
-$T_1$).
+Event mode alone does not produce a crossing: 46403 for
+T\={o}hoku and 46412 for Chile stay below $T_1$, so distance and
+signal strength still govern the outcome.
 
 \begin{table}[!htbp]
 \centering
@@ -1974,10 +1968,9 @@ The high ensemble scores at 46408, 46402, and 46411 therefore reflect
 seismic energy, not tsunami wave detection.
 
 \noindent\textbf{Agentic pipeline trace.}
-At $M_w$\,9.1 with depth 29\,km, the seismic-only escalation
-path fires immediately: the FSM transitions
-IDLE~$\to$~MONITOR~$\to$~ESCALATE within seconds of the USGS
-trigger, placing the event in human review before any DART data
+At $M_w$\,9.1 with depth 29\,km, the seismic-only escalation path fires on the seismic parameters
+alone: the FSM transitions IDLE~$\to$~MONITOR~$\to$~ESCALATE on the
+USGS trigger, placing the event in human review before any DART data
 arrives.  In parallel, the Anomaly Agent begins processing
 incoming DART observations.  Station 21418 (560\,km) crosses $T_1$ and $T_3$ at +3.6\,min.  That
 crossing is a pressure excursion consistent with coseismic seafloor
@@ -2051,10 +2044,13 @@ complete trace example in this format.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.82\linewidth]{figures/fig_tohoku_residuals.pdf}
-\caption{Detided residuals (tsunami waveform) after removing
-  the 8-constituent harmonic tidal prediction fitted on 30-day
-  calibration data.  The isolated tsunami signal shows amplitude
-  attenuation with distance.  Processing: level-shift correction,
+\caption{Detided residuals after removing the 8-constituent harmonic
+  tidal prediction fitted on 30-day calibration data.  At the
+  near-field stations the isolated tsunami signal attenuates with
+  distance.  In the most distant panels the excursions are seismic
+  pressure perturbations; 46408 sits at the boundary, with its
+  predicted arrival near the end of the record.
+  Processing: level-shift correction,
   pre-event linear detrend, a 120\,min centered rolling median for
   stations beyond 3{,}000\,km to remove residual tidal curvature, and
   a Hampel spike filter.  This figure shows the detided residual
@@ -2128,7 +2124,7 @@ cannot be read as a measurement of what coarse sampling costs.
 \subsection{Detiding Validation}
 \label{sec:eval-detiding}
 
-Anomaly detection quality depends critically on tidal removal accuracy.
+Anomaly detection quality depends on tidal removal accuracy.
 We validate the 8-constituent harmonic fit (Eq.~\ref{eq:tidal}) on 30~days of calibration data
 per station (\texttt{scripts/validate\_detiding.py}).
 For each station, we report the full-fit residual RMS, a holdout RMS
@@ -2189,11 +2185,12 @@ detector and the maximum of wavelet and BOCPD scores. To understand
 which components drive detection, we decompose scores across the
 sliding-window timeline for near-field and far-field stations
 (Figure~\ref{fig:score-decomposition}).
-By design, near-field stations receive higher-amplitude arrivals
-that should activate both the threshold and wavelet detectors, while
-far-field stations receive attenuated signals where the BOCPD detector
-is expected to contribute more via distributional-shift detection in
-the broadband residual (Figure~\ref{fig:score-decomposition}).
+The design expectation is that near-field stations, which receive
+higher-amplitude arrivals, activate the threshold and wavelet
+detectors, while far-field stations, which receive attenuated signals,
+depend more on BOCPD detecting a distributional shift in the broadband
+residual.  The ablation in \S\ref{sec:eval-ablation} tests that
+expectation against the scores.
 
 \begin{figure}[!htbp]
 \centering
@@ -2330,7 +2327,7 @@ the signal is marginal at this distance (4{,}830\,km).
 \subsection{Quiet-Period False Trigger Analysis}
 \label{sec:eval-false-positive}
 
-To measure the false positive rate, we process 30~days of quiet-period
+To measure the quiet-period false trigger rate, we process 30~days of
 DART data (June 2011, no significant tsunamis) for the same eight
 stations (\texttt{scripts/run\_false\_positive\_evaluation.py}).
 The first 15~days serve as calibration; the remaining 15 days
@@ -2438,15 +2435,16 @@ aggregation tests over \texttt{determine\_outcome}.
 \subsection{Pipeline Latency}
 \label{sec:eval-latency}
 
-Table~\ref{tab:latency} reports measured latencies from
+Table~\ref{tab:latency} reports component latencies, measured where the component is local and stated as design targets where it is network-bound, from
 \texttt{scripts/profile\_latency.py} (50 iterations, Apple M-series
 laptop). The anomaly detection pipeline (detiding, bandpass filtering,
 wavelet analysis, BOCPD, and ensemble fusion) completes in
 $\sim$47\,ms at p95, dominated
 by the BOCPD computation ($\sim$44\,ms). QC checks process 10 records
-in ${\sim}0.12$\,ms, and FSM transitions are sub-millisecond. The
-computational cost of the signal processing pipeline is well within
-real-time requirements for 1-minute DART event-mode data.
+in ${\sim}0.12$\,ms, and FSM transitions are sub-millisecond. Against a 1-minute event-mode sampling interval, single-station
+compute is not what bounds the deployed worker; the ingest poll
+interval and the network round trip are, and those rows are design
+targets rather than measurements.
 
 \FloatBarrier
 \subsection{Synthetic Scenario Verification}
@@ -2532,10 +2530,11 @@ is also the floor the verification layer's DART coverage check enforces,
 below which it returns FAIL.
 
 Figure~\ref{fig:physics-summary} presents the four-scenario summary.
-Together, these scenarios verify correct detection across distance
-ranges, false positive rejection (sub-threshold amplitude, with the
-seismic quiet penalty adding margin), and
-continued operation under partial network failure.
+The four scenarios exercise the detection path on inputs the simulator
+built from the same assumptions the detector uses, so they show the
+software behaving as designed on those inputs.  They do not measure
+how the detector responds to signals the simulator does not
+reproduce.
 
 \begin{figure}[!htbp]
 \centering
@@ -2555,7 +2554,7 @@ continued operation under partial network failure.
 \caption{Four-scenario physics simulation summary.
   (a)~M8.5 Aleutian large tsunami: stations within detection range.
   (b)~M7.0 moderate earthquake: zero false escalation.
-  (c)~Meteotsunami: correctly rejected; the 0.10\,m amplitude is below
+  (c)~Meteotsunami: no escalation; the 0.10\,m amplitude is below
   the 0.15\,m CO-OPS detection threshold (the seismic quiet penalty
   adds margin but is not the primary rejection mechanism).
   (d)~Partial outage: 2 of 6 online stations detect, both exceeding
@@ -2578,11 +2577,11 @@ Figure~\ref{fig:simulation-station-map} shows the simulation station
 network for Scenario~1.
 Figure~\ref{fig:synthetic-waveforms} shows the raw synthetic records
 at all nine stations (six DART bottom-pressure recorders and three
-CO-OPS tide gauges).  DART station amplitudes (0.025--0.032\,m) reflect
-the combined effects of geometric spreading (distances
-2{,}448--3{,}764\,km) and azimuthal directivity: the Aleutian
-fault strike (250\textdegree) directs maximum radiation NNW, whereas
-the Pacific stations lie south or east of the epicenter, receiving
+CO-OPS tide gauges).  DART station amplitudes (0.025--0.032\,m) follow from two terms the
+simulator applies: geometric spreading over distances of
+2{,}448--3{,}764\,km, and azimuthal directivity, where the Aleutian
+fault strike (250\textdegree) directs maximum radiation NNW while the
+Pacific stations lie south or east of the epicenter and receive
 40--50\% of the peak amplitude.  CO-OPS coastal stations show
 ${\sim}10\times$ larger amplitudes (0.23--0.28\,m) due to Green's Law
 shoaling amplification (${\sim}3.8$--$4.5\times$) applied at nearshore depths
@@ -2640,8 +2639,9 @@ within the sliding-window timelines; two of the three CO-OPS stations
 cross $T_3$ in the timelines, and all three do so on the full event
 window due to Green's-Law shoaling amplification (see above).  The onset time varies by station, reflecting the
 206--333\,min spread in arrival times across the nine stations.  For the
-M7.0 event, the scores remain near zero throughout, confirming correct
-rejection of the non-tsunamigenic signal.
+M7.0 event, the scores remain near zero throughout: the injected
+amplitude stays below the station threshold, so the threshold
+component contributes nothing.
 
 \begin{figure}[htbp]
 \centering
@@ -2650,8 +2650,8 @@ rejection of the non-tsunamigenic signal.
   Left column: M8.5 Aleutian scenario (all nine stations: six DART,
   three CO-OPS) showing
   rapid threshold crossings after tsunami arrival at each station.
-  Right column: M7.0 moderate earthquake (three stations) showing
-  correct rejection (all scores remain below $T_1 = 0.35$).
+  Right column: M7.0 moderate earthquake (three stations); all scores
+  remain below $T_1 = 0.35$.
   Colors: blue = ensemble, green = threshold, orange = wavelet,
   purple = BOCPD.  Horizontal lines mark $T_1$, $T_2$, $T_3$.}
 \label{fig:synthetic-score-timeline}
@@ -2785,7 +2785,7 @@ budget because the NNLS solver (Eq.~\ref{eq:nnls}) iterates over the propagation
 the 3-minute target assumes a pre-loaded database with ${\leq}200$
 candidate subfaults. When the LLM synthesis layer is enabled, a single
 API call (evidence, scenario, or narrative node) adds 3--8\,s of wall-clock
-time, but runs on the template-only path in $<1$\,s when the API is
+time, and falls back to the template-only path in $<1$\,s when the API is
 unavailable. The end-to-end target of ${\leq}5$ minutes from data
 availability to Tier~1 report is within the same order of magnitude as
 the PTWC's initial bulletin timeline~\citep{bernard2015evolution},
@@ -2921,8 +2921,7 @@ beyond the tested amplitude range at the longest periods
   INV = INVESTIGATE, ASS = ASSESS, ESC = ESCALATE).  The ESCALATE
   boundary shifts upward by roughly a factor of three at most periods
   between the quietest and noisiest conditions (and beyond the tested
-  amplitude range at 90--120\,min periods), demonstrating graceful
-  degradation under realistic noise variation.}
+  amplitude range at 90--120\,min periods).}
 \label{fig:noise-triptych}
 \end{figure}
 
@@ -2991,9 +2990,7 @@ ${\sim}6.8$\,h, beyond the evaluation window.  NOAA states the same
 limitation for the operational 3\,cm criterion: a station ``may record
 an amplitude of less than 3 cm at the low-amplitude fringe of the main
 energy beam for a tsunami that is, in fact, large and
-destructive"~\citep[pp.~31--32]{gonzalez2005nthmp}.  This highlights a sensitivity limitation
-for far-field stations where tsunami amplitudes approach the detection
-floor.  The earliest sliding-window detections per event
+destructive''~\citep[pp.~31--32]{gonzalez2005nthmp}.  Separately, the earliest sliding-window detections per event
 (2.7--12.3\,min post-earthquake) correspond to coseismic deformation and seismic
 surface-wave arrivals on the BPR, not
 the tsunami wave itself; the system does not currently distinguish
@@ -3109,16 +3106,12 @@ Fifteenth, the anomaly-score-driven escalation path depends on
 ocean observations: the ensemble score that advances the FSM through
 INVESTIGATE and ASSESS is computed from water-level data, and the
 ASSESS-to-ESCALATE seismic override requires DART event-mode
-confirmation.  To complement this, the FSM also implements a
-seismic-only escalation path
-aligned with PTWC/JMA operational practice: large shallow earthquakes
-($M \geq 7.5$, depth $< 100$\,km) in tsunamigenic zones trigger
-immediate escalation to human review without requiring ocean data.
-DART observations, when available, refine the assessment during the
-15--30 minute window between seismic detection and tsunami wave arrival.
-This two-phase architecture mirrors the standard operational model
-where initial warnings are seismic-based and subsequent bulletins
-incorporate sea-level confirmation~\citep{bernard2015evolution}.
+confirmation.  An event whose ocean signal never lifts the ensemble
+score to $T_3$, and which lacks the DART event-mode activation the
+override requires, can still reach ESCALATE through the seismic-only
+path (Section~\ref{sec:fsm}), which carries no sea-level evidence at
+all.  The routes into ESCALATE therefore do not rest on comparable
+grounds.
 Sixteenth, the FSM advances based on the maximum single-station
 ensemble score; no multi-station spatial coherence criterion gates
 the escalation decision.  The data-coverage verification check
@@ -3205,13 +3198,15 @@ supports independent review of FSM transitions, verification outcomes,
 and human review decisions; complete raw-to-output
 \texttt{input\_refs} provenance is not yet exposed end to end.
 
-Potential risks include over-reliance on the system's outputs if
-duty scientists do not maintain independent judgment, and
-misinterpretation of \texttt{APPROVED\_INTERNAL} as an official
-product. Both risks are mitigated by the disclaimer mechanism and
-the system's framing as a situational awareness tool, not a warning
-system. The code and design documents are public to allow
-independent scrutiny.
+Potential risks include over-reliance on the system's outputs if duty
+scientists do not maintain independent judgment, and misinterpretation
+of the \texttt{APPROVED\_INTERNAL} status as an official product.  The
+disclaimer carried on every emitted report and the framing of the
+system as a situational awareness tool are partial answers to both,
+but neither is evidence that an operator under time pressure reads a
+disclaimer, and we have not tested that.  The code and design
+documents are public so that the claims made here can be checked
+independently.
 False negatives pose a distinct risk: if the ensemble score remains
 below $T_1$ during a genuine event (e.g., due to DART station
 outage or an atypical source), the system's quiescent display may
@@ -4483,9 +4478,9 @@ Station 51426 reaches $T_3$ at +6.6\,min.
 Station 51425 (804\,km) crosses $T_2$ at +17.8\,min in the
 sliding timeline; over the full 6-hour window its ensemble is
 0.588, with threshold as the sole contributing component
-(wavelet and BOCPD both zero), demonstrating that the ensemble's
-threshold-heavy renormalization preserves detection even when the
-statistical component contributes nothing.
+(wavelet and BOCPD both zero).  With the statistical term at zero the
+renormalized weights leave the threshold component carrying the score
+on its own, which is enough to clear $T_1$ but not $T_2$.
 Audit trail:
 (1)~\texttt{state\_transition}: IDLE~$\to$~MONITOR ($M$\,8.1);
 (2)~\texttt{state\_transition}: MONITOR~$\to$~ESCALATE
