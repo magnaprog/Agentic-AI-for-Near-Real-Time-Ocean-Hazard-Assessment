@@ -447,12 +447,16 @@ _STAGE_LEADINS = [
         ),
         "ScenarioAssessment": (
             "Scenario and Verification envelopes illustrate the expected\n"
-            "output schema (the inversion and verification agents need real\n"
-            "DART waveforms, which synthetic events do not provide):"
+            "output schema; this script runs the QC agent, the detector and\n"
+            "the FSM, and does not run those two agents:"
         ),
     },
     {
-        "QC": "QC Agent confirms data usability:",
+        "QC": (
+            "QC Agent output for the first record of the stream. With no\n"
+            "history, zero checks evaluate and confidence 1.0 is the\n"
+            "no-evidence convention rather than a pass:"
+        ),
         "AnomalyAssessment": (
             "Anomaly Agent: low score ({score:.3f}) reflects the absence\n"
             "of a detectable tsunami signal:"

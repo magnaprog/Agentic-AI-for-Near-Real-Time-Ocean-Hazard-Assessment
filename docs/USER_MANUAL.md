@@ -1558,7 +1558,7 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 
 **QARTOD**: Quality Assurance of Real-Time Oceanographic Data. A set of standardized data quality tests maintained by the U.S. Integrated Ocean Observing System (IOOS).
 
-**Scenario Agent**: The pipeline agent that performs NNLS inversion and uncertainty estimation.
+**Scenario Agent**: The pipeline agent specified to perform NNLS inversion and uncertainty estimation. The deployed worker does not run it; see section 8.
 
 **SIFT**: Short-term Inundation Forecasting for Tsunamis. NOAA's operational tsunami forecast tool based on a precomputed database of unit-source Green's functions.
 
@@ -1568,6 +1568,6 @@ Dependencies are declared with lower bounds rather than pinned versions, so an e
 
 **Trace ID**: A UUID identifying a single end-to-end pipeline execution (one processed batch). The run-scoped audit entries share it: FSM state transitions, the seismic trigger's `seismic_provenance`, a seismic-only `abstain_triggered`, `qc_complete`, `anomaly_scored`, and the pipeline-node entries. The per-event observation-provenance entries (`input_provenance`, `provenance_capped`) are deliberately event-scoped, not trace-scoped: they accumulate across many batches and are queried by `event_id` (via `/api/lineage/event/{event_id}` and the escalation packet), so they appear under `__no_trace__` in a single-trace view.
 
-**Verification Agent**: The pipeline agent that runs nine checks against the scenario assessment and enforces the ABSTAIN path.
+**Verification Agent**: The pipeline agent that defines nine checks over a scenario assessment and the ABSTAIN routing they feed. No runtime component assembles its input, so the checks do not run on live data.
 
 **Wavelet score**: An anomaly component score derived from Daubechies-4 wavelet decomposition, measuring energy concentration in the tsunami frequency band (5-120 min periods).

@@ -85,8 +85,8 @@ transition with its trigger condition:}
 \end{tracebox}
 
 \noindent\textit{Scenario and Verification envelopes illustrate the expected
-output schema (the inversion and verification agents need real
-DART waveforms, which synthetic events do not provide):}
+output schema; this script runs the QC agent, the detector and
+the FSM, and does not run those two agents:}
 
 \tracelabel[tracescenario]{Scenario Assessment (illustrative)}
 \begin{tracebox}
@@ -150,7 +150,9 @@ with only a small BOCPD contribution (0.19) from the broadband
 residual.
 
 \medskip
-\noindent\textit{QC Agent confirms data usability:}
+\noindent\textit{QC Agent output for the first record of the stream. With no
+history, zero checks evaluate and confidence 1.0 is the
+no-evidence convention rather than a pass:}
 
 \tracelabel[traceqc]{QC Agent Output}
 \begin{tracebox}

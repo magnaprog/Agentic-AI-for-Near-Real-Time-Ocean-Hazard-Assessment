@@ -182,6 +182,49 @@ def test_printed_compass_directions_match_the_bearing() -> None:
     assert checked >= 30, f"only {checked} directions were checked; format changed?"
 
 
+#: Shallow-water tsunami speed the paper reasons with, and the evaluation
+#: window the detection artifacts are scored over.
+_SHALLOW_WATER_M_S = 198.0
+_WINDOW_HOURS = 6.0
+
+
+def test_standard_mode_scores_are_confounded_by_distance() -> None:
+    """The paper says twelve of the thirteen standard-mode records sit beyond
+    the distance a tsunami covers in the evaluation window.
+
+    That arithmetic is the reason the paper refuses to read low standard-mode
+    scores as a measurement of what coarse sampling costs, and an appendix
+    passage once asserted the opposite reading. The numbers come from the
+    per-event results tables, so a table edit could silently flip the
+    conclusion in three places at once.
+    """
+    tex = PAPER.read_text()
+    reach_km = _SHALLOW_WATER_M_S * _WINDOW_HOURS * 3600.0 / 1000.0
+
+    beyond: list[str] = []
+    inside: list[str] = []
+    for event in EVENTS:
+        for line in _table(tex, f"{event}-results").splitlines():
+            row = re.match(r"^\s*(\d{5})\S*\s*&\s*([0-9{},]+)\s*&\s*(\w+)", line)
+            if row is None or row.group(3) != "std":
+                continue
+            printed = float(row.group(2).replace("{,}", "").replace(",", ""))
+            label = f"{event}/{row.group(1)} at {printed:,.0f} km"
+            (beyond if printed > reach_km else inside).append(label)
+
+    assert len(beyond) + len(inside) == 13, (
+        f"expected 13 standard-mode records, found {len(beyond) + len(inside)}; "
+        "the paper's count needs updating"
+    )
+    assert len(beyond) == 12, f"expected 12 beyond the {reach_km:,.0f} km reach: {beyond}"
+    # Samoa 51407 is the one standard-mode record close enough that the
+    # clamped passband is a live explanation for its zero score. The appendix
+    # says so by name, so losing it would leave that sentence unsupported.
+    assert [s.split(" at ")[0] for s in inside] == ["samoa/51407"], (
+        f"the one record inside the reach changed: {inside}"
+    )
+
+
 def test_the_two_tables_print_the_same_distance_for_a_station() -> None:
     """A station's distance appears in both its event's tables.
 
