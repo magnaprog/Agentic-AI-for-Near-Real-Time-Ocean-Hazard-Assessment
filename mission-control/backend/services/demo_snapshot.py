@@ -143,7 +143,7 @@ TOHOKU_SNAPSHOT: dict[str, Any] = {
             "timestamp_utc": "2011-03-11T05:49:30+00:00",
             "event_id": "tohoku-2011-03-11T05:46:24Z",
             "event_type": "escalation_packet_generated",
-            "producer": "report_node",
+            "producer": "escalation_generator",
             "data": {
                 "handoff_id": "esc-tohoku-001",
                 "station_count": 8,

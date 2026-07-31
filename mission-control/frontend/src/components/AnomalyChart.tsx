@@ -22,9 +22,9 @@ interface Props {
 interface DataPoint {
   /** Epoch milliseconds. The x-axis is a real time scale, not a category
    *  axis: with a string dataKey Recharts spaces points evenly regardless of
-   *  the interval between them, so a 2-second gap and the 30-second keepalive
-   *  gap drew the same width and any slope read off this chart was a
-   *  distorted rate. */
+   *  the interval between them, so a point two seconds after its neighbour
+   *  and one a minute after drew the same width, and any slope read off this
+   *  chart was a distorted rate. */
   t: number;
   time: string;
   score: number;

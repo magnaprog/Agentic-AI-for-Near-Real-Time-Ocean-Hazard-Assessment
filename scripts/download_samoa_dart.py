@@ -16,12 +16,12 @@ station:
      resolves ("first" row in native archive order wins).
 
 Key stations (from NCEI 2009 Samoa DART Summary - 24 stations total):
-  51425 - ~804 km NNE, near epicenter (nearest)
+  51425 - ~804 km NW, near epicenter (nearest)
   51426 - ~932 km SSE, near Tonga
   54401 - ~1962 km S, south of Samoa
-  51407 - ~4247 km NE, off Hawaii
-  52402 - ~4829 km W, NE of Papua New Guinea
-  46403 - ~7718 km NE, off Alaska
+  51407 - ~4247 km NNE, off Hawaii
+  52402 - ~4829 km NW, NE of Papua New Guinea
+  46403 - ~7715 km N, off Alaska
   46411 - ~7680 km NE, off N California
 
 Earthquake parameters (USGS NEIC solution, event usp000h1ys):
@@ -64,12 +64,12 @@ SAMOA_ORIGIN_UTC = datetime(2009, 9, 29, 17, 48, 10, tzinfo=UTC)
 # Selected subset covering near-field to far-field range.
 # Format: (station_id, approx_distance_km, description)
 SAMOA_STATIONS = [
-    ("51425", 804, "NNE, near epicenter - nearest"),
+    ("51425", 804, "NW, near epicenter - nearest"),
     ("51426", 932, "SSE, near Tonga"),
     ("54401", 1962, "S, south of Samoa"),
-    ("51407", 4247, "NE, off Hawaii"),
-    ("52402", 4829, "W, NE of Papua New Guinea"),
-    ("46403", 7718, "NE, off Alaska"),
+    ("51407", 4247, "NNE, off Hawaii"),
+    ("52402", 4829, "NW, NE of Papua New Guinea"),
+    ("46403", 7715, "N, off Alaska"),
     ("46411", 7680, "NE, off N California"),
 ]
 

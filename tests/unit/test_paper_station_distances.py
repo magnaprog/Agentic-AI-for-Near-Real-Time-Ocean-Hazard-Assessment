@@ -117,7 +117,9 @@ def test_printed_station_distances_are_real_haversine_distances() -> None:
         "printed station distances disagree with the haversine distance:\n  "
         + "\n  ".join(mismatches)
     )
-    assert checked >= 30, (
+    # Set to the current count. A loose floor would still pass with a whole
+    # event's tables missing, which is exactly the drift this guards against.
+    assert checked >= 63, (
         f"only {checked} distances were checked; has a table's format changed? "
         f"(skipped for missing coordinates: {skipped})"
     )
@@ -130,8 +132,9 @@ def test_printed_compass_directions_match_the_bearing() -> None:
     Five of these were wrong by roughly 90 degrees: stations west of a South
     American epicenter, including one off Alaska, were labelled NNE, and the
     Chile and Illapel tables disagreed with each other about the same station.
-    Four more were two points off. One 16-point step of slack is allowed,
-    since the labels are coarse by design.
+    Four more were two points off, and seven more by one. Every label is now
+    the exact 16-point compass reading, so this requires an exact match: any
+    slack would re-admit the one-step errors it just took to remove.
     """
     tex = PAPER.read_text()
     mismatches: list[str] = []
@@ -160,7 +163,7 @@ def test_printed_compass_directions_match_the_bearing() -> None:
                 (_COMPASS.index(printed) - _COMPASS.index(actual)) % 16,
                 (_COMPASS.index(actual) - _COMPASS.index(printed)) % 16,
             )
-            if apart > 1:
+            if apart > 0:
                 mismatches.append(
                     f"{event} {row.group(1)}: paper {printed}, bearing "
                     f"{bearing:.1f} deg = {actual} ({apart} points apart)"
@@ -170,7 +173,7 @@ def test_printed_compass_directions_match_the_bearing() -> None:
         "printed compass directions disagree with the bearing from the "
         "epicenter:\n  " + "\n  ".join(mismatches)
     )
-    assert checked >= 20, f"only {checked} directions were checked; format changed?"
+    assert checked >= 30, f"only {checked} directions were checked; format changed?"
 
 
 def test_the_two_tables_print_the_same_distance_for_a_station() -> None:
@@ -181,6 +184,7 @@ def test_the_two_tables_print_the_same_distance_for_a_station() -> None:
     """
     tex = PAPER.read_text()
     disagreements: list[str] = []
+    compared = 0
     for event in EVENTS:
         printed: dict[str, dict[str, str]] = {}
         for table in ("stations", "results"):
@@ -191,8 +195,13 @@ def test_the_two_tables_print_the_same_distance_for_a_station() -> None:
                     printed[table][row.group(1)] = row.group(2)
         for station_id in sorted(set(printed["stations"]) & set(printed["results"])):
             left, right = printed["stations"][station_id], printed["results"][station_id]
+            compared += 1
             if left != right:
                 disagreements.append(
                     f"{event} {station_id}: stations table {left}, results table {right}"
                 )
     assert not disagreements, "the two tables disagree:\n  " + "\n  ".join(disagreements)
+    # Without a floor this passes vacuously the moment the row regex stops
+    # matching, which is exactly when the tables are most likely to have
+    # drifted apart.
+    assert compared >= 30, f"only {compared} station pairs were compared; format changed?"

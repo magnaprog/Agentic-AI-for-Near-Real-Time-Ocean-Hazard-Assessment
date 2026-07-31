@@ -15,9 +15,10 @@ live worker skips its Rayleigh check. The offline validators are unaffected,
 because they pass no station position at all, so that check is gated off for
 every station on the offline path rather than for this one. Closing the
 gap needs an NDBC position for 32402 added here and to the Mission Control
-map together. The positions hardcoded in ``scripts/generate_paper_figures.py``
-are not a usable source: they disagree with each other, and for stations that
-do appear here they disagree with these values by up to a few kilometres.
+map together. ``scripts/generate_paper_figures.py`` used to keep its own
+copies, which had drifted from these by up to 20 km and disagreed with each
+other; they are now taken from this table, so this module and the Mission
+Control map are the only places a DART position is written down.
 """
 
 from __future__ import annotations

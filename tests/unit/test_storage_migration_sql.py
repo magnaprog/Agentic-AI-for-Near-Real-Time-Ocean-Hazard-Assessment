@@ -105,6 +105,15 @@ def test_migration_adds_append_only_audit_triggers() -> None:
     assert "audit_events is append-only" in body.group(0)
     assert "RETURN NEW" not in body.group(0)
 
+    # The triggers that call it. Inserting a test above this one had left
+    # these four assertions stranded in that test, so the function named for
+    # the triggers no longer checked that any trigger existed.
+    assert "CREATE TRIGGER audit_events_block_update" in MIGRATION_SQL
+    assert "BEFORE UPDATE ON audit_events" in MIGRATION_SQL
+
+    assert "CREATE TRIGGER audit_events_block_delete" in MIGRATION_SQL
+    assert "BEFORE DELETE ON audit_events" in MIGRATION_SQL
+
 
 def test_later_migrations_supersede_two_baseline_grants() -> None:
     """The baseline is not the effective role matrix.
@@ -122,12 +131,6 @@ def test_later_migrations_supersede_two_baseline_grants() -> None:
         encoding="utf-8"
     )
     assert "DROP VIEW IF EXISTS provenance_chain;" in drop_sql
-
-    assert "CREATE TRIGGER audit_events_block_update" in MIGRATION_SQL
-    assert "BEFORE UPDATE ON audit_events" in MIGRATION_SQL
-
-    assert "CREATE TRIGGER audit_events_block_delete" in MIGRATION_SQL
-    assert "BEFORE DELETE ON audit_events" in MIGRATION_SQL
 
 
 _PROVENANCE_SECURITY_SQL = (

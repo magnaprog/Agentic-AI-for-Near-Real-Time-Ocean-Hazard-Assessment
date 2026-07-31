@@ -427,3 +427,39 @@ class TestBuildAssessment:
         assert assessment.stations == []
         assert assessment.pipeline_outcome is PipelineOutcome.ABSTAIN
         assert assessment.fsm_state_changed is True
+
+
+def test_runnable_check_count_stays_coupled_to_its_three_definitions() -> None:
+    """Three places must agree on how many QC checks the system can run.
+
+    ``_evaluated_flags`` lists the flags a record can actually be scored on,
+    ``N_RUNNABLE_CHECKS`` is the ceiling the assessment builder subtracts
+    from, and ``QCReport.n_checks_evaluated`` carries an ``le`` bound. Only a
+    docstring said they must match. If a sixth runnable check were added to
+    the list without raising the other two, every record would report a
+    negative unevaluated count, because the builder computes
+    ``N_RUNNABLE_CHECKS - n_checks_evaluated``.
+
+    The count was already wrong once in the other direction: the builder used
+    ``len(qc.flags)``, which is all eight QARTODFlags fields, so every record
+    claimed three checks had gone unevaluated when nothing had been skipped.
+    """
+    import inspect
+
+    from hazard_assessment.agents import qc_checks
+    from hazard_assessment.schemas.qc import QCReport
+
+    listed = inspect.getsource(qc_checks._evaluated_flags).count("flags.")
+    assert listed == qc_checks.N_RUNNABLE_CHECKS, (
+        f"_evaluated_flags considers {listed} flags but N_RUNNABLE_CHECKS is "
+        f"{qc_checks.N_RUNNABLE_CHECKS}; the builder would produce a wrong "
+        "unevaluated count"
+    )
+
+    bound = QCReport.model_fields["n_checks_evaluated"].metadata
+    upper = next(m.le for m in bound if hasattr(m, "le"))
+    assert upper == qc_checks.N_RUNNABLE_CHECKS, (
+        f"QCReport.n_checks_evaluated is bounded at {upper} but "
+        f"N_RUNNABLE_CHECKS is {qc_checks.N_RUNNABLE_CHECKS}; a report at the "
+        "bound would drive the unevaluated count negative"
+    )

@@ -17,12 +17,12 @@ station:
 
 Key stations (distances from epicenter computed via haversine):
   32402 - ~580 km NW, off central Chile, first tsunami arrival (~30 min)
-  32401 - ~1250 km NW, off northern Chile
+  32401 - ~1250 km N, off northern Chile
   32412 - ~2110 km NW, off Peru
-  51426 - ~9280 km W, near Tonga
-  46403 - ~12440 km NNE, off Alaska
-  46411 - ~9740 km N, off N California
-  46407 - ~10110 km N, off Oregon
+  51426 - ~9280 km WSW, near Tonga
+  46403 - ~12450 km NW, off Alaska
+  46411 - ~9740 km NW, off N California
+  46407 - ~10110 km NW, off Oregon
 
 Earthquake parameters (USGS NEIC solution, event us20003k7a):
   Origin:    2015-09-16 22:54:32 UTC
@@ -65,12 +65,12 @@ ILLAPEL_ORIGIN_UTC = datetime(2015, 9, 16, 22, 54, 32, tzinfo=UTC)
 # Format: (station_id, approx_distance_km, description)
 ILLAPEL_STATIONS = [
     ("32402", 580, "NW, off central Chile - first arrival"),
-    ("32401", 1250, "NW, off northern Chile"),
+    ("32401", 1250, "N, off northern Chile"),
     ("32412", 2110, "NW, off Peru"),
-    ("51426", 9280, "W, near Tonga"),
-    ("46403", 12440, "NNE, off Alaska"),
-    ("46411", 9740, "N, off N California"),
-    ("46407", 10110, "N, off Oregon"),
+    ("51426", 9280, "WSW, near Tonga"),
+    ("46403", 12450, "NW, off Alaska"),
+    ("46411", 9740, "NW, off N California"),
+    ("46407", 10110, "NW, off Oregon"),
 ]
 
 # NDBC historical DART data URL pattern

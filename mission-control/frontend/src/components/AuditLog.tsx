@@ -56,12 +56,11 @@ function shortEventDescription(e: AuditEntry): string {
   return e.event_type;
 }
 
-/** Human-readable producer names for provenance. Only the two producers whose
- *  generic form reads badly are special-cased; everything else falls through
- *  to the suffix trim. */
+/** Human-readable producer names for provenance. Only "orchestrator" needs a
+ *  case of its own; every other producer reads correctly after trimming the
+ *  _agent suffix and the underscores, which is what the default does. */
 function producerLabel(producer: string): string {
   switch (producer) {
-    case "anomaly_agent": return "anomaly";
     case "orchestrator": return "fsm";
     default: return producer.replace(/_agent$/, "").replace(/_/g, " ");
   }

@@ -62,6 +62,7 @@ function ReviewGate({
   // replaces it with something else. Without moving focus, it lands on <body>
   // and a keyboard or screen reader user loses their place mid-decision.
   const acknowledgedRef = useRef<HTMLDivElement>(null);
+  const acknowledgeRef = useRef<HTMLButtonElement>(null);
   const recordedRef = useRef<HTMLDivElement>(null);
   const rationaleRef = useRef<HTMLTextAreaElement>(null);
 
@@ -123,15 +124,20 @@ function ReviewGate({
   // Keyed on this session's submit, not on `reviewed`: a decision arriving in
   // a snapshot from another operator must not yank focus out from under
   // whoever is typing here.
+  const showingRecord = reviewRecorded && !superseding;
   useEffect(() => {
-    if (reviewRecorded) recordedRef.current?.focus();
-  }, [reviewRecorded]);
+    if (showingRecord) recordedRef.current?.focus();
+  }, [showingRecord]);
 
   // Superseding removes the record and restores the buttons, which start
-  // disabled, so focus goes to the rationale: the field that unblocks them.
+  // disabled. Focus goes to whichever control unblocks them: the rationale
+  // when the packet has been acknowledged, otherwise the acknowledge button,
+  // since the rationale is still disabled and cannot take focus at all.
   useEffect(() => {
-    if (superseding) rationaleRef.current?.focus();
-  }, [superseding]);
+    if (!superseding) return;
+    if (packetViewed) rationaleRef.current?.focus();
+    else acknowledgeRef.current?.focus();
+  }, [superseding, packetViewed]);
 
   const handleDecision = async (decision: "APPROVE" | "REJECT" | "DEFER") => {
     if (submittingRef.current) return;
@@ -267,6 +273,7 @@ function ReviewGate({
               evidence has been read. */}
           {!packetViewed && (
             <button
+              ref={acknowledgeRef}
               onClick={() => setPacketViewed(true)}
               className="btn btn--full mt-10"
             >

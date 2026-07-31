@@ -16,12 +16,12 @@ station:
      resolves ("first" row in native archive order wins).
 
 Key stations (from NCTR model-data comparison page):
-  32401 - ~295 km SSW, off Arica, Chile (nearest, first arrival)
+  32401 - ~292 km WSW, off Arica, Chile (nearest, first arrival)
   32402 - ~858 km S, off Caldera, Chile
-  32412 - ~1652 km NW, off Peru
-  32413 - ~2797 km NW, off Peru (far-field)
-  51426 - ~9900 km W, near Tonga
-  46403 - ~11469 km NNE, off Alaska
+  32412 - ~1652 km W, off Peru
+  32413 - ~2803 km WNW, off Peru (far-field)
+  51426 - ~9900 km WSW, near Tonga
+  46403 - ~11477 km NW, off Alaska
 
 Earthquake parameters (USGS NEIC solution, event usc000nzvd):
   Origin:    2014-04-01 23:46:47 UTC
@@ -61,12 +61,12 @@ IQUIQUE_ORIGIN_UTC = datetime(2014, 4, 1, 23, 46, 47, tzinfo=UTC)
 # Source: NCTR model-data comparison page (nctr.pmel.noaa.gov/chile20140401/)
 # Format: (station_id, approx_distance_km, description)
 IQUIQUE_STATIONS = [
-    ("32401", 295, "SSW, off Arica, Chile - nearest"),
+    ("32401", 292, "WSW, off Arica, Chile - nearest"),
     ("32402", 858, "S, off Caldera, Chile"),
-    ("32412", 1652, "NW, off Peru"),
-    ("32413", 2797, "NW, off Peru (far-field)"),
-    ("51426", 9900, "W, near Tonga"),
-    ("46403", 11469, "NNE, off Alaska"),
+    ("32412", 1652, "W, off Peru"),
+    ("32413", 2803, "WNW, off Peru (far-field)"),
+    ("51426", 9900, "WSW, near Tonga"),
+    ("46403", 11477, "NW, off Alaska"),
 ]
 
 # NDBC historical DART data URL pattern

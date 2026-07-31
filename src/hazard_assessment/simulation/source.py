@@ -68,10 +68,10 @@ def compute_characteristic_amplitude_m(magnitude: float) -> float:
     That conservatism applies to the characteristic amplitude alone.
     It does not carry over to the waveform the simulator injects:
     ``generate_tsunami_spectrum`` gives every sub-corner component
-    the full characteristic amplitude, so the synthesized peak is a
-    few times larger (about 2.8x at the default 10 components).  The
-    injected signal is therefore not simply a harder test than a real
-    record, and no claim here should rest on that.
+    the full characteristic amplitude, so the synthesized peak is
+    several times larger, 3.4 to 3.8 times at the default 10
+    components.  The injected signal is therefore not simply a harder
+    test than a real record, and no claim here should rest on that.
 
     The result is the characteristic amplitude at the 1000 km
     reference distance, before geometric spreading.

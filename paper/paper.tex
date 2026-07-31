@@ -624,7 +624,7 @@ assessment pipeline.
 \draw[arrow] ([xshift=-3.3cm]kafka.north) -- (qc.south);
 
 % Processing plane -> TimescaleDB (features and audit rows written back)
-\draw[arrow] ([xshift=5.5cm]proc.south) -- (tsdb.north)
+\draw[arrow] ([xshift=6.2cm]proc.south) -- ([xshift=0.7cm]tsdb.north)
   node[font=\tiny, midway, left, xshift=-2pt] {features + audit};
 
 % FSM Orchestrator (inside Processing Plane, above agents)
@@ -697,7 +697,7 @@ assessment pipeline.
 \caption{System architecture and agentic pipeline. In the
   \textbf{Data Plane}, each connector publishes to the Kafka
   \texttt{raw.observations} topic and separately writes the raw record to
-  TimescaleDB.  The worker consumes the topic, so the live path runs
+  TimescaleDB; one such write is drawn, standing for all three.  The worker consumes the topic, so the live path runs
   through Kafka, not the database, which holds the durable record and the
   features and audit rows written back (in-memory fallback when
   unavailable).
@@ -1165,20 +1165,20 @@ Limitation~6 in Section~\ref{sec:discussion} for calibration status).
 \begin{table}[t]
 \centering
 \caption{FSM state transitions. The De-escalation column gives the
-  automatic downward transition available from the \emph{From} state, where
-  one exists; it fires when the score drops below the corresponding lower
-  threshold.}
+  automatic transition that reverses the row's own transition, where one
+  exists, firing when the score drops below the corresponding lower
+  threshold.  The MONITOR timeout back to IDLE is a row in its own right.}
 \label{tab:fsm}
 \begin{tabular}{llll}
 \toprule
 From & To & Trigger & De-escalation \\
 \midrule
-IDLE        & MONITOR     & Seismic $M \geq M_\text{min}$ in a tsunamigenic zone & N/A \\
+IDLE        & MONITOR     & Seismic $M \geq M_\text{min}$$^\P$ & --- \\
 MONITOR     & IDLE        & Timeout (12\,h) AND $s < T_1$ & --- \\
 MONITOR     & ESCALATE    & Seismic-only$^\ddagger$        & --- \\
-MONITOR     & INVESTIGATE & $s \geq T_1 = 0.35$ OR override$^*$ & --- \\
-INVESTIGATE & ASSESS      & $s \geq T_2 = 0.60$           & $s < T_1$ $\to$ MONITOR$^*$ \\
-ASSESS      & ESCALATE    & $s \geq T_3 = 0.85$           & $s < T_2$ $\to$ INVESTIGATE$^*$ \\
+MONITOR     & INVESTIGATE & $s \geq T_1 = 0.35$ OR override$^*$ & $s < T_1$ $\to$ MONITOR$^*$ \\
+INVESTIGATE & ASSESS      & $s \geq T_2 = 0.60$           & $s < T_2$ $\to$ INVESTIGATE$^*$ \\
+ASSESS      & ESCALATE    & $s \geq T_3 = 0.85$           & --- \\
 ASSESS      & ESCALATE    & Seismic override$^\dagger$    & --- \\
 ESCALATE    & IDLE        & Explicit event resolution$^\S$ & --- \\
 \bottomrule
@@ -1198,6 +1198,9 @@ same holds at ASSESS, where the override is evaluated before the
 $s < T_2$ check and so escalates rather than de-escalates.  A low
 interim ensemble score therefore cannot hold down or de-escalate an
 event with a large earthquake and active event-mode DART reporting.\\
+$\P$ The magnitude test is not sufficient on its own: the event region
+must also be one of the configured tsunamigenic zones, or the FSM stays in
+IDLE however large the earthquake.\\
 $\S$ Explicit event resolution is implemented as
 \texttt{resolve\_event()}. No current API route invokes it, and the
 caller-asserted review decisions (APPROVE, REJECT, DEFER) are all
@@ -1428,11 +1431,13 @@ summarizes the checks.
 \begin{table}[t]
 \centering
 \caption{Verification checks. Any FAIL verdict triggers
-  \texttt{abstain\_required=true}. No component assembles a
+  \texttt{abstain\_required=true}. No runtime component assembles a
   \texttt{VerificationInput}, so none of the nine runs on live data.
-  The four rows marked $\dagger$ are unreachable for a second reason:
-  the field each of those conditions reads is never populated on that
-  structure, so they report NOT\_EVALUATED for a missing prerequisite.
+  Three of the four rows marked $\dagger$ read a
+  \texttt{VerificationInput} field that nothing sets, so they report
+  NOT\_EVALUATED for a missing prerequisite; the tidal state row is instead
+  unreachable because the inversion whose coastal proxies it inspects does
+  not run.
   See the fifth limitation in Section~\ref{sec:discussion}.}
 \label{tab:verification}
 \begin{tabular}{lll}
@@ -1594,8 +1599,9 @@ a prompt.  Findings are written to a table that migration 009 grants to a
 dedicated \texttt{investigator\_writer} role alone.  The
 \texttt{pipeline\_worker} role that drives the FSM holds neither insert nor
 select on that table, and neither does the API's own role, so a finding can be
-neither written nor read by the code that escalates.  Both denials were
-checked against a provisioned database rather than assumed.  The investigator also runs only once the worker has persisted a
+neither written nor read by the code that escalates.  Migration 009 makes
+exactly one grant on that table, and the integration suite asserts the
+insert denial against a provisioned database.  The investigator also runs only once the worker has persisted a
 checkpoint, binding its findings to that row while reading the event's audit
 trail for evidence, so it sits off the detection path and cannot add latency
 to ingest, scoring, or a transition, and every finding passes the same guardrail
@@ -3347,7 +3353,8 @@ architecture, generated from the draw.io source files in
 \caption{Scenario inversion activity diagram. DART-constrained and
   seismic-only paths diverge at the constraint stage. Unit source
   selection, Green's function matrix assembly, NNLS inversion,
-  moment magnitude calculation, bootstrap uncertainty estimation
+  moment magnitude calculation~\citep{hanks1979moment}, bootstrap
+  uncertainty estimation
   (500 iterations), coastal amplitude proxies (P10/P50/P90), and
   ensemble spread computation produce ranked scenarios.}
 \label{fig:uml-scenario-inversion}
@@ -3460,9 +3467,8 @@ ensemble spread tells us.
 
 Background: Each scenario is a weighted combination of pre-computed unit
 sources (subfault segments from a unit-source propagation database). The NNLS
-weights represent relative slip on each subfault; the equivalent moment
-magnitude~\citep{hanks1979moment} is derived from the cumulative seismic
-moment of the weighted sources.
+weights represent relative slip on each subfault; the equivalent Mw is
+derived from the cumulative seismic moment of the weighted sources.
 
 Rules:
 - Explain why the top scenario ranks first (e.g., best waveform fit).
@@ -3885,12 +3891,12 @@ algorithm, which is more selective for smaller events.
 \textbf{Station} & \textbf{Dist.\,(km)} & \textbf{Location} & \textbf{Mode} \\
 \midrule
 32412 & 2{,}400   & NW, off Peru             & event (1\,min) \\
-32411 & 4{,}920   & NW, off Galapagos        & event (1\,min) \\
-54401 & 8{,}740   & W, SW Pacific            & standard (15\,min) \\
+32411 & 4{,}920   & NNW, off Galapagos        & event (1\,min) \\
+54401 & 8{,}740   & WSW, SW Pacific            & standard (15\,min) \\
 46412 & 9{,}080   & NW, off San Diego CA      & event (1\,min) \\
 46411 & 10{,}040  & NW, off N California    & standard (15\,min) \\
 51407 & 10{,}740  & WNW, Hawaii              & standard (15\,min) \\
-46402 & 13{,}110  & NNW, S of Dutch Harbor AK & --- (no data) \\
+46402 & 13{,}110  & NW, S of Dutch Harbor AK & --- (no data) \\
 21413 & 15{,}840  & W, off Japan             & standard (15\,min) \\
 \bottomrule
 \end{tabular}
@@ -4073,7 +4079,7 @@ overlap with the T\={o}hoku evaluation.
 32402 &    580  & W of Caldera, Chile    & event (1\,min) \\
 32401 & 1{,}250 & W of Iquique, Chile    & event (1\,min) \\
 32412 & 2{,}110 & NW, off Peru           & event (1\,min) \\
-51426 & 9{,}280 & W, near Tonga          & standard (15\,min) \\
+51426 & 9{,}280 & WSW, near Tonga          & standard (15\,min) \\
 46411 & 9{,}740 & NW, off N California    & standard (15\,min) \\
 46407 & 10{,}110 & NW, off Oregon          & standard (15\,min) \\
 46403 & 12{,}450 & NW, off Alaska        & standard (15\,min) \\
@@ -4229,8 +4235,8 @@ four operated in event mode during the event window.
 32401 &    295  & WSW, off Arica, Chile   & event (1\,min) \\
 32402 &    858  & S, off Caldera, Chile   & event (1\,min) \\
 32412 & 1{,}652 & W, off Peru            & event (45\,s) \\
-32413 & 2{,}803 & NW, off Peru (far)      & event (45\,s) \\
-51426 & 9{,}900 & W, near Tonga           & standard (15\,min) \\
+32413 & 2{,}803 & WNW, off Peru (far)      & event (45\,s) \\
+51426 & 9{,}900 & WSW, near Tonga           & standard (15\,min) \\
 46403 & 11{,}476 & NW, off Alaska        & standard (15\,min) \\
 \bottomrule
 \end{tabular}
@@ -4388,7 +4394,7 @@ Six DART stations spanning 804--7{,}720\,km are selected
 51425 &    804  & NW, near epicenter     & event (1\,min) \\
 51426 &    935  & SSE, near Tonga         & event (1\,min) \\
 54401 & 1{,}960 & S, south of Samoa       & event (1\,min) \\
-51407 & 4{,}250 & NE, off Hawaii          & standard (15\,min) \\
+51407 & 4{,}250 & NNE, off Hawaii          & standard (15\,min) \\
 46411 & 7{,}680 & NE, off N California    & standard (15\,min) \\
 46403 & 7{,}720 & N, off Alaska          & standard (15\,min) \\
 \bottomrule
