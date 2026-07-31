@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import ast
 import pathlib
+import re
 
 from hazard_assessment.config.settings import ThresholdSettings
 
@@ -89,4 +90,42 @@ def test_script_thresholds_match_settings() -> None:
     assert checked >= 42, (
         f"only {checked} hardcoded thresholds were found in scripts/; "
         "have the constants been renamed?"
+    )
+
+
+def test_mission_control_thresholds_match_settings() -> None:
+    """The console carries its own copy of the thresholds, twice.
+
+    ``constants.ts`` holds a fallback used before the first snapshot arrives,
+    and the demo snapshot ships a fixed set for the no-upstream mode. Neither
+    is reachable from Python, so both sat outside every check. A console
+    drawing its threshold lines at values the FSM no longer uses would be
+    wrong in the one place an operator reads them off a chart.
+    """
+    settings = ThresholdSettings()
+    expected = {"t1": settings.t1, "t2": settings.t2, "t3": settings.t3}
+
+    mc = SCRIPTS.parent / "mission-control"
+    sources = {
+        "frontend/src/constants.ts": (mc / "frontend" / "src" / "constants.ts"),
+        "backend/services/demo_snapshot.py": (
+            mc / "backend" / "services" / "demo_snapshot.py"
+        ),
+    }
+    drifted: list[str] = []
+    for label, path in sources.items():
+        text = path.read_text(encoding="utf-8")
+        for name, value in expected.items():
+            # Matches both `t1: 0.35` (TypeScript) and `"t1": 0.35` (Python).
+            found = re.findall(rf'"?{name}"?\s*:\s*([0-9.]+)', text)
+            if not found:
+                drifted.append(f"{label}: no value found for {name}")
+                continue
+            for raw in found:
+                if float(raw) != value:
+                    drifted.append(f"{label}: {name} = {raw}, settings has {value}")
+
+    assert not drifted, (
+        "Mission Control thresholds disagree with config/settings.py:\n  "
+        + "\n  ".join(drifted)
     )

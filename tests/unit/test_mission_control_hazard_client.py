@@ -145,3 +145,66 @@ async def test_pending_review_includes_packet_identity_when_ready() -> None:
             "packet_hash": "a" * 64,
         }
     ]
+
+
+def _fsm_payload() -> dict[str, Any]:
+    """Minimal FSM state good enough for FSMStateOut."""
+    return {
+        "fsm_state": "IDLE",
+        "has_active_event": False,
+        "transition_history": [],
+        "event_context": None,
+        "thresholds": {"t1": 0.35, "t2": 0.60, "t3": 0.85, "basin": "pacific"},
+    }
+
+
+@pytest.mark.asyncio
+async def test_snapshot_names_the_sections_whose_query_failed() -> None:
+    """A failed side query must be reported, not silently returned as empty.
+
+    The three non-critical sections degrade to an empty list so one bad query
+    cannot take the whole snapshot down. An empty list is indistinguishable
+    from a genuinely empty one, and the console reads those two very
+    differently: an unavailable review history renders as "this escalation
+    has not been reviewed" and re-arms the decision controls. The names below
+    are a contract with the frontend, which tests membership against these
+    exact strings.
+    """
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/api/fsm":
+            return httpx.Response(200, json=_fsm_payload())
+        # agents, audit and reviews all fail, by three different mechanisms.
+        if request.url.path == "/api/agents":
+            return httpx.Response(500, json={"detail": "boom"})
+        if request.url.path == "/api/audit":
+            return httpx.Response(200, json={"not": "a list"})
+        return httpx.Response(503, json={"detail": "unavailable"})
+
+    client = _client_with_transport(handler)
+    snapshot = await client.get_snapshot()
+
+    assert sorted(snapshot["degraded_sections"]) == [
+        "agents",
+        "recent_audit",
+        "recent_reviews",
+    ]
+    assert snapshot["agents"] == []
+    assert snapshot["recent_audit"] == []
+    assert snapshot["recent_reviews"] == []
+    # The FSM is the critical section and still came through.
+    assert snapshot["fsm"]["fsm_state"] == "IDLE"
+
+
+@pytest.mark.asyncio
+async def test_snapshot_reports_nothing_degraded_when_every_query_succeeds() -> None:
+    """The flag must stay empty on a healthy poll, or the console would warn
+    about an outage on every snapshot."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/api/fsm":
+            return httpx.Response(200, json=_fsm_payload())
+        return httpx.Response(200, json=[])
+
+    client = _client_with_transport(handler)
+    snapshot = await client.get_snapshot()
+
+    assert snapshot["degraded_sections"] == []

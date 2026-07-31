@@ -37,10 +37,16 @@ EVENTS = ("tohoku", "chile", "illapel", "iquique", "samoa")
 #: The early USGS determination validate_chile.py pins, and the paper footnotes.
 _CHILE_EARLY_EPICENTER = (-35.846, -72.719)
 
-#: Some tables print to the nearest 10 km and some to the nearest km, so a
-#: correct value can sit up to half a 10 km step away. One kilometre of slack
-#: on top of that keeps the boundary case from failing on a rounding tie.
-_TOLERANCE_KM = 6.0
+def _tolerance_km(printed: float) -> float:
+    """Slack allowed for one printed distance, from its own precision.
+
+    Some tables round to the nearest 10 km and some to the nearest km. A flat
+    tolerance wide enough for the coarse tables let a 5 km drift pass silently
+    in the fine ones, which is most of a real error. Half a step plus a
+    kilometre for rounding ties, judged per value.
+    """
+    step = 10.0 if printed % 10 == 0 else 1.0
+    return step / 2.0 + 1.0
 
 _ROW = re.compile(r"^\s*(\d{5})\s*&\s*([0-9{},]+)\s*&\s*([^&]+?)\s*&")
 
@@ -107,7 +113,7 @@ def test_printed_station_distances_are_real_haversine_distances() -> None:
                 continue
             actual = haversine_km(lat, lon, coords[0], coords[1])
             checked += 1
-            if abs(actual - printed) > _TOLERANCE_KM:
+            if abs(actual - printed) > _tolerance_km(printed):
                 mismatches.append(
                     f"{event} {station_id}: paper {printed:,.0f} km, "
                     f"haversine {actual:,.1f} km (delta {actual - printed:+.1f})"
