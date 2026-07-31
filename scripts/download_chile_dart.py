@@ -18,7 +18,7 @@ station:
 Key stations (distances from epicenter computed via haversine):
   32412 - ~2400 km NW, off Peru, first tsunami arrival
   32411 - ~4920 km NW, off Galapagos
-  54401 - ~8750 km W, SW Pacific
+  54401 - ~8740 km W, SW Pacific
   46412 - ~9080 km N, off San Diego CA
   46411 - ~10040 km NNE, off N California (also in Tohoku evaluation)
   51407 - ~10740 km WNW, Hawaii
