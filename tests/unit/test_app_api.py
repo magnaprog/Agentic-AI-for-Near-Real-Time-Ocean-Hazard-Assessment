@@ -5,6 +5,7 @@ Review endpoint binds decisions to durable packet row identity and hash.
 
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -1091,6 +1092,96 @@ def test_after_action_fails_when_report_commit_is_not_confirmed(
 
         assert resp.status_code == 503
         assert "durable audit storage" in resp.json()["detail"].lower()
+
+
+def test_after_action_withholds_a_tool_log_using_reserved_terms(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Reserved terminology in the tool-call log must not reach the operator.
+
+    The narrative fields were scanned but the tool-call log was not, and the
+    log is model-authored: an unknown-tool request echoes back the name the
+    model asked for, and a recorded call echoes its arguments. That put a
+    reserved term in front of a duty scientist, and into the audit trail,
+    while the three narrative fields came back clean. The investigator already
+    scans its own log for exactly this reason.
+    """
+    import hazard_assessment.agents.llm_advisory.after_action as aa_module
+    from hazard_assessment.audit.logger import AuditEntry, AuditLogger
+
+    monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
+
+    # The model asks for a tool whose name carries an official NOAA product
+    # term. The name is echoed verbatim into the log by resolve_tool_calls.
+    poisoned_call = {
+        "node": "timeline",
+        "tool": "issue_tsunami_warning",
+        "args": {"text": "All Clear"},
+        "error": "unknown_tool",
+    }
+
+    class _StubGraph:
+        def invoke(self, _state: Any, config: Any = None) -> dict[str, Any]:
+            return {
+                "timeline": "clean timeline",
+                "gaps": "clean gaps",
+                "draft_report": "clean report",
+            }
+
+    def _stub_builder(
+        _settings: Any,
+        _audit_snapshot: Any,
+        *,
+        pinned_event_id: Any,
+        tool_call_log: list[dict[str, Any]] | None = None,
+    ) -> _StubGraph:
+        assert tool_call_log is not None
+        tool_call_log.append(poisoned_call)
+        return _StubGraph()
+
+    monkeypatch.setattr(aa_module, "build_after_action_graph", _stub_builder)
+
+    with _app_client() as (app_module, client):
+        closed_event = uuid4()
+        db = DurableReviewDb(None)
+        app_module._db_client = db
+        app_module._audit = AuditLogger(db_client=db)
+        app_module._audit.append(AuditEntry(
+            event_id=closed_event,
+            event_type="state_transition",
+            producer="orchestrator",
+            data={"from_state": "ASSESS", "to_state": "IDLE"},
+        ))
+        resp = client.post(
+            "/api/after-action",
+            headers=AUTH,
+            json={"event_id": str(closed_event)},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+
+        # The clean narrative is untouched: only the log was poisoned.
+        assert body["timeline"] == "clean timeline"
+
+        # Withheld whole rather than edited, because the log is the record of
+        # what the model did. The count survives; the model's text does not.
+        assert body["tool_calls"] != [poisoned_call]
+        assert len(body["tool_calls"]) == 1
+        assert body["tool_calls"][0]["n_calls"] == 1
+        assert "withheld" in body["tool_calls"][0]
+
+        returned = json.dumps(body)
+        for term in ("issue_tsunami_warning", "All Clear"):
+            assert term not in returned, f"{term!r} reached the operator"
+
+        # The same must hold for what was written to the audit trail.
+        persisted = app_module._audit.get_entries(
+            event_id=closed_event, event_type="after_action_report"
+        )
+        assert len(persisted) == 1
+        stored = json.dumps(persisted[0].data, default=str)
+        for term in ("issue_tsunami_warning", "All Clear"):
+            assert term not in stored, f"{term!r} was persisted to the audit trail"
 
 
 def test_after_action_returns_and_persists_tool_call_log(

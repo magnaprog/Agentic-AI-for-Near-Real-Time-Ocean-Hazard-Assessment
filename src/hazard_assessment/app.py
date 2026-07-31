@@ -19,6 +19,7 @@ Caller-gated assessment review bound to durable evidence.
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 import threading
@@ -1582,6 +1583,33 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
                 text_fields[field_name] = (
                     f"(redacted: contained {len(terms)} prohibited alert term(s))"
                 )
+
+    # The three narrative fields are not the only model-authored text here. The
+    # model also chooses tool names and tool arguments, and the log records
+    # both: an unknown-tool request echoes back the name it asked for
+    # (tools.py, resolve_tool_calls). That log is persisted and returned, so
+    # scanning only the narrative left reserved wording a route to an operator
+    # while the narrative itself came back clean. The investigator already
+    # closes this on its own path; this is the same defense on the sibling one.
+    tool_call_scan = scan_text(json.dumps(tool_call_log, sort_keys=True, default=str))
+    record_guardrail_scan(passed=not tool_call_scan.violations)
+    if tool_call_scan.violations:
+        # Withheld whole rather than edited: the log is the record of what the
+        # model did, so rewriting entries would destroy the evidence. The count
+        # carries no model-authored text and is kept.
+        logger.warning(
+            "After-action tool log withheld on reserved terms: %s",
+            ", ".join(sorted({v.term for v in tool_call_scan.violations})),
+        )
+        tool_call_log = [
+            {
+                "withheld": (
+                    "tool-call log used reserved alert terminology and was "
+                    "dropped by the guardrail scanner"
+                ),
+                "n_calls": len(tool_call_log),
+            }
+        ]
 
     # Persist the post-guardrail text and complete tool-call log. Success is
     # returned only after the durable audit append is confirmed.

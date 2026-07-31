@@ -108,7 +108,7 @@ live:    ingest -> qc metadata -> anomaly -> FSM -> OceanEvidenceAssessment
                                   durable packet -> caller-gated review
                                                    (FSM unchanged)
 
-offline (archived inputs): ingest -> qc -> anomaly -> FSM -> detection artifact
+offline (archived inputs): archived CSV -> anomaly -> threshold comparison -> detection artifact
 synthetic only (verify_e2e_workflow.py): scenario -> Verification -> report or ABSTAIN
 ```
 
@@ -400,7 +400,7 @@ This is a static registry read from the core API, not a health monitor.
 
 Along the lower edge of the map, a live anomaly score chart plots the most
 recent 60 samples with dashed reference lines at T1, T2, and T3. A sample is
-appended for each score the console receives while an event is active, so the
+appended on each score change while an event is active, so the
 chart spans the last 60 scores rather than a fixed period, and the trace resets
 when an event begins or ends. If the core API stops responding the line stops
 where the data stopped rather than extending flat. With no active
@@ -917,7 +917,8 @@ In the offline evaluation path, a Scenario component runs NNLS inversion for pre
 
 > **Deployment note:** The Scenario inversion described above (and Verification
 > and Report generation in 9.5-9.6) is exercised only by
-> `scripts/verify_e2e_workflow.py` on synthetic inputs. No script that produces
+> `scripts/verify_e2e_workflow.py` on synthetic inputs, and report
+> synthesis additionally by `scripts/evaluate_llm_synthesis.py`. No script that produces
 > the committed `results/` artifacts runs Scenario inversion or the Verification
 > checks. The unit-source library is a precomputed set of unit-source Green's
 > functions; no library ships with this repository, because
@@ -1102,7 +1103,7 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `evidence_investigation` | An active-event investigation ran. Records which issues produced findings, which failed, which were not stored, and which were guardrail-withheld |
 | `llm_call` | LLM advisory call recorded |
 | `anomaly_scored` | Worker anomaly assessment persisted as a lineage feature row |
-| `escalation_packet_conflict` | A second escalation packet was generated for a checkpoint that already had one |
+| `escalation_packet_conflict` | A checkpoint already had a packet with a different content hash; an identical repeat is adopted instead |
 | `after_action_report` | A post-event after-action analysis ran, with its tool-call log |
 | `fsm_recovery_failed` | FSM state recovery from the database failed; event context lost |
 
@@ -1499,7 +1500,7 @@ bash scripts/run_full_evaluation.sh   # all 17 steps
 cd paper && tectonic paper.tex        # rebuilds paper.pdf
 ```
 
-Several scripts sit outside `run_full_evaluation.sh`. The `download_*.py` group and `scripts/archive_native_dart.py` fetch or archive inputs rather than produce results, `scripts/generate_confusable_map.py` regenerates the confusable table in `policy/_confusables.py`, and `scripts/verify_e2e_workflow.py` exercises the scenario, verification and report stages on synthetic inputs. Of these, `scripts/download_coops_data.py` fetches the CO-OPS water-level and tide-prediction CSVs that the appendix de-tiding figures read, `scripts/archive_native_dart.py` keeps a copy of the raw NDBC payloads alongside the parsed CSVs, and `scripts/evaluate_llm_synthesis.py` produces the 20-scenario guardrail sweep the paper cites for the optional narrative layer. None of them is needed to reproduce the detection artifacts.
+Several scripts sit outside `run_full_evaluation.sh`. Only `scripts/download_tohoku_dart.py` is invoked by it, as step 1; the other `download_*.py` scripts are not. `scripts/download_coops_data.py` fetches the CO-OPS water-level and tide-prediction CSVs that the appendix de-tiding figures read, and `scripts/archive_native_dart.py` keeps a copy of the raw NDBC payloads alongside the parsed CSVs. `scripts/generate_confusable_map.py` regenerates the confusable table in `policy/_confusables.py`. `scripts/verify_e2e_workflow.py` exercises the scenario, verification and report stages on synthetic inputs, and `scripts/evaluate_llm_synthesis.py` produces the 20-scenario guardrail sweep the paper cites for the optional narrative layer. None of them is needed to reproduce the detection artifacts.
 
 Step 1 downloads NDBC historical archive data, so a full run needs network access. The remaining steps read the local CSVs under `data/`. The station-map figures use Cartopy Natural Earth features, which Cartopy fetches into its own cache the first time they render.
 

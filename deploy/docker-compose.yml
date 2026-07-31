@@ -79,9 +79,9 @@ services:
       DB_AUDIT_READER_PASSWORD: ${DB_AUDIT_READER_PASSWORD:-}
       DB_ORCHESTRATOR_WRITER_PASSWORD: ${DB_ORCHESTRATOR_WRITER_PASSWORD:-}
       DB_PIPELINE_WORKER_PASSWORD: ${DB_PIPELINE_WORKER_PASSWORD:-}
-      # investigator_writer is provisioned by migration 009 for the planned
-      # evidence-investigator worker; no running
-      # service consumes this role yet.
+      # investigator_writer is the role /api/investigate connects as to
+      # write evidence findings; the pipeline worker can neither write
+      # nor read them.
       DB_INVESTIGATOR_WRITER_PASSWORD: ${DB_INVESTIGATOR_WRITER_PASSWORD:-}
       DB_CONNECT_TIMEOUT: 5
     depends_on:

@@ -27,12 +27,27 @@ REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 PAPER = REPO_ROOT / "paper" / "paper.tex"
 PROMPTS = REPO_ROOT / "src" / "hazard_assessment" / "agents" / "llm_advisory" / "prompts.py"
 
-#: ``\promptlabel[style]{Title \normalfont...}`` then a verbatim ``promptbox``.
+#: ``\promptlabel[style]{Title \normalfont\textnormal{\textit{(tier)}}}`` then a
+#: verbatim ``promptbox``. The tier annotation is captured, not discarded: it
+#: states which model runs the prompt, and a listing relabelled from the fast
+#: model to the quality model would otherwise misinform a reader while every
+#: assertion still passed.
 _BOX = re.compile(
-    r"\\promptlabel\[[^\]]*\]\{([^}]*?)(?:\s*\\normalfont.*?)?\}\s*\n"
+    r"\\promptlabel\[[^\]]*\]\{([^}]*?)(?:\s*\\normalfont(.*?))?\}\s*\n"
     r"\\begin\{promptbox\}\n(.*?)\\end\{promptbox\}",
     re.DOTALL,
 )
+
+#: Model tier each listing declares, checked against the purpose the source
+#: actually builds for that node (synthesis_graph.py, after_action.py).
+EXPECTED_TIER = {
+    "Evidence Synthesis Prompt": "fast",
+    "Scenario Interpretation Prompt": "fast",
+    "Narrative Synthesis Prompt": "standard",
+    "Timeline Reconstruction Prompt": "quality",
+    "Detection Gap Analysis Prompt": "quality",
+    "Incident Report Draft Prompt": "quality",
+}
 
 _CONST = re.compile(r'^([A-Z_]+_PROMPT) = """\\?\n(.*?)"""', re.DOTALL | re.MULTILINE)
 
@@ -53,8 +68,11 @@ EXPECTED = {
 }
 
 
-def _paper_listings() -> list[tuple[str, str]]:
-    return [(title.strip(), body.strip()) for title, body in _BOX.findall(PAPER.read_text())]
+def _paper_listings() -> list[tuple[str, str, str]]:
+    return [
+        (title.strip(), tier.strip(), body.strip())
+        for title, tier, body in _BOX.findall(PAPER.read_text())
+    ]
 
 
 def _source_prompts() -> dict[str, str]:
@@ -68,7 +86,13 @@ def test_every_prompt_listing_is_byte_exact_against_source() -> None:
 
     problems: list[str] = []
     seen: dict[str, str] = {}
-    for title, body in listings:
+    for title, tier, body in listings:
+        want_tier = EXPECTED_TIER.get(title)
+        if want_tier is not None and want_tier not in tier:
+            problems.append(
+                f"{title!r} is labelled {tier!r}; source runs it on the "
+                f"{want_tier} model"
+            )
         expected = EXPECTED.get(title)
         if expected is None:
             problems.append(f"{title!r} is not a listing this test knows about")
@@ -85,6 +109,16 @@ def test_every_prompt_listing_is_byte_exact_against_source() -> None:
     missing = sorted(set(EXPECTED.values()) - set(seen))
     if missing:
         problems.append(f"prompts the appendix no longer reproduces: {missing}")
+
+    # A prompt added to prompts.py that nobody lists here would otherwise be
+    # omitted from the appendix silently, which is the failure this file
+    # exists to prevent.
+    unlisted = sorted(set(prompts) - set(EXPECTED.values()))
+    if unlisted:
+        problems.append(
+            f"prompts.py defines {unlisted}, which the appendix does not "
+            "reproduce and this test does not account for"
+        )
 
     assert not problems, (
         "the paper's prompt listings disagree with prompts.py:\n  " + "\n  ".join(problems)
@@ -119,7 +153,7 @@ def test_the_investigator_prompts_are_not_claimed_as_reproduced() -> None:
     # would be satisfied by the phrase appearing anywhere in a 90-page file.
     start = paper.index("\\label{sec:appendix-prompts}")
     section = paper[start : paper.index("\\promptlabel", start)]
-    assert "omitted here for length" in section, (
+    assert "are omitted here for length" in section, (
         "the prompt appendix no longer discloses that the investigator "
         "prompts are omitted, but prompts.py still defines them"
     )
