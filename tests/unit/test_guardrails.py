@@ -15,6 +15,7 @@ from hazard_assessment.policy.guardrails import (
     NON_AUTHORITATIVE_DISCLAIMER,
     PROHIBITED_TERMS,
     ScanResult,
+    scan_structure,
     scan_text,
 )
 
@@ -731,3 +732,44 @@ class TestInvisibleNonFormatCharacters:
         combining, so neither the format-character strip nor the mark strip
         removed them and they split a reserved term for the matcher."""
         assert scan_text(f"Tsunami Warn{chr(codepoint)}ing issued.").violations
+
+
+class TestScanStructure:
+    """Scanning a nested structure must not go through ``json.dumps`` first.
+
+    Two call sites, the after-action endpoint and the investigator, scan a
+    model-authored tool-call log before persisting and returning it. Both used
+    ``scan_text(json.dumps(log))``. That silently disabled most of this module:
+    ``json.dumps`` defaults to ``ensure_ascii=True``, so every homoglyph became
+    a ``\\uXXXX`` escape before the scanner saw it, and JSON escaping turned a
+    tab inside a reserved phrase into a backslash and a ``t``. The escaped form
+    was scanned while the real characters were persisted and returned.
+    """
+
+    def test_a_homoglyph_in_a_nested_value_is_caught(self) -> None:
+        # Cyrillic U+0430 for "a". json.dumps would escape it out of reach.
+        log = [{"node": "timeline", "tool": "Wаrning", "args": {}}]
+        assert {v.term for v in scan_structure(log)} == {"Warning"}
+
+    def test_whitespace_inside_a_reserved_phrase_is_caught(self) -> None:
+        # json.dumps renders this tab as a backslash and a "t".
+        log = [{"tool": "q", "args": {"text": "All\tClear"}}]
+        assert {v.term for v in scan_structure(log)} == {"All Clear"}
+
+    def test_a_dictionary_key_is_scanned(self) -> None:
+        """A model names its own tool arguments, so keys are not ours."""
+        log = [{"tool": "q", "args": {"Аdvisory": 1}}]
+        assert {v.term for v in scan_structure(log)} == {"Advisory"}
+
+    def test_a_clean_log_produces_no_violations(self) -> None:
+        log = [{"node": "gaps", "tool": "query_audit_trail",
+                "args": {"event_type": "state_transition"}, "n_returned": 3}]
+        assert scan_structure(log) == []
+
+    def test_values_are_scanned_separately_so_no_match_spans_two(self) -> None:
+        """Joining values before scanning would invent this violation."""
+        assert scan_structure([{"a": "All", "b": "Clear"}]) == []
+
+    def test_non_string_scalars_do_not_crash_the_walk(self) -> None:
+        log = [{"n": 1, "ok": True, "ratio": 0.5, "missing": None, "tags": {"x"}}]
+        assert scan_structure(log) == []

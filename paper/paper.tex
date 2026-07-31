@@ -216,10 +216,10 @@ ensemble anomaly detection.  NNLS-based scenario
 inversion~\citep{lawson1974solving, percival2011extraction} and a
 nine-check verification stage ship as specified stages that no runtime
 path executes.
-Verification failure is specified to route to ABSTAIN.  The case that
-fires today is the missing one: the worker reaches ASSESS or ESCALATE
-with no scenario to verify, abstains, and records the abstention for
-review.
+Verification failure is specified to route to ABSTAIN.  What fires
+today is the missing-verification case: the worker reaches ASSESS or
+ESCALATE with no scenario to verify, abstains, and records the
+abstention for review.
 An optional LLM layer synthesizes operator-readable narratives but
 cannot modify detection state or bypass verification.  On request while
 an event is open, and only once the worker has persisted a checkpoint,
@@ -238,7 +238,8 @@ in Iquique (ASSESS) and Samoa (INVESTIGATE);
 standard-mode stations (15-min sampling) score at or near zero.
 Those stations are filter-degraded by the Nyquist criterion, and all
 but one are also too distant for either coseismic deformation or
-tsunami arrival to fall inside the six-hour evaluation window, so the low
+tsunami arrival to fall inside the six-hour evaluation window.  For
+that one the predicted arrival lands after its last sample, so the low
 scores cannot be attributed to sampling rate alone.  All five events
 were available during development, so this is a retrospective
 consistency check rather than a held-out test.
@@ -296,8 +297,8 @@ anomaly detection, and produce human-interpretable guidance. The challenge is
 implementing such a framework with the safety properties required in a
 maritime hazard context: no autonomous public communication, no
 interference with operational data streams, deterministic reasoning that
-can be audited after the fact, and a review decision recorded against
-every escalation.
+can be audited after the fact, and any review decision bound to the
+escalation packet it was made against.
 
 We present a \textbf{bounded agentic AI framework} that addresses these
 requirements. The system ingests DART buoy observations, NOAA CO-OPS water-level
@@ -310,8 +311,9 @@ sequential pipeline whose deployed portion is quality control and
 ensemble anomaly detection; the scenario-inversion, verification and
 report stages sit downstream in the specification, and no runtime path
 assembles their inputs.  Report generation is gated on nine
-verification checks, one of which has a prerequisite nothing
-satisfies, so no report is produced on a live or archived stream.
+verification checks, and nothing outside the offline demo scripts
+assembles a verification input, so no report is produced on a live or
+archived stream.
 No assessment is ever classified as approved: the review endpoint
 records a caller-asserted decision against the escalation packet and
 changes nothing else.
@@ -370,14 +372,14 @@ bounded agentic architecture for tsunami assessment:
   \item A fail-closed verification specification of nine checks
     (including Rayleigh wave suspect detection) with an explicit
     ABSTAIN output.  The routing defense is live and abstains today on
-    missing verification; the checks themselves have not run outside
-    unit tests.
+    missing verification; the checks themselves run only in unit tests
+    and in the offline demo script.
   \item A publicly available implementation, free for noncommercial use
     under PolyForm Noncommercial 1.0.0, with automated tests
     across the deterministic pipeline, LLM advisory layer, and
     tsunami-relevant safety properties (no autonomous public
-    communication, a recorded review decision against every escalation
-    packet, deterministic detection).
+    communication, review decisions bound to the packet of record,
+    deterministic detection).
 \end{enumerate}
 
 \noindent We evaluate the system through retrospective replay on five
@@ -824,9 +826,10 @@ per-reviewer authentication is future work.
 The deployed worker already runs ingest, QC, anomaly scoring, and FSM
 transitions on live streams.  The flow below is the target.  Of its
 stages, only anomaly scoring has been exercised on archived data
-(Section~\ref{sec:evaluation}); the replay scripts compare scores
-against the same threshold constants the FSM uses rather than running
-ingest, QC or the orchestrator, and the Scenario, Verification and
+(Section~\ref{sec:evaluation}); the replay scripts compare each
+station's full-record score against the same threshold values the FSM
+uses, rather than running ingest, QC or the orchestrator, or climbing
+one state per evaluation as the FSM does, and the Scenario, Verification and
 Report stages remain future work that no path runs on live or archived
 streams.
 The seismic connector polls the USGS feed every 15\,s by default, so
@@ -853,10 +856,11 @@ bootstrap targets completion within three minutes
 \label{sec:qc}
 
 The QC Agent runs five QARTOD-aligned checks over each incoming
-observation as it enters the detection pipeline.  Not all five
-evaluate on every record: gross range returns NOT\_EVALUATED for raw
-water-column heights, and the flat-line test needs a full rolling
-window. The resulting flags
+observation as it enters the detection pipeline.  All five can return
+NOT\_EVALUATED rather than a verdict: gross range does so for every
+DART record, and the other four do so on a station's first record,
+before there is a previous observation or a full rolling window to
+compare against. The resulting flags
 annotate the record for the audit trail and operator review; they do
 not filter observations out of anomaly scoring, because a genuine
 tsunami signal trips several of these checks:
@@ -1162,11 +1166,12 @@ transition IDLE to MONITOR; an event outside those zones does not
 leave IDLE regardless of magnitude. Most subsequent transitions are
 driven by the ensemble anomaly score $s$ against three configurable
 thresholds: $T_1 = 0.35$, $T_2 = 0.60$, $T_3 = 0.85$
-(Table~\ref{tab:fsm}).  Two paths do not use the score: a seismic
+(Table~\ref{tab:fsm}).  Four paths do not turn on the score: an
 override ($M \geq 7.5$ with DART event-mode transmission) advances the
-FSM one state per evaluation and takes priority over de-escalation,
-and a seismic-only chain ($M \geq 7.5$, depth $< 100$\,km) escalates
-before any score exists.
+FSM one state per evaluation and takes priority over de-escalation, a
+seismic-only chain ($M \geq 7.5$, depth $< 100$\,km) escalates before
+any score exists, a 12-hour dwell timeout returns MONITOR to IDLE, and
+an explicit \texttt{resolve\_event()} call returns ESCALATE to IDLE.
 These thresholds are design constants, spaced to separate the
 escalation stages, with $T_3$ set high to reduce false escalation.
 They are not calibrated against historical events (see Limitation~6 in
@@ -1577,10 +1582,12 @@ en, or em, separates clauses rather than building a compound, so
 A violation in the deterministic summary raises a
 \texttt{GuardrailScanError} and blocks emission. A violation in the
 optional LLM commentary drops the commentary and leaves the
-deterministic report intact.  The test suite exercises 68~guardrail test functions with
-120~assertions covering prohibited-term detection, disclaimer
+deterministic report intact.  The test suite exercises 74~guardrail test functions with
+126~assertions covering prohibited-term detection, disclaimer
 enforcement, homoglyph and small-capital bypass attempts, characters
 normalization would otherwise destroy, shape-collapsed spellings,
+model-authored tool-call logs scanned as structures rather than as
+serialized JSON,
 whitespace and hyphen splitting of multi-word terms, and zero-width
 character injection.  A further 20~synthetic scenarios
 (\texttt{scripts/evaluate\_llm\_synthesis.py}) exercise the synthesis
@@ -1711,9 +1718,10 @@ in-memory state changes and aborts if that write raises, so the
 in-memory trail cannot skip a transition; the database write is a
 separate best-effort transaction whose failure is logged while
 processing continues.
-No role holds UPDATE or DELETE on \texttt{audit\_events}, the four
-baseline roles have both explicitly revoked, and a row-level trigger
-raises on either regardless of grants. Each connector records a SHA-256 hash of the raw payload at the ingest
+No application role is granted UPDATE or DELETE on
+\texttt{audit\_events}, the four baseline roles have both explicitly
+revoked, and a row-level trigger raises on either regardless of
+grants, which binds the owning role too. Each connector records a SHA-256 hash of the raw payload at the ingest
 boundary and carries it in the handoff schemas, separately from the
 record it covers, so re-hashing an archived observation and comparing
 it against the reference detects any alteration between ingest and
@@ -2496,9 +2504,10 @@ no run of them is profiled.  Measurements come from
 \texttt{scripts/profile\_latency.py} (50 iterations, Apple M-series
 laptop). The anomaly detection pipeline (detiding, bandpass filtering,
 wavelet analysis, BOCPD, and ensemble fusion) completes in
-$\sim$47\,ms at p95.  Detection over an already detided residual takes
-44\,ms of that, against 0.06\,ms for the separately profiled wavelet
-row, so BOCPD accounts for nearly all of the detector's cost. QC checks process 10 records
+$\sim$47\,ms at p95, of which detection over an already detided
+residual is 44\,ms.  No component below that row is profiled
+separately in the artifact, so the split across threshold, wavelet and
+BOCPD is not measured here. QC checks process 10 records
 in ${\sim}0.12$\,ms, and FSM transitions are sub-millisecond. Against a 1-minute event-mode sampling interval, single-station
 compute is not what bounds the deployed worker; the ingest poll
 interval and the network round trip are, and those rows are design
@@ -2847,9 +2856,9 @@ the profiling machine (Table~\ref{tab:latency}, AnomalyAgent
 end-to-end row).  The Isolation Forest is not loaded, so it
 contributes nothing to that figure. Scenario inversion dominates the end-to-end
 budget because the NNLS solver (Eq.~\ref{eq:nnls}) iterates over the propagation database;
-the 3-minute figure is a design target for a pre-loaded database
-rather than a measurement, over the at most 15 candidate unit sources
-the selector returns by default. When the LLM synthesis layer is enabled a single API
+the 3-minute figure is a design target rather than a measurement,
+assuming a pre-loaded database and the at most 15 candidate unit
+sources the selector returns by default. When the LLM synthesis layer is enabled a single API
 call adds seconds rather than milliseconds, and the template-only path
 is what survives an API failure; neither cost is profiled here. The
 end-to-end target of ${\leq}5$ minutes from data availability to
@@ -4543,9 +4552,9 @@ stations because only the threshold detector fires (wavelet and BOCPD
 both score zero), capping the ensemble at $0.588 \times 1.0 = 0.588$,
 the single-detector maximum under the renormalized weighting.
 The three far-field standard-mode stations are filter degraded.  Only
-51407 is close enough for the question to arise, and its predicted
-arrival at 357.5\,min still falls just past the end of its 356.8\,min
-record, so its zero score does not separate the two causes either.
+51407 is close enough for the question to arise, and even there the
+predicted arrival at 357.5\,min falls a few minutes after its last
+sample, so its zero score does not separate the two causes either.
 Table~\ref{tab:samoa-results} provides the full per-station breakdown.
 Raw pressure records with IRLS tidal fits are shown in
 Figure~\ref{fig:samoa-waveforms}; detided residuals in

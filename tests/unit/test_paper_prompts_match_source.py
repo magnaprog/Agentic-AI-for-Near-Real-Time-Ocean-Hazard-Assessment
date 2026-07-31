@@ -38,8 +38,10 @@ _BOX = re.compile(
     re.DOTALL,
 )
 
-#: Model tier each listing declares, checked against the purpose the source
-#: actually builds for that node (synthesis_graph.py, after_action.py).
+#: Model tier each listing declares. Transcribed from the ``purpose=`` each
+#: node builds (``synthesis_graph.py`` fast/fast/standard, ``after_action.py``
+#: quality) and checked against the label in the paper. This is a table, not a
+#: read of those files: it catches a relabelled listing, not a changed node.
 EXPECTED_TIER = {
     "Evidence Synthesis Prompt": "fast",
     "Scenario Interpretation Prompt": "fast",
@@ -49,7 +51,13 @@ EXPECTED_TIER = {
     "Incident Report Draft Prompt": "quality",
 }
 
-_CONST = re.compile(r'^([A-Z_]+_PROMPT) = """\\?\n(.*?)"""', re.DOTALL | re.MULTILINE)
+#: ``NAME = """`` and ``NAME = f"""`` both define a prompt. Matching only the
+#: plain form let an f-string prompt be added to source and omitted from the
+#: appendix without failing anything, and prompts.py already writes three of
+#: its prompts that way.
+_CONST = re.compile(
+    r'^([A-Z_]+_PROMPT) = f?"""\\?\n(.*?)"""', re.DOTALL | re.MULTILINE
+)
 
 #: Which source constant each appendix listing claims to reproduce.
 #:
@@ -58,6 +66,15 @@ _CONST = re.compile(r'^([A-Z_]+_PROMPT) = """\\?\n(.*?)"""', re.DOTALL | re.MULT
 #: be printed twice while another silently disappears from the appendix, and
 #: the listing still passes. Binding the title to the constant is what makes a
 #: mislabelled or missing prompt fail.
+#: The investigator's three prompts, deliberately omitted from the appendix for
+#: length and disclosed as such. Listed by name rather than skipped by pattern
+#: so that a fourth investigator prompt, or any new prompt, still fails below.
+KNOWN_OMITTED = {
+    "STATION_AGREEMENT_PROMPT",
+    "EVIDENCE_GAPS_PROMPT",
+    "TIMELINE_CONSISTENCY_PROMPT",
+}
+
 EXPECTED = {
     "Evidence Synthesis Prompt": "EVIDENCE_SYSTEM_PROMPT",
     "Scenario Interpretation Prompt": "SCENARIO_SYSTEM_PROMPT",
@@ -110,10 +127,10 @@ def test_every_prompt_listing_is_byte_exact_against_source() -> None:
     if missing:
         problems.append(f"prompts the appendix no longer reproduces: {missing}")
 
-    # A prompt added to prompts.py that nobody lists here would otherwise be
-    # omitted from the appendix silently, which is the failure this file
-    # exists to prevent.
-    unlisted = sorted(set(prompts) - set(EXPECTED.values()))
+    # A prompt added to prompts.py that is neither reproduced nor on the
+    # known-omitted list would otherwise disappear from the appendix silently,
+    # which is the failure this file exists to prevent.
+    unlisted = sorted(set(prompts) - set(EXPECTED.values()) - KNOWN_OMITTED)
     if unlisted:
         problems.append(
             f"prompts.py defines {unlisted}, which the appendix does not "

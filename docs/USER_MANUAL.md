@@ -37,13 +37,13 @@ This manual describes installation, configuration, and operation of **Agentic AI
 - Applies QARTOD-aligned quality control to incoming observations.
 - Detects potential tsunami signals using an ensemble anomaly detector (harmonic detiding, bandpass filtering, wavelet energy, Bayesian changepoint detection, spatial coherence).
 - Advances a deterministic five-state finite-state machine (FSM) in response to anomaly scores and seismic events.
-- Provides offline scientific components for NNLS source-scenario inversion, nine Verification checks, and structured report generation.
+- Provides scientific components for NNLS source-scenario inversion, nine Verification checks, and structured report generation. Only the demo scripts exercise them; no path that produces a committed artifact does.
 - Builds one deterministic `OceanEvidenceAssessment` at each active live-worker checkpoint and fail-closes to ABSTAIN at ASSESS or ESCALATE.
 - Persists an immutable reviewer packet from the assessment that entered ESCALATE when database storage is configured.
 - Records caller-gated APPROVE, REJECT, or DEFER assessment reviews bound to that durable packet.
 
 > **Deployment status:** Scenario inversion, Verification, and report generation
-> run only in offline evaluation. The deployed Kafka worker runs ingest, QC
+> run only in the demo scripts. The deployed Kafka worker runs ingest, QC
 > metadata, anomaly detection, FSM evaluation, assessment persistence, and
 > reviewer-packet rendering. Current review identity is caller-asserted, not an
 > authenticated human principal. Review does not authorize distribution, change
@@ -93,7 +93,7 @@ Cross-cutting: OpenTelemetry | Prometheus | Immutable Audit Trail
 | `IDLE` | No active event | Initial state or MONITOR timeout |
 | `MONITOR` | Seismic trigger received; watching | Seismic event >= min. magnitude in a configured tsunamigenic region |
 | `INVESTIGATE` | Anomaly score elevated | Anomaly score >= T1 (default 0.35) |
-| `ASSESS` | Deterministic FSM threshold state; live checkpoints fail-close to ABSTAIN because Scenario and Verification are offline-only | Anomaly score >= T2 (default 0.60) |
+| `ASSESS` | Deterministic FSM threshold state; live checkpoints fail-close to ABSTAIN because no runtime path assembles Scenario or Verification input | Anomaly score >= T2 (default 0.60) |
 | `ESCALATE` | Event is eligible for packet review once the durable packet exists | Anomaly score >= T3 (default 0.85), M >= 7.5 plus DART event-mode activation, or direct large-shallow-earthquake override from MONITOR |
 
 ### Pipeline Flow
@@ -339,7 +339,7 @@ The top panel shows the current FSM state as a color-coded indicator:
 | IDLE | Green | No active event |
 | MONITOR | Amber | Seismic trigger; watching |
 | INVESTIGATE | Orange | Elevated anomaly score |
-| ASSESS | Orange | Threshold state; live checkpoint is ABSTAIN because Scenario/Verification are offline-only |
+| ASSESS | Orange | Threshold state; live checkpoint is ABSTAIN because no runtime path assembles Scenario/Verification input |
 | ESCALATE | Red | Escalated event; review becomes available after durable packet persistence |
 
 ### 7.2 Active Event Panel
@@ -435,7 +435,7 @@ The API returns each entry's producer-selected `data` metadata. This is not nece
 
 ### 7.7 Lineage Queries
 
-Query `/api/lineage/<trace_id>` (or `/api/lineage/event/<event_id>`) to see the audit and decision lineage for a pipeline execution: which agent or state decided what, and when. For the raw-input chain, `/api/lineage/provenance/<trace_id>` walks the worker's persisted `qc_report` and `anomaly_score` feature rows back to raw observation records by payload hash: anomaly rows reference every sample retained in the scored rolling window, and QC rows reference the records QC summarized (database required). Assessment-stage outputs (scenario, verification, report) run in the offline path and have no live feature rows (see 11.5).
+Query `/api/lineage/<trace_id>` (or `/api/lineage/event/<event_id>`) to see the audit and decision lineage for a pipeline execution: which agent or state decided what, and when. For the raw-input chain, `/api/lineage/provenance/<trace_id>` walks the worker's persisted `qc_report` and `anomaly_score` feature rows back to raw observation records by payload hash: anomaly rows reference every sample retained in the scored rolling window, and QC rows reference the records QC summarized (database required). Assessment-stage outputs (scenario, verification, report) run only in the demo scripts and have no live feature rows (see 11.5).
 
 ---
 
@@ -905,7 +905,7 @@ score >= T3 (0.85):   ASSESS -> ESCALATE
 
 ### 9.4 Offline Scenario Inversion
 
-In the offline evaluation path, a Scenario component runs NNLS inversion for prepared assessment inputs:
+In `scripts/verify_e2e_workflow.py`, a Scenario component runs NNLS inversion for prepared assessment inputs:
 
 1. Retrieves DART waveform observations.
 2. Selects candidate unit-source Green's functions from the configured unit-source library based on epicenter proximity.
@@ -1103,7 +1103,7 @@ The audit trail is **append-only**. No records can be modified or deleted. Every
 | `evidence_investigation` | An active-event investigation ran. Records which issues produced findings, which failed, which were not stored, and which were guardrail-withheld |
 | `llm_call` | LLM advisory call recorded |
 | `anomaly_scored` | Worker anomaly assessment persisted as a lineage feature row |
-| `escalation_packet_conflict` | A checkpoint already had a packet with a different content hash; an identical repeat is adopted instead |
+| `escalation_packet_conflict` | A checkpoint already had a packet with a different content hash, or a different event id; an identical repeat is adopted instead |
 | `after_action_report` | A post-event after-action analysis ran, with its tool-call log |
 | `fsm_recovery_failed` | FSM state recovery from the database failed; event context lost |
 

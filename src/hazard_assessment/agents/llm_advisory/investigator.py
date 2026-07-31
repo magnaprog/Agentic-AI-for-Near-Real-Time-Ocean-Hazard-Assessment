@@ -55,7 +55,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
 from hazard_assessment.agents.llm_advisory.prompts import INVESTIGATOR_ISSUE_PROMPTS
-from hazard_assessment.policy.guardrails import scan_text
+from hazard_assessment.policy.guardrails import scan_structure, scan_text
 
 if TYPE_CHECKING:
     from hazard_assessment.audit.logger import AuditLogger
@@ -204,8 +204,7 @@ def investigate_issue(
     # for reserved wording to reach an operator while the finding itself came
     # back clean.
     violations = [v.term for v in scan_text(finding).violations]
-    tool_call_text = json.dumps(call_log, sort_keys=True, default=str)
-    tool_violations = [v.term for v in scan_text(tool_call_text).violations]
+    tool_violations = [v.term for v in scan_structure(call_log)]
 
     if violations:
         # Dropped, not redacted: a partially rewritten finding would

@@ -19,7 +19,6 @@ Caller-gated assessment review bound to durable evidence.
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import threading
@@ -51,7 +50,7 @@ from hazard_assessment.policy.approval import (
     log_denial,
     log_policy_result,
 )
-from hazard_assessment.policy.guardrails import scan_text
+from hazard_assessment.policy.guardrails import scan_structure, scan_text
 from hazard_assessment.schemas.envelope import DataSource, InputRef
 from hazard_assessment.schemas.escalation import EscalationPacket
 from hazard_assessment.schemas.human_decision import (
@@ -1591,15 +1590,18 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
     # scanning only the narrative left reserved wording a route to an operator
     # while the narrative itself came back clean. The investigator already
     # closes this on its own path; this is the same defense on the sibling one.
-    tool_call_scan = scan_text(json.dumps(tool_call_log, sort_keys=True, default=str))
-    record_guardrail_scan(passed=not tool_call_scan.violations)
-    if tool_call_scan.violations:
+    tool_call_violations = scan_structure(tool_call_log)
+    record_guardrail_scan(passed=not tool_call_violations)
+    # Captured before the withhold path rebinds the list, so the audit record
+    # keeps the real count rather than the length of the placeholder.
+    n_tool_calls = len(tool_call_log)
+    if tool_call_violations:
         # Withheld whole rather than edited: the log is the record of what the
         # model did, so rewriting entries would destroy the evidence. The count
         # carries no model-authored text and is kept.
         logger.warning(
             "After-action tool log withheld on reserved terms: %s",
-            ", ".join(sorted({v.term for v in tool_call_scan.violations})),
+            ", ".join(sorted({v.term for v in tool_call_violations})),
         )
         tool_call_log = [
             {
@@ -1607,7 +1609,7 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
                     "tool-call log used reserved alert terminology and was "
                     "dropped by the guardrail scanner"
                 ),
-                "n_calls": len(tool_call_log),
+                "n_calls": n_tool_calls,
             }
         ]
 
@@ -1623,7 +1625,7 @@ def run_after_action(req: AfterActionRequest) -> dict[str, Any]:
             "gaps": text_fields["gaps"],
             "draft_report": text_fields["draft_report"],
             "tool_calls": tool_call_log,
-            "n_tool_calls": len(tool_call_log),
+            "n_tool_calls": n_tool_calls,
             "report_correlation_id": str(report_correlation_id),
         },
     )

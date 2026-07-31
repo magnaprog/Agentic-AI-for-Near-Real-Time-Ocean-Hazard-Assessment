@@ -1112,11 +1112,22 @@ def test_after_action_withholds_a_tool_log_using_reserved_terms(
     monkeypatch.setenv("LLM_API_KEY", "test-llm-key")
 
     # The model asks for a tool whose name carries an official NOAA product
-    # term. The name is echoed verbatim into the log by resolve_tool_calls.
+    # term, spelled with a Cyrillic "a" so a naive check misses it, and passes
+    # an argument whose own KEY is a reserved term, also homoglyphed.
+    # resolve_tool_calls echoes both back verbatim. Every poison here is
+    # chosen so that a json.dumps-then-scan finds nothing at all, which is
+    # what makes this test fail against the defect rather than pass by
+    # catching some other term.
+    #
+    # The homoglyph is the case that matters. Serializing the log with
+    # json.dumps before scanning escaped it to a \uXXXX literal, so the
+    # confusable fold in guardrails.py had nothing to match while the real
+    # character was persisted and returned. A plain-ASCII poison would have
+    # passed that broken scan too and hidden the defect.
     poisoned_call = {
         "node": "timeline",
-        "tool": "issue_tsunami_warning",
-        "args": {"text": "All Clear"},
+        "tool": "W\u0430rning",  # Cyrillic U+0430 in place of "a"
+        "args": {"\u0410dvisory": "1", "text": "All\tClear"},
         "error": "unknown_tool",
     }
 
@@ -1170,8 +1181,8 @@ def test_after_action_withholds_a_tool_log_using_reserved_terms(
         assert body["tool_calls"][0]["n_calls"] == 1
         assert "withheld" in body["tool_calls"][0]
 
-        returned = json.dumps(body)
-        for term in ("issue_tsunami_warning", "All Clear"):
+        returned = json.dumps(body, ensure_ascii=False)
+        for term in ("W\u0430rning", "\u0410dvisory", "All\tClear"):
             assert term not in returned, f"{term!r} reached the operator"
 
         # The same must hold for what was written to the audit trail.
@@ -1179,8 +1190,8 @@ def test_after_action_withholds_a_tool_log_using_reserved_terms(
             event_id=closed_event, event_type="after_action_report"
         )
         assert len(persisted) == 1
-        stored = json.dumps(persisted[0].data, default=str)
-        for term in ("issue_tsunami_warning", "All Clear"):
+        stored = json.dumps(persisted[0].data, default=str, ensure_ascii=False)
+        for term in ("W\u0430rning", "\u0410dvisory", "All\tClear"):
             assert term not in stored, f"{term!r} was persisted to the audit trail"
 
 

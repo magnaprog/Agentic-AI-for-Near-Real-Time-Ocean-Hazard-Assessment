@@ -462,3 +462,39 @@ def scan_text(text: str) -> ScanResult:
         violations=violations,
         has_disclaimer=has_disclaimer,
     )
+
+
+def scan_structure(value: object) -> list[GuardrailViolation]:
+    """Scan every string inside a nested structure, keys included.
+
+    Callers used to serialize a tool-call log with ``json.dumps`` and scan the
+    result. That silently disabled most of this module. ``json.dumps`` defaults
+    to ``ensure_ascii=True``, so a Cyrillic or fullwidth homoglyph became a
+    literal ``\\uXXXX`` escape before the scanner saw it, and the confusable
+    fold, the small-capital fold and the NFKC/NFD passes above all had nothing
+    left to catch. JSON escaping breaks the whitespace-flexible match too: a tab
+    inside a reserved phrase serializes to a backslash and a ``t``. The escaped
+    form was scanned while the real characters were persisted and returned.
+
+    Scanning each string on its own also avoids the opposite error, where
+    joining values with a separator invents a match that spans two of them.
+
+    Dictionary keys are scanned because they are not always ours: a model
+    chooses its own tool-argument names, and those names become keys.
+    """
+    violations: list[GuardrailViolation] = []
+    stack: list[object] = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, str):
+            violations.extend(scan_text(item).violations)
+        elif isinstance(item, dict):
+            for key, sub in item.items():
+                stack.append(key)
+                stack.append(sub)
+        elif isinstance(item, (list, tuple, set)):
+            stack.extend(item)
+        elif item is not None and not isinstance(item, (bool, int, float)):
+            # Anything else reaches the operator through its string form.
+            violations.extend(scan_text(str(item)).violations)
+    return violations
