@@ -1233,7 +1233,8 @@ specification.}
 %  them visually above center and well clear of the de-escalation arrows below.
 \draw[fwd]
   ($(idle.north east)!0.35!(idle.south east)$) --
-  node[lbl, midway, above=3pt]{$M{\geq}M_\text{min}$}
+  node[lbl, midway, above=9pt, align=center]
+    {$M{\geq}M_\text{min}$,\\[-2pt]tsunami zone}
   ($(mon.north west)!0.35!(mon.south west)$);
 \draw[fwd]
   ($(mon.north east)!0.35!(mon.south east)$) --
@@ -1285,7 +1286,9 @@ specification.}
   corresponding lower threshold ($T_1$ or $T_2$); \textsc{monitor}
   also returns to \textsc{idle} after a 12\,h timeout if $s < T_1$.
   Orange arcs: seismic-only escalation ($M \geq 7.5$, depth $< 100$\,km)
-  bypasses \textsc{investigate}/\textsc{assess} entirely;
+  bypasses \textsc{investigate}/\textsc{assess} entirely, firing as a
+  chained \textsc{idle}\,$\to$\,\textsc{monitor}\,$\to$\,\textsc{escalate}
+  on the triggering event rather than from a standing \textsc{monitor};
   seismic override ($M \geq 7.5$ and DART event mode)
   bypasses $T_3$ from \textsc{assess} (the same override also advances
   \textsc{monitor} and \textsc{investigate} one state per evaluation;
