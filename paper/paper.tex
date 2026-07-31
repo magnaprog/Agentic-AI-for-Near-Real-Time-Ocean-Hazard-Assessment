@@ -1905,9 +1905,11 @@ Figure~\ref{fig:station-map} shows the station locations relative
 to the epicenter.
 Figure~\ref{fig:tohoku-waveforms} shows de-meaned raw BPR records
 for all eight stations ordered by epicentral distance, with
-the earthquake origin marked.  The tsunami signal is visible as
-a sustained oscillation beginning minutes to hours after the
-earthquake, with amplitude decreasing at greater distances.
+the earthquake origin marked.  At the near-field stations the tsunami appears as a sustained
+oscillation beginning minutes to hours after the earthquake, with
+smaller amplitude at greater distance; the most distant records
+contain seismic pressure perturbations rather than a tsunami arrival
+inside this window.
 Figure~\ref{fig:tohoku-residuals} shows the same records after
 tidal removal via the 8-constituent harmonic fit, isolating the
 tsunami waveform.
@@ -2111,8 +2113,16 @@ $M_w$\,8.1--9.1.  Samoa is the one case outside subduction-zone thrust faulting,
 detector reached the same operating points there.  One outer-rise
 normal-faulting event is not enough to establish that the detector
 generalizes across mechanisms.
-Detection at greater distances uniformly requires event-mode switching
-(1-min or 15-sec sampling) to resolve the tsunami energy band.
+No station sampling at the 15-minute standard interval crossed $T_1$ in
+any of the five events; every crossing came from a station in event
+mode, whose passband is not clamped by the Nyquist limit.  Sampling
+rate is not the only difference between those two groups, though.  Of
+the thirteen standard-mode station records, twelve sit farther from
+their epicenter than a tsunami travels in the six-hour evaluation
+window at the shallow-water speed of 198\,m\,s$^{-1}$, so for those
+records neither the tsunami nor the coseismic signal could have
+arrived in time to be scored.  The low standard-mode scores therefore
+cannot be read as a measurement of what coarse sampling costs.
 
 \FloatBarrier
 \subsection{Detiding Validation}
@@ -2398,8 +2408,11 @@ than sweeping a decision boundary.
 \subsection{ABSTAIN Correctness}
 \label{sec:eval-abstain}
 
-The verification layer (\S\ref{sec:verification}) enforces
-conservative degradation when observational data are insufficient.
+The verification layer (\S\ref{sec:verification}) degrades
+conservatively when observational data are insufficient.  What follows
+is the aggregation policy and the unit tests over it.  Verification
+does not run in the retrospective replays or the synthetic scenarios,
+so none of it is measured on event data.
 A check whose input is absent does not return a trivial PASS.  It
 returns NOT\_EVALUATED with its prerequisite marked MISSING, so only
 checks that actually ran on available data can PASS.  The aggregate
