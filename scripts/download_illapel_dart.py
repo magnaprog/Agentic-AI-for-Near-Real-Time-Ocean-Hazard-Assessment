@@ -17,7 +17,7 @@ station:
 
 Key stations (distances from epicenter computed via haversine):
   32402 - ~580 km NW, off central Chile, first tsunami arrival (~30 min)
-  32401 - ~1230 km NW, off northern Chile
+  32401 - ~1250 km NW, off northern Chile
   32412 - ~2110 km NW, off Peru
   51426 - ~9280 km W, near Tonga
   46403 - ~12440 km NNE, off Alaska
@@ -65,7 +65,7 @@ ILLAPEL_ORIGIN_UTC = datetime(2015, 9, 16, 22, 54, 32, tzinfo=UTC)
 # Format: (station_id, approx_distance_km, description)
 ILLAPEL_STATIONS = [
     ("32402", 580, "NW, off central Chile - first arrival"),
-    ("32401", 1230, "NW, off northern Chile"),
+    ("32401", 1250, "NW, off northern Chile"),
     ("32412", 2110, "NW, off Peru"),
     ("51426", 9280, "W, near Tonga"),
     ("46403", 12440, "NNE, off Alaska"),

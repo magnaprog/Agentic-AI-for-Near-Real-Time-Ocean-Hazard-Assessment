@@ -1164,8 +1164,10 @@ Limitation~6 in Section~\ref{sec:discussion} for calibration status).
 
 \begin{table}[t]
 \centering
-\caption{FSM state transitions. De-escalation (downward) occurs when
-  the score drops below the corresponding lower threshold.}
+\caption{FSM state transitions. The De-escalation column gives the
+  automatic downward transition available from the \emph{From} state, where
+  one exists; it fires when the score drops below the corresponding lower
+  threshold.}
 \label{tab:fsm}
 \begin{tabular}{llll}
 \toprule
@@ -1174,9 +1176,9 @@ From & To & Trigger & De-escalation \\
 IDLE        & MONITOR     & Seismic $M \geq M_\text{min}$ in a tsunamigenic zone & N/A \\
 MONITOR     & IDLE        & Timeout (12\,h) AND $s < T_1$ & --- \\
 MONITOR     & ESCALATE    & Seismic-only$^\ddagger$        & --- \\
-MONITOR     & INVESTIGATE & $s \geq T_1 = 0.35$ OR override$^*$ & $s < T_1$ $\to$ MONITOR \\
+MONITOR     & INVESTIGATE & $s \geq T_1 = 0.35$ OR override$^*$ & --- \\
 INVESTIGATE & ASSESS      & $s \geq T_2 = 0.60$           & $s < T_1$ $\to$ MONITOR$^*$ \\
-ASSESS      & ESCALATE    & $s \geq T_3 = 0.85$           & $s < T_2$ $\to$ INVESTIGATE \\
+ASSESS      & ESCALATE    & $s \geq T_3 = 0.85$           & $s < T_2$ $\to$ INVESTIGATE$^*$ \\
 ASSESS      & ESCALATE    & Seismic override$^\dagger$    & --- \\
 ESCALATE    & IDLE        & Explicit event resolution$^\S$ & --- \\
 \bottomrule
@@ -1191,9 +1193,11 @@ No DART data required (per PTWC/JMA operational criteria).\\
 $*$ The seismic override condition ($M \geq 7.5$ with DART event-mode
 activation) prevents a sub-$T_1$ ensemble score from holding the FSM
 back: from MONITOR it advances to INVESTIGATE, and de-escalation from
-INVESTIGATE is suppressed (the FSM advances to ASSESS instead), so a
-low interim ensemble score cannot hold down or de-escalate an event
-with a large earthquake and active event-mode DART reporting.\\
+INVESTIGATE is suppressed (the FSM advances to ASSESS instead).  The
+same holds at ASSESS, where the override is evaluated before the
+$s < T_2$ check and so escalates rather than de-escalates.  A low
+interim ensemble score therefore cannot hold down or de-escalate an
+event with a large earthquake and active event-mode DART reporting.\\
 $\S$ Explicit event resolution is implemented as
 \texttt{resolve\_event()}. No current API route invokes it, and the
 caller-asserted review decisions (APPROVE, REJECT, DEFER) are all
@@ -1324,7 +1328,7 @@ Algorithm~\ref{alg:fsm} formalizes the transition logic.
   \IF{$s \geq T_1$} \RETURN \textsc{investigate}
   \ELSIF{$M \geq 7.5$ \AND event-mode}
     \RETURN \textsc{investigate} \COMMENT{seismic override prevents holding}
-  \ELSIF{$\Delta t > 12$\,h \AND $s < T_1$} \RETURN \textsc{idle}
+  \ELSIF{$\Delta t \geq 12$\,h \AND $s < T_1$} \RETURN \textsc{idle}
   \ENDIF
 \ELSIF{$q = \textsc{investigate}$}
   \IF{$s \geq T_2$} \RETURN \textsc{assess}
@@ -1424,10 +1428,11 @@ summarizes the checks.
 \begin{table}[t]
 \centering
 \caption{Verification checks. Any FAIL verdict triggers
-  \texttt{abstain\_required=true}. The four rows marked $\dagger$ state
-  policy the shipped pipeline does not reach: nothing supplies the
-  input each condition tests, so all four report NOT\_EVALUATED with a
-  missing prerequisite and the conditions shown are never evaluated.
+  \texttt{abstain\_required=true}. No component assembles a
+  \texttt{VerificationInput}, so none of the nine runs on live data.
+  The four rows marked $\dagger$ are unreachable for a second reason:
+  the field each of those conditions reads is never populated on that
+  structure, so they report NOT\_EVALUATED for a missing prerequisite.
   See the fifth limitation in Section~\ref{sec:discussion}.}
 \label{tab:verification}
 \begin{tabular}{lll}
@@ -1448,7 +1453,7 @@ Model fit            & RMSE $> 5$\,cm or bias        & RMSE $> 3$\,cm \\
                      & $> 1$\,cm AND $> 3\sigma$     &                \\
 Tidal state$\dagger$ & Needed + uncorrected          & Uncorrected    \\
                      &                               & coastal proxies\\
-Meteotsunami$\dagger$ & Non-tsun.\ energy $> 60\%$   & $> 30\%$       \\
+Meteotsunami$\dagger$ & Meteo.\ score $> 0.6$        & $> 0.3$        \\
 Rayleigh wave$\dagger$ & ---                         & Timing match   \\
                      &                               & (haversine/$3.6$\,km/s $\pm 20\%$)\\
 \bottomrule
@@ -2768,7 +2773,7 @@ earthquake origin, whereas ours starts when DART data become available.
 DART ingest (event mode) & --- & $\leq 30{,}000$ & 15\,s poll + HTTP (design target) \\
 Seismic ingest & --- & $\leq 15{,}000$ & FDSN event query (design target) \\
 QC (10 records) & 0.12 & 0.16 & 5 QARTOD checks (measured) \\
-Detide + bandpass & 0.90 & 1.10 & Harmonic fit + Butterworth (measured) \\
+Detide + bandpass & 0.89 & 1.10 & Harmonic fit + Butterworth (measured) \\
 Anomaly detection (full) & 43.5 & 44.4 & BOCPD dominates (measured) \\
 AnomalyAgent end-to-end & 44.8 & 46.8 & Detide + all scores (measured) \\
 FSM transition & 0.01 & 0.02 & In-memory lookup (measured) \\
@@ -3598,7 +3603,7 @@ INVESTIGATE & MONITOR & $s < T_1$ (de-escalation; suppressed when $M \geq 7.5$ w
 \addlinespace
 ASSESS & ESCALATE & $s \geq T_3$ \\
 ASSESS & ESCALATE & $M \geq M_{\mathrm{esc}}$ with DART event-mode activation (seismic override) \\
-ASSESS & INVESTIGATE & $s < T_2$ (de-escalation) \\
+ASSESS & INVESTIGATE & $s < T_2$ (de-escalation; suppressed when $M \geq 7.5$ with DART event-mode$\to$ESCALATE) \\
 \addlinespace
 ESCALATE & IDLE & Explicit event resolution (\texttt{resolve\_event()}; no API route invokes it. APPROVE, REJECT and DEFER are all recorded without changing FSM state) \\
 \bottomrule
@@ -3881,9 +3886,9 @@ algorithm, which is more selective for smaller events.
 \midrule
 32412 & 2{,}400   & NW, off Peru             & event (1\,min) \\
 32411 & 4{,}920   & NW, off Galapagos        & event (1\,min) \\
-54401 & 8{,}750   & W, SW Pacific            & standard (15\,min) \\
+54401 & 8{,}740   & W, SW Pacific            & standard (15\,min) \\
 46412 & 9{,}080   & N, off San Diego CA      & event (1\,min) \\
-46411 & 10{,}040  & NNE, off N California    & standard (15\,min) \\
+46411 & 10{,}040  & NW, off N California    & standard (15\,min) \\
 51407 & 10{,}740  & WNW, Hawaii              & standard (15\,min) \\
 46402 & 13{,}110  & NNW, S of Dutch Harbor AK & --- (no data) \\
 21413 & 15{,}840  & W, off Japan             & standard (15\,min) \\
@@ -4066,12 +4071,12 @@ overlap with the T\={o}hoku evaluation.
 \textbf{Station} & \textbf{Dist.\,(km)} & \textbf{Location} & \textbf{Mode} \\
 \midrule
 32402 &    580  & W of Caldera, Chile    & event (1\,min) \\
-32401 & 1{,}230 & W of Iquique, Chile    & event (1\,min) \\
+32401 & 1{,}250 & W of Iquique, Chile    & event (1\,min) \\
 32412 & 2{,}110 & NW, off Peru           & event (1\,min) \\
-51426 & 9{,}260 & W, near Tonga          & standard (15\,min) \\
-46411 & 9{,}740 & N, off N California    & standard (15\,min) \\
+51426 & 9{,}280 & W, near Tonga          & standard (15\,min) \\
+46411 & 9{,}740 & NW, off N California    & standard (15\,min) \\
 46407 & 10{,}110 & N, off Oregon          & standard (15\,min) \\
-46403 & 12{,}450 & NNE, off Alaska        & standard (15\,min) \\
+46403 & 12{,}450 & NW, off Alaska        & standard (15\,min) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -4081,7 +4086,7 @@ event mode (1-min sampling) during the event window
 (Figure~\ref{fig:illapel-detection}).
 The closest station (32402 at 580\,km) produced an ensemble score of
 0.99, comfortably exceeding the ESCALATE threshold ($T_3 = 0.85$);
-station 32401 at 1{,}230\,km scored 0.753 (ASSESS level, $T_2 = 0.60$).
+station 32401 at 1{,}250\,km scored 0.753 (ASSESS level, $T_2 = 0.60$).
 Station 32412, at 2{,}110\,km, scored 0.49 (above INVESTIGATE
 threshold $T_1 = 0.35$), consistent with its greater distance
 and the smaller source amplitude compared to the $M_w$\,8.8--9.1
@@ -4101,7 +4106,7 @@ Appendix~\ref{sec:appendix-coops} (Figure~\ref{fig:coops-illapel}).
 At $M_w$\,8.3 and 22\,km depth, seismic-only escalation fires
 immediately.  DART evidence arrives at +3.7\,min when
 station 32402 (580\,km) crosses $T_1$.  Station 32402 reaches
-$T_3$ at +5.0\,min; station 32401 (1{,}230\,km) reaches
+$T_3$ at +5.0\,min; station 32401 (1{,}250\,km) reaches
 $T_2$ but not $T_3$ (ensemble 0.753), demonstrating the
 ensemble's graded response at intermediate distances.
 Audit trail:
@@ -4126,9 +4131,9 @@ Audit trail:
   & \textbf{Deg} \\
 \midrule
 32402 &    580    & event & 0.992 & 1.000 & 0.981 & 0.304 & \checkmark & \checkmark & \checkmark & --- \\
-32401 & 1{,}230   & event & 0.753 & 0.914 & 0.524 & 0.364 & \checkmark & \checkmark & ---        & --- \\
+32401 & 1{,}250   & event & 0.753 & 0.914 & 0.524 & 0.364 & \checkmark & \checkmark & ---        & --- \\
 32412 & 2{,}110   & event & 0.493 & 0.539 & 0.120 & 0.427 & \checkmark & ---        & ---        & --- \\
-51426 & 9{,}260   & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
+51426 & 9{,}280   & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
 46411 & 9{,}740   & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
 46407 & 10{,}110  & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
 46403 & 12{,}450  & std   & 0.000 & 0.000 & 0.000 & 0.001 & ---        & ---        & ---        & \checkmark \\
@@ -4211,8 +4216,8 @@ four operated in event mode during the event window.
   event-mode station is the median spacing of its retained record, not
   an instrument setting. These records interleave samples that the
   NDBC archive tags as 15-second and 1-minute mode, and the median
-  lands at 45\,s on the two stations that kept the most 15-second
-  samples, 120 and 103 against 25 and 20 on the other two. The
+  lands at 45\,s on the two stations whose event window holds the most
+  15-second-tagged rows, 96 and 80 against 20 and 16 on the other two. The
   per-sample mode is preserved in the native records under
   \texttt{data/iquique/native/}, whose manifest documents the tag.}
 \label{tab:iquique-stations}
@@ -4221,12 +4226,12 @@ four operated in event mode during the event window.
 \toprule
 \textbf{Station} & \textbf{Dist.\,(km)} & \textbf{Location} & \textbf{Mode} \\
 \midrule
-32401 &    295  & SSW, off Arica, Chile   & event (1\,min) \\
+32401 &    295  & WSW, off Arica, Chile   & event (1\,min) \\
 32402 &    858  & S, off Caldera, Chile   & event (1\,min) \\
 32412 & 1{,}652 & NW, off Peru            & event (45\,s) \\
-32413 & 2{,}809 & NW, off Peru (far)      & event (45\,s) \\
+32413 & 2{,}803 & NW, off Peru (far)      & event (45\,s) \\
 51426 & 9{,}900 & W, near Tonga           & standard (15\,min) \\
-46403 & 11{,}476 & NNE, off Alaska        & standard (15\,min) \\
+46403 & 11{,}476 & NW, off Alaska        & standard (15\,min) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -4286,7 +4291,7 @@ Audit trail:
 32401 &    295    & event & 0.698 & 1.000 & 0.000 & 0.266 & \checkmark & \checkmark & ---        & --- \\
 32402 &    858    & event & 0.817 & 1.000 & 0.000 & 0.557 & \checkmark & \checkmark & ---        & --- \\
 32412 & 1{,}652   & event & 0.978 & 0.986 & 0.965 & 0.000 & \checkmark & \checkmark & \checkmark & --- \\
-32413 & 2{,}809   & event & 1.000 & 1.000 & 1.000 & 0.932 & \checkmark & \checkmark & \checkmark & --- \\
+32413 & 2{,}803   & event & 1.000 & 1.000 & 1.000 & 0.932 & \checkmark & \checkmark & \checkmark & --- \\
 51426 & 9{,}900   & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
 46403 & 11{,}476  & std   & 0.000 & 0.000 & 0.000 & 0.000 & ---        & ---        & ---        & \checkmark \\
 \bottomrule
@@ -4380,7 +4385,7 @@ Six DART stations spanning 804--7{,}720\,km are selected
 \toprule
 \textbf{Station} & \textbf{Dist.\,(km)} & \textbf{Location} & \textbf{Mode} \\
 \midrule
-51425 &    804  & NNE, near epicenter     & event (1\,min) \\
+51425 &    804  & NW, near epicenter     & event (1\,min) \\
 51426 &    935  & SSE, near Tonga         & event (1\,min) \\
 54401 & 1{,}960 & S, south of Samoa       & event (1\,min) \\
 51407 & 4{,}250 & NE, off Hawaii          & standard (15\,min) \\
