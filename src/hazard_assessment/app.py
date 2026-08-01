@@ -889,6 +889,19 @@ def submit_review(
             status_code=400,
             detail="X-Reviewer-Id must not contain control characters",
         )
+    # The identity lands in the same audit record as the decision reason and is
+    # rendered beside it in Mission Control, so it gets the same reserved-term
+    # check. Scanning the reason but not the identity left the console able to
+    # display an official product term that arrived one header over.
+    reviewer_scan = scan_text(reviewer_id)
+    if reviewer_scan.violations:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "X-Reviewer-Id contains prohibited alert terminology: "
+                f"{sorted({v.term for v in reviewer_scan.violations})}"
+            ),
+        )
 
     parsed_id = _parse_uuid_param(req.event_id, "event_id")
     if parsed_id is None:

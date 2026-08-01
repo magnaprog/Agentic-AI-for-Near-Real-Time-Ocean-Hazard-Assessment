@@ -797,6 +797,36 @@ def test_review_decision_reason_rejects_prohibited_terms() -> None:
         assert "prohibited alert terminology" in resp.json()["detail"]
 
 
+def test_review_reviewer_id_rejects_prohibited_terms() -> None:
+    """The identity header gets the same check as the reason beside it.
+
+    Both land in the same append-only audit record, and Mission Control renders
+    the reviewer next to the decision. Scanning only the reason let a reserved
+    product term reach the console from one header over.
+
+    Plain ASCII deliberately: an HTTP header cannot carry a Cyrillic homoglyph
+    (the client refuses to encode it), so the reachable case here is an
+    ordinary spelling, unlike the tool-call log where the model chooses the
+    bytes.
+    """
+    with _app_client() as (app_module, client):
+        event_id = _escalate_in_memory(app_module)
+        packet_fields, _ = install_durable_review_packet(app_module, event_id)
+
+        resp = client.post(
+            "/api/review",
+            headers={**AUTH, "X-Reviewer-Id": "All Clear desk"},
+            json={
+                "event_id": event_id,
+                "decision": "APPROVE",
+                "decision_reason": "Consistent with the recorded evidence",
+                **packet_fields,
+            },
+        )
+        assert resp.status_code == 400
+        assert "prohibited alert terminology" in resp.json()["detail"]
+
+
 def test_stale_escalation_packet_rejected_for_different_event() -> None:
     """GET /api/escalation must not serve a packet whose event differs from the
     FSM's current escalated event (stale evidence from a prior event)."""

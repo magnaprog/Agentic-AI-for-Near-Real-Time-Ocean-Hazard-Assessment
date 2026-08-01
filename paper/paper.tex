@@ -309,11 +309,10 @@ the deployed worker or evaluated on historical events. A
 five-state deterministic finite-state machine (FSM) orchestrates a
 sequential pipeline whose deployed portion is quality control and
 ensemble anomaly detection; the scenario-inversion, verification and
-report stages sit downstream in the specification, and no runtime path
-assembles their inputs.  Report generation is gated on nine
-verification checks, and nothing outside the offline demo scripts
-assembles a verification input, so no report is produced on a live or
-archived stream.
+report stages sit downstream in the specification.  Report generation
+is gated on nine verification checks, and nothing outside the offline
+demo scripts assembles an input for any of those three stages, so no
+report is produced on a live or archived stream.
 No assessment is ever classified as approved: the review endpoint
 records a caller-asserted decision against the escalation packet and
 changes nothing else.
@@ -742,10 +741,11 @@ The system is organized into three planes, analogous to the
 data-plane / control-plane separation in network and cloud systems
 engineering (Figure~\ref{fig:architecture};
 full UML diagrams in Appendix~\ref{sec:appendix-uml}).
-Two processing agents, QC and Anomaly, run in sequence under
-deterministic FSM control.  Scenario, Verification and Report are
-specified with the same typed handoff schemas, and no runtime path
-invokes them (Figure~\ref{fig:pipeline}).
+Two processing agents run in the deployed worker: QC annotates
+ingested records as best-effort audit metadata, and the Anomaly
+detector scores the retained window and drives the deterministic FSM.  Scenario, Verification and Report are
+specified with the same typed handoff schemas, and nothing outside the
+offline demo scripts invokes them (Figure~\ref{fig:pipeline}).
 
 \paragraph{Data Plane.}
 Three ingest connectors poll external NOAA and USGS endpoints at
@@ -2048,7 +2048,8 @@ $M$\,9.1 trigger and MONITOR~$\to$~ESCALATE on the seismic-only path
 (depth 29\,km $< 100$\,km).  The Tohoku validator does not
 instantiate the orchestrator, so no audit trail was recorded for this
 event; the verification and report entries the full flow would add
-come after stages no runtime path assembles input for.
+come after stages nothing outside the offline demo scripts assembles
+input for.
 Any assessment reaching the gate stays PROVISIONAL. A human operator
 records APPROVE, REJECT, or DEFER against it; under caller-asserted
 identity none of these changes the status, which would otherwise
@@ -2500,7 +2501,8 @@ aggregation tests over \texttt{determine\_outcome}.
 Table~\ref{tab:latency} reports component latencies.  QC, detiding,
 anomaly scoring and the FSM transition are measured; the ingest rows,
 scenario inversion and both report paths are design targets, because
-no run of them is profiled.  Measurements come from
+no run of them is profiled; the review gate is an operator decision
+and has no bound at all.  Measurements come from
 \texttt{scripts/profile\_latency.py} (50 iterations, Apple M-series
 laptop). The anomaly detection pipeline (detiding, bandpass filtering,
 wavelet analysis, BOCPD, and ensemble fusion) completes in
@@ -2508,7 +2510,8 @@ $\sim$47\,ms at p95, of which detection over an already detided
 residual is 44\,ms.  No component below that row is profiled
 separately in the artifact, so the split across threshold, wavelet and
 BOCPD is not measured here. QC checks process 10 records
-in ${\sim}0.12$\,ms, and FSM transitions are sub-millisecond. Against a 1-minute event-mode sampling interval, single-station
+in ${\sim}0.16$\,ms at the same percentile, and FSM transitions are
+sub-millisecond. Against a 1-minute event-mode sampling interval, single-station
 compute is not what bounds the deployed worker; the ingest poll
 interval and the network round trip are, and those rows are design
 targets rather than measurements.
@@ -2883,7 +2886,7 @@ DART ingest (event mode) & --- & $\leq 30{,}000$ & 15\,s poll + HTTP (design tar
 Seismic ingest & --- & $\leq 15{,}000$ & FDSN event query (design target) \\
 QC (10 records) & 0.12 & 0.16 & 5 QARTOD checks (measured) \\
 Detide + bandpass & 0.89 & 1.10 & Harmonic fit + Butterworth (measured) \\
-Anomaly detection (full) & 43.5 & 44.4 & BOCPD dominates (measured) \\
+Anomaly detection (full) & 43.5 & 44.4 & Threshold, wavelet, BOCPD, fusion (measured) \\
 AnomalyAgent end-to-end & 44.8 & 46.8 & Detide + all scores (measured) \\
 FSM transition & 0.01 & 0.02 & In-memory lookup (measured) \\
 Scenario inversion & --- & $\leq 180{,}000$ & NNLS + bootstrap UQ (design target) \\
@@ -3381,7 +3384,8 @@ architecture, generated from the draw.io source files in
   TimescaleDB when configured). The Processing Plane holds the QC and
   Anomaly agents, which the pipeline worker runs, alongside the
   Scenario and Verification agents, drawn in their specified positions;
-  no runtime path assembles their inputs today. The deterministic FSM
+  nothing outside the offline demo scripts assembles their inputs
+  today. The deterministic FSM
   sits beside them as the sole state authority. The Output Plane includes the Report Agent,
   alert-language guardrail scanner, Abstain Node, and Human Review
   Gate. Observability is provided by the Telemetry Tracing module

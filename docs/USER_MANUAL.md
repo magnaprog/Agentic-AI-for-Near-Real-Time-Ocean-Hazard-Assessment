@@ -701,7 +701,7 @@ Records a caller-gated assessment review. The FSM must be in `ESCALATE`, configu
 }
 ```
 
-**Headers:** `X-Reviewer-Id: <caller-asserted-identifier>` (required by both the core API and Mission Control; this is not authenticated human identity). Bounded at 128 characters and rejected if it contains control characters, because the value is written to the append-only audit trail as the record's producer and echoed into logs. That bounds its shape, not its truthfulness.
+**Headers:** `X-Reviewer-Id: <caller-asserted-identifier>` (required by both the core API and Mission Control; this is not authenticated human identity). Bounded at 128 characters, and rejected if it contains control characters or reserved alert terminology, because the value is written to the append-only audit trail as the record's producer, echoed into logs, and shown beside the decision in Mission Control. That bounds its shape, not its truthfulness.
 
 For APPROVE, REJECT, and DEFER, response 200 means the immutable `assessment_review_decision` entry was confirmed in durable audit storage. The endpoint leaves the FSM in `ESCALATE`, derives assessment identity from the packet, and includes packet and assessment bindings in the decision hash. No current decision authorizes distribution, changes assessment status, or closes the event. Durable append failure returns 503.
 
